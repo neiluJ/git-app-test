@@ -1,0 +1,29 @@
+{
+    "name": "neiluj/test-git",
+    "license": "mit",
+    "authors": [
+        {
+            "name": "neiluJ",
+            "email": "julien@nitronet.org"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.3.0",
+        "fwk/events": "dev-master",
+        "fwk/di": "dev-master",
+        "fwk/xml": "dev-master",
+        "symfony/http-foundation": "dev-master",
+        "gitonomy/gitlib": "dev-master", 
+        "symfony/finder": "dev-master"
+    },
+    "require-dev": {
+        "joseph-lenton/php-error": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Fwk\\Core": "vendor/fwk/core",
+            "TestGit": "app"
+        }
+    }
+}
