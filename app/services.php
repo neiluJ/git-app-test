@@ -6,6 +6,7 @@ use Fwk\Core\Components\RequestMatcher\RequestMatcher;
 
 $container = new Container();
 $container->set('requestMatcher', new RequestMatcher(), true);
+$container->set('urlRewriter', new ClassDefinition('Fwk\Core\Components\UrlRewriter\UrlRewriterService'), true);
 
 // git service
 $container->set(
@@ -16,8 +17,8 @@ $container->set(
 
 // viewHelper
 $viewHelperClassDef = new ClassDefinition('Fwk\Core\Components\ViewHelper\ViewHelperService');
-$container->set('embedViewHelper', new ClassDefinition('Fwk\Core\Components\ViewHelper\EmbedViewHelper'));
-$viewHelperClassDef->addMethodCall('add', array('embed', '@embedViewHelper'));
-$container->set('viewHelper', $viewHelperClassDef, true);
+$viewHelperClassDef->addMethodCall('add', array('embed', new ClassDefinition('Fwk\Core\Components\ViewHelper\EmbedViewHelper')));
+$viewHelperClassDef->addMethodCall('add', array('url', new ClassDefinition('Fwk\Core\Components\UrlRewriter\UrlViewHelper', array('requestMatcher', 'urlRewriter'))));
 
+$container->set('viewHelper', $viewHelperClassDef, true);
 return $container;

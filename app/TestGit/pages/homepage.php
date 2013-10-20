@@ -9,24 +9,25 @@
     <title>Test-Git</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="./css/bootstrap.css" rel="stylesheet">
+    <link href="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/css/bootstrap.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="./css/site.css" rel="stylesheet">
+    <link href="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/css/site.css" rel="stylesheet">
     
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="./js/html5shiv.js"></script>
-      <script src="./js/respond.min.js"></script>
+      <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/html5shiv.js"></script>
+      <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/respond.min.js"></script>
     <![endif]-->
     
-    <script src="./js/angular.min.js"></script>
-    <script src="./app/gitapp.js"></script>
-    <script src="./app/controllers.js"></script>
+    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/angular.min.js"></script>
+    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/app/gitapp.js"></script>
+    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/app/controllers.js"></script>
   </head>
 
   <body ng-controller="RepositoriesCtrl">
-    <?php echo $services->get('viewHelper')->embed('Menu', array('active' => 'repositories')); ?>
+    <?php echo $services->get('viewHelper')
+            ->embed('Menu', array('active' => 'repositories')); ?>
 
     <div class="container">
 
@@ -57,7 +58,7 @@
         <tbody>
           <tr ng-repeat="repo in repositories | filter:query">
             <td><i class="glyphicon glyphicon-list"></i></td>
-            <td><a href="#">{{ repo.name }}</a></td>
+            <td><a href="<?php echo $services->get('viewHelper')->url(); ?>/Repository.action?name={{ repo.name }}">{{ repo.name }}</a></td>
             <td>{{ repo.lastCommit.date }}</td>
             <td>
                 [<a href="#">{{ repo.lastCommit.author }}</a>] {{ repo.lastCommit.message }} (<a href="#">{{ repo.lastCommit.hash|shortHash }}</a>)
@@ -73,7 +74,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="./js/jquery.min.js"></script>
-    <script src="./js/bootstrap.min.js"></script>
+    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/jquery.min.js"></script>
+    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/bootstrap.min.js"></script>
   </body>
 </html>
