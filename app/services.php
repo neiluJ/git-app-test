@@ -7,6 +7,7 @@ use Fwk\Core\Components\RequestMatcher\RequestMatcher;
 $container = new Container();
 $container->set('requestMatcher', new RequestMatcher(), true);
 $container->set('urlRewriter', new ClassDefinition('Fwk\Core\Components\UrlRewriter\UrlRewriterService'), true);
+$container->set('resultTypeService', new \Fwk\Core\Components\ResultType\ResultTypeService(), true);
 
 // git service
 $container->set(

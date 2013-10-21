@@ -24,6 +24,7 @@ gitApp.factory('httpLoader',['$q',function($q){
 
 gitApp.config(['$httpProvider',function($httpProvider) {
     $httpProvider.interceptors.push('httpLoader');
+    $httpProvider.defaults.headers.common["X-Requested-With"] = 'XMLHttpRequest';
 }]);
 
 gitApp.filter('shortHash', function() {

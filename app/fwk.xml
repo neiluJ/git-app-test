@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fwk id="TestApp" version="1.0-dev">
+    <listener class="Fwk\Core\Components\RequestMatcher\RequestMatcherListener">
+        <param>:requestMatcherService</param>
+    </listener>
+    <listener class="Fwk\Core\Components\ResultType\ResultTypeListener">
+        <param>:resultTypeService</param>
+    </listener>
+    <listener class="Fwk\Core\Components\ViewHelper\ViewHelperListener">
+        <param>:viewHelperService</param>
+    </listener>
+    <listener class="Fwk\Core\Components\UrlRewriter\UrlRewriterListener">
+        <param>:urlRewriterService</param>
+    </listener>
+    
+    <result-types>
+        <result-type
+            name="php"
+            class="Fwk\Core\Components\ResultType\PhpTemplateResultType">
+            <param name="templatesDir">:packageDir/TestGit/pages</param>
+        </result-type>
+        <result-type
+            name="json"
+            class="Fwk\Core\Components\ResultType\JsonResultType"
+        />
+        <result-type
+            name="chain"
+            class="Fwk\Core\Components\ResultType\ChainResultType"
+        />
+        <result-type
+            name="redirect"
+            class="Fwk\Core\Components\ResultType\RedirectResultType"
+        />
+    </result-types>
+    
+    <actions>
+        <action name="Home" shortcut="TestGit\Controllers\Home:show">
+            <result name="success" type="php">
+                <param name="file">homepage.php</param>
+            </result>
+        </action>
+        <action name="Menu" shortcut="TestGit\Controllers\Home:menu">
+            <result name="embed:success" type="php">
+                <param name="file">menu.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Home</param>
+            </result>
+        </action>
+        <action name="Error" shortcut="TestGit\Controllers\Home:error">
+            <result name="success" type="php">
+                <param name="file">error.php</param>
+            </result>
+        </action>
+        <action name="Repositories" shortcut="TestGit\Controllers\Repositories:show">
+            <result name="success" type="chain">
+                <param name="actionName">Home</param>
+            </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">repositories</param>
+            </result>
+        </action>
+        <action name="Repository" shortcut="TestGit\Controllers\Repository:show">
+            <result name="success" type="php">
+                <param name="file">repository.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Repository not found.</param>
+            </result>
+        </action>
+        <action name="Tree" shortcut="TestGit\Controllers\Repository:tree">
+            <result name="success" type="json">
+                <param name="properties">files</param>
+            </result>
+        </action>
+    </actions>
+</fwk>

@@ -44,4 +44,16 @@ class GitService
         }
         return $result;
     }
+    
+    /**
+     * 
+     * @param string $repoName
+     * @return \Gitonomy\Git\Repository
+     */
+    public function getRepository($repoName)
+    {
+        return new \Gitonomy\Git\Repository($this->repositoriesDir . DIRECTORY_SEPARATOR . $repoName, array(
+            'working_dir' => null
+        ));
+    }
 }

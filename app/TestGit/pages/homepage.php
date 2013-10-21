@@ -1,33 +1,7 @@
-<!DOCTYPE html>
-<html lang="en" ng-app="gitApp">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>Test-Git</title>
-
-    <!-- Bootstrap core CSS -->
-    <link href="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/css/bootstrap.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/css/site.css" rel="stylesheet">
-    
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/html5shiv.js"></script>
-      <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/respond.min.js"></script>
-    <![endif]-->
-    
-    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/angular.min.js"></script>
-    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/app/gitapp.js"></script>
-    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/app/controllers.js"></script>
-  </head>
-
+<?php $vh = $this->_helper; ?>
+<?php include __DIR__ .'/_header.php'; ?>
   <body ng-controller="RepositoriesCtrl">
-    <?php echo $services->get('viewHelper')
-            ->embed('Menu', array('active' => 'repositories')); ?>
+    <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
     <div class="container">
 
@@ -38,14 +12,14 @@
         <div class="">
             <button type="button" class="btn btn-primary pull-right">Create Repository</button>
         <form role="form" class="form-inline filter">
-  <div class="form-group">
-    <input type="search" tabindex="1" ng-model="query" class="form-control" id="searchRepos" placeholder="Filter repositories">
-  </div>
-</form>
+            <div class="form-group">
+              <input type="search" tabindex="1" ng-model="query" class="form-control" id="searchRepos" placeholder="Filter repositories">
+            </div>
+          </form>
             
         </div>
 
-        <table class="table table-striped" style="margin-top:20px;">
+    <table class="table table-striped" style="margin-top:20px;">
         <thead>
           <tr>
             <th style="width: 35px;">&nbsp;</th>
@@ -58,7 +32,7 @@
         <tbody>
           <tr ng-repeat="repo in repositories | filter:query">
             <td><i class="glyphicon glyphicon-list"></i></td>
-            <td><a href="<?php echo $services->get('viewHelper')->url(); ?>/Repository.action?name={{ repo.name }}">{{ repo.name }}</a></td>
+            <td><a href="<?php echo $vh->url(); ?>/Repository.action?name={{ repo.name }}">{{ repo.name }}</a></td>
             <td>{{ repo.lastCommit.date }}</td>
             <td>
                 [<a href="#">{{ repo.lastCommit.author }}</a>] {{ repo.lastCommit.message }} (<a href="#">{{ repo.lastCommit.hash|shortHash }}</a>)
@@ -69,12 +43,5 @@
       </table>
         
     </div><!-- /.container -->
-
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/jquery.min.js"></script>
-    <script src="<?php echo str_replace('/index.php', '', $services->get('viewHelper')->url()); ?>/js/bootstrap.min.js"></script>
-  </body>
-</html>
+    
+<?php include __DIR__ .'/_footer.php'; ?>
