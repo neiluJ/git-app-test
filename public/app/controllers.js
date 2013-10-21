@@ -9,9 +9,10 @@ gitApp.controller('RepositoriesCtrl', function RepositoriesCtrl($scope, $http) {
     
 gitApp.controller('RepositoryCtrl', function RepositoryCtrl($scope, $http) {
         
-    $scope.repoName = 'ecom-git';
+    $scope.repoName = $('#repoName').html();
+    $scope.branch = $('#repoBranch').html();
     
-    $http.get('Tree.action?name='+ $scope.repoName +'&angular').success(function(data) {
+    $http.get('Tree.action?name='+ $scope.repoName +'&branch='+ $scope.branch +'&angular').success(function(data) {
         $scope.files = data.files;
     }).error(function() {
         alert('Unable to load repository tree');

@@ -5,7 +5,7 @@
 
     <div class="container">
         <div class="starter-template">
-            <h1><a ng-bind="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a> @ <a href="#">master</a></h1>
+            <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a> @ <a id="repoBranch" ng-bind="branch" href="#">master</a></h1>
             <p>Last Updated on <a href="#"><?php echo $this->repository->getHeadCommit()->getAuthorDate()->format('d/m/y H:i:s'); ?></a> by <strong><?php echo $this->repository->getHeadCommit()->getAuthorName(); ?></strong></p>
         </div>
         
