@@ -44,6 +44,11 @@ class Repository implements ServicesAware
         
         $commit = $revision->getCommit();
         $tree = $commit->getTree();
+        
+        if (null !== $this->path) {
+            $tree = $tree->resolvePath($this->path);
+        }
+        
         $final = array();
         
         foreach ($tree->getEntries() as $fileName => $infos) {
