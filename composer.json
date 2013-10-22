@@ -15,7 +15,8 @@
         "fwk/xml": "dev-master",
         "symfony/http-foundation": "dev-master",
         "gitonomy/gitlib": "dev-master", 
-        "symfony/finder": "dev-master"
+        "symfony/finder": "dev-master",
+        "dflydev/markdown": "dev-master"
     },
     "require-dev": {
         "joseph-lenton/php-error": "dev-master"

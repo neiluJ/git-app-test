@@ -64,5 +64,5 @@
     
     
     </div><!-- /.container -->
-    
+ <script src="<?php echo str_replace('/index.php', '', $this->_helper->url()); ?>/js/highlight.js/highlight.pack.js"></script>   
 <?php include __DIR__ .'/_footer.php'; ?>

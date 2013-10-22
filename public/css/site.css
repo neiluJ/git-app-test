@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "DroidSansMono";
+  src: url(../fonts/Inconsolata.otf) format("opentype");
+}
+
 body {
   padding-top: 50px;
 }
@@ -39,11 +44,6 @@ body {
     background-color: #fff;
 }
 
-.code-display {
-    font-family: "Courier New", Courier, monospace;
-    white-space: pre;
-}
-
 ul.commits-list {
     display:block;
     width:100%;
@@ -71,7 +71,7 @@ p.commit-infos {
     padding: 10px; 
     background-color: #eee; 
     margin-bottom:0;
-    font-family: "Courier New", Courier, monospace;
+    font-family: Inconsolata, "Courier New", Courier, monospace;
     white-space: pre;
 }
 
@@ -87,6 +87,10 @@ code, pre {
     font-family: inherit;
     border-radius:0;
 }
+code#blobCtx {
+    font-family: Inconsolata, "Courier New", Courier, monospace;
+    overflow-x: auto;
+}
 
 td.ln {
     width: 40px;
@@ -99,16 +103,25 @@ td.ln {
     -webkit-user-select :none;
     -moz-user-select: -moz-none;
     font-family: "Courier New", monospace;
+    padding-top:7px;
 }
 table.blob {
     width:100%;
     border:solid 3px #eee;
+    margin-bottom: 40px;
 }
-table.blob td.ln {
+table.blob td {
     vertical-align: top;
 }
 table.blob td.ln span {
     display:block;
     text-align: right;
-    line-height: 18px;
+    line-height: 20px;
+    padding-right: 5px;
+    font-family: Incosolata, "Courier New",Courier,monospace;
+    font-size: 14px;
+}
+
+div.markdown {
+    word-break:break-all;
 }

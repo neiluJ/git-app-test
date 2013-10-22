@@ -100,7 +100,7 @@ gitApp.controller('RepositoryBlob', function RepositoryBlob($scope, $http) {
         });
     };
     
-    exploreFn(window.location.href, true, true);
+    exploreFn(window.location.href, false, true);
     
     $scope.blobBrowseRevisions = function($event) {
         $event.preventDefault();

@@ -1,1 +1,7 @@
-<?php echo htmlentities($this->blob->getContent(), ENT_QUOTES, "utf-8"); ?>
+<?php 
+use dflydev\markdown\MarkdownExtraParser;
+$parser = new MarkdownExtraParser();
+?>
+<div class="markdown">
+<?php echo $parser->transform($this->blob->getContent());  ?>
+</div>

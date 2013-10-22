@@ -9,9 +9,8 @@
                 }
                 ?>
             </td>
-            <td class="contents code-display"><pre><code><?php echo htmlentities($this->blob->getContent(), ENT_QUOTES, "utf-8"); ?></code></pre></td>
+            <td class="contents code-display"><pre><code id="blobCtx"><?php echo htmlentities($this->blob->getContent(), ENT_QUOTES, "utf-8"); ?></code></pre></td>
         </tr>
     </tbody>
 </table>
-
-<script src="<?php echo str_replace('/index.php', '', $vh->url()); ?>/js/highlight.js/highlight.pack.js"></script>
+<script type="text/javascript">hljs.highlightBlock($('#blobCtx')[0]);</script>
