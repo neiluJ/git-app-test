@@ -54,6 +54,7 @@ ul.commits-list {
     border:solid 1px #eee;
     max-height: 430px;
     overflow-x: auto;
+    margin-bottom:40px;
 }
 
 ul.commits-list li {
@@ -71,10 +72,13 @@ p.commit-infos {
     padding: 10px; 
     background-color: #eee; 
     margin-bottom:0;
+    overflow-x: auto;
+}
+.commit-txt {
     font-family: Inconsolata, "Courier New", Courier, monospace;
+    font-size:14px;
     white-space: pre;
 }
-
 pre {
     padding:0;
     margin:0;
@@ -124,4 +128,5 @@ table.blob td.ln span {
 
 div.markdown {
     word-break:break-all;
+    margin-bottom:40px;
 }

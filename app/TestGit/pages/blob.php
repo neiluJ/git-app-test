@@ -35,7 +35,7 @@
         <?php endif; ?>
         
     <ul class="breadcrumb">
-        <li><a href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a></li>
+        <li><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>"><?php echo $this->name; ?></a></li>
         <li ng-repeat="p in pathParts">
             <a ng-if="!$last" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
             <a ng-if="$last" style="color: inherit" href="<?php echo $vh->url(); ?>/Blob.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
@@ -44,24 +44,21 @@
         
     <div class="row">
         <div class="col-xs-5 col-sm-5 col-md-3 left-list">
-            <h4><a href="#" style="float:right;" title="RSS Feed"><i class="glyphicon glyphicon-signal"></i></a> File History</h4>
+            <h4><a href="#" style="float:right;" title="RSS Feed"><i class="glyphicon glyphicon-signal"></i></a> Commits History</h4>
             <ul class="commits-list">
                 <li ng-class="{active: currentCommit.hash == commit.hash}" ng-repeat="commit in commits">
-                    <strong><a ng-click="blobBrowseRevisions($event);" href="./Blob.action?name={{ repoName }}&branch={{ commit.hash }}&path={{ path }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
+                    <strong><a ng-click="blobBrowseRevisions($event);" href="./Blob.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
                     <span style="font-size: 12px; color: #666;">{{ commit.date }}</span>
                 </li>
             </ul>
         </div>
         <div class="col-xs-12 col-sm-7 col-md-9">
-            <h4><a href="#" style="float:right" class="btn btn-default btn-xs">View <strong>{{ currentCommit.hash|shortHash }}</strong></a>Commit <a href="#">{{ currentCommit.hash }}</a></h4>
-            <p class="commit-infos">{{ currentCommit.message }}</p>
+            <h4><a href="#" style="float:right" class="btn btn-default btn-xs">View <strong>{{ currentCommit.hash|shortHash }}</strong></a>Commit <a href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommit.hash }}">{{ currentCommit.hash }}</a></h4>
+            <p class="commit-infos commit-txt">{{ currentCommit.message }}</p>
             <hr style="margin:10px 0;" />
             <div id="blobContents"></div>
-</div>
-        
+        </div>
     </div><!-- /row -->
-            
-    
     
     </div><!-- /.container -->
  <script src="<?php echo str_replace('/index.php', '', $this->_helper->url()); ?>/js/highlight.js/highlight.pack.js"></script>   

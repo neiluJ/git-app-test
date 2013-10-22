@@ -5,8 +5,9 @@
 
     <div class="container">
         <div class="starter-template">
-            <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a> @ <a id="repoBranch" ng-bind="branch" href="#">master</a></h1>
+            <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a> @ <a id="repoBranch" ng-bind="branch" href="#"><?php echo $this->branch; ?></a></h1>
             <p>This is a smally-tiny-shiny nice repository description</p>
+            
             <div class="collapse navbar-collapse repo-nav">
                 <ul class="nav navbar-nav navbar-left">
                     <li class="active"><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Browse source"><i class="glyphicon glyphicon-list"></i></a></li>
@@ -30,7 +31,7 @@
             </div>
             
             <div class="clearfix"></div>
-        </div>
+        </div><!-- /starter-template -->
     
         <?php if (!empty($this->path)): ?>
             <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->path; ?>" />
@@ -48,7 +49,7 @@
         <thead>
           <tr>
             <th style="width: 35px;">&nbsp;</th>
-            <th style="width: 350px;">File</th>
+            <th style="width: 280px;">File</th>
             <th>Message</th>
             <th style="width: 100px;">Last update</th>
           </tr>
@@ -63,14 +64,15 @@
                 &nbsp;
             </td>
             <td ng-if="!file.special">
-                <a ng-if="file.directory" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&branch={{ branch }}&path={{ path }}/{{ file.path }}">{{ file.path }}</a>
-                <a ng-if="!file.directory" href="<?php echo $vh->url(); ?>/Blob.action?name={{ repoName }}&branch={{ branch }}&path={{ path }}/{{ file.path }}">{{ file.path }}</a>
+                <a ng-if="file.directory" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ path }}/{{ file.path }}">{{ file.path }}</a>
+                <a ng-if="!file.directory" href="<?php echo $vh->url(); ?>/Blob.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ path }}/{{ file.path }}">{{ file.path }}</a>
             </td>
             <td ng-if="file.special">
-                <a ng-if="file.realpath != ''" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&branch={{ branch }}&path={{ file.realpath }}">{{ file.path }}</a>
-                <a ng-if="file.realpath == ''" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&branch={{ branch }}">{{ file.path }}</a>
+                <a ng-if="file.realpath != ''" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ file.realpath }}">{{ file.path }}</a>
+                <a ng-if="file.realpath == ''" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}">{{ file.path }}</a>
             </td>
-            <td>{{ file.lastCommit.message }}</td>
+            <td ng-if="!file.special" class="commit-txt"><a href="./Commit.action?name={{ repoName }}&amp;hash={{ file.lastCommit.hash }}" style="color:inherit">{{ file.lastCommit.message }}</a> [<a href="#">{{ file.lastCommit.author }}</a>]</td>
+            <td ng-if="file.special">&nbsp;</td>
             <td>{{ file.lastCommit.date }}</td>
           </tr>
         </tbody>

@@ -75,7 +75,7 @@ class Repository implements ServicesAware, Preparable
                     'hash'          => $commit->getHash(),
                     'author'        => $commit->getCommitterName(),
                     'date'          => $commit->getCommitterDate()->format('d/m/y'),
-                    'message'       => $commit->getShortMessage()
+                    'message'       => $commit->getShortMessage(80)
                 )
             );
         }
