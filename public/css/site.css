@@ -74,3 +74,41 @@ p.commit-infos {
     font-family: "Courier New", Courier, monospace;
     white-space: pre;
 }
+
+pre {
+    padding:0;
+    margin:0;
+    font-size:inherit;
+    color:inherit;
+    background-color: transparent;
+    border: none;
+}
+code, pre {
+    font-family: inherit;
+    border-radius:0;
+}
+
+td.ln {
+    width: 40px;
+    text-align:center;
+    background-color: #fafafa;
+    border-right:solid 1px #eaeaea;
+    color: #aaa;
+    user-select :none;
+    -o-user-select :none;
+    -webkit-user-select :none;
+    -moz-user-select: -moz-none;
+    font-family: "Courier New", monospace;
+}
+table.blob {
+    width:100%;
+    border:solid 3px #eee;
+}
+table.blob td.ln {
+    vertical-align: top;
+}
+table.blob td.ln span {
+    display:block;
+    text-align: right;
+    line-height: 18px;
+}
