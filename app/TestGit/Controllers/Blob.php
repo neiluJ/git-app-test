@@ -63,8 +63,12 @@ class Blob extends Repository implements ContextAware
             $response->headers->set('Content-Type', 'text/plain');
         } elseif ($this->isImage($this->blob)) {
             $response->headers->set('Content-Type', $this->blob->getMimeType());
+            $response->headers->set('Content-Transfer-Encoding', 'binary');
         } else {
+            $tmp = explode('/', $this->path);
             $response->headers->set('Content-Type', 'application/octet-stream');
+            $response->headers->set('Content-Transfer-Encoding', 'binary');
+            $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"', array_pop($tmp)));
         }
         
         if ($response->isNotModified($this->context->getRequest())) {

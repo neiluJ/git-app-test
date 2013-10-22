@@ -105,6 +105,9 @@
             <result name="display_text" type="php">
                 <param name="file">blob/display-text.php</param>
             </result>
+            <result name="display_binary" type="php">
+                <param name="file">blob/display-binary.php</param>
+            </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
                 <param name="errorMsg">File not found.</param>
