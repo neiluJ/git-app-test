@@ -4,8 +4,9 @@ namespace TestGit\Controllers;
 use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
+use Fwk\Core\Preparable;
 
-class Repository implements ServicesAware
+class Repository implements ServicesAware, Preparable
 {
     public $name;
     public $branch = 'master';
@@ -16,6 +17,16 @@ class Repository implements ServicesAware
     protected $services;
     
     protected $files;
+    
+    protected $commits = array();
+    protected $currentCommit;
+    
+    public function prepare()
+    {
+        if (!empty($this->path)) {
+            $this->path = rtrim($this->path, '/');
+        }
+    }
     
     public function show()
     {
@@ -53,9 +64,13 @@ class Repository implements ServicesAware
         
         foreach ($tree->getEntries() as $fileName => $infos) {
             $dir = ($infos[0] === '040000' ? true : false);
+            $log = $this->repository->getLog($revision, (!empty($this->path) ? ltrim($this->path,'/') . '/' : '') . $fileName, 0, 1);
+            $commit = $log->getSingleCommit();
             $final[($infos[0] === '040000' ? 0 : 1) . $fileName] = array(
                 'path'          => $fileName,
                 'directory'     => $dir,
+                'realpath'      => $fileName,
+                'special'       => false,
                 'lastCommit'    => array(
                     'hash'          => $commit->getHash(),
                     'author'        => $commit->getCommitterName(),
@@ -65,8 +80,103 @@ class Repository implements ServicesAware
             );
         }
         
+        if (!empty($this->path)) {
+            $prev = explode('/', $this->path);
+            unset($prev[count($prev)-1]);
+            
+            $final['00'] = array(
+                'path'          => '..',
+                'directory'     => true,
+                'special'       => true,
+                'realpath'      => implode('/', $prev),
+                'lastCommit'    => array(
+                    'hash'          => null,
+                    'author'        => null,
+                    'date'          => null,
+                    'message'       => null
+                )
+            );
+        }
+        
         ksort($final);
         $this->files = $final;
+        
+        return Result::SUCCESS;
+    }
+    
+    public function blob()
+    {
+        try {
+            $this->repository = $this->getGitService()->getRepository($this->name);
+        } catch(\Exception $exp) {
+            return Result::ERROR;
+        }
+        
+        $refs = $this->repository->getReferences();
+        if ($refs->hasBranch($this->branch)) {
+            $revision = $refs->getBranch($this->branch);
+        } else {
+            $revision = $this->repository->getRevision($this->branch);
+        }
+        
+        $commit = $revision->getCommit();
+        $tree = $commit->getTree();
+        
+        if (null !== $this->path) {
+            $tree = $tree->resolvePath($this->path);
+        }
+        
+        if (!$tree instanceof \Gitonomy\Git\Blob) {
+            return Result::ERROR;
+        }
+        
+        $this->blob = $tree;
+        
+        return Result::SUCCESS;
+    }
+    
+    public function blobinfos()
+    {
+        $res = $this->blob();
+        if ($res === Result::ERROR) {
+            return Result::ERROR;
+        }
+        
+        $refs = $this->repository->getReferences();
+        if ($refs->hasBranch($this->branch)) {
+            $revision = $refs->getBranch($this->branch);
+        } else {
+            $revision = $this->repository->getRevision($this->branch);
+        }
+        
+        $commit = $revision->getCommit();
+        $tree = $commit->getTree();
+        
+        if (null !== $this->path) {
+            $tree = $tree->resolvePath($this->path);
+        }
+        
+        if (!$tree instanceof \Gitonomy\Git\Blob) {
+            return Result::ERROR;
+        }
+        
+        $finalCommits = array();
+        $commits = $this->repository->getLog(
+            $revision, ltrim($this->path,'/'), 0, 25
+        )->getCommits();
+        
+        foreach ($commits as $commit) {
+            $finalCommits[] = array(
+                'author'    => $commit->getAuthorName(),
+                'date'      => $commit->getAuthorDate()->format('d/m/Y H:i:s'),
+                'date_obj'  => $commit->getAuthorDate(),
+                'hash'      => $commit->getHash(),
+                'message'   => $commit->getMessage()
+            );
+        }
+        
+        $this->commits = $finalCommits;
+        $this->currentCommit = array_shift($finalCommits);
         
         return Result::SUCCESS;
     }
@@ -90,12 +200,21 @@ class Repository implements ServicesAware
     {
         return $this->files;
     }
-
         /**
      * @return \TestGit\GitService
      */
     protected function getGitService()
     {
         return $this->getServices()->get('git');
+    }
+    
+    public function getCommits()
+    {
+        return $this->commits;
+    }
+    
+    public function getCurrentCommit()
+    {
+        return $this->currentCommit;
     }
 }

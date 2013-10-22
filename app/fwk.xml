@@ -71,8 +71,45 @@
         </action>
         <action name="Tree" shortcut="TestGit\Controllers\Repository:tree">
             <result name="success" type="json">
-                <param name="properties">files</param>
+                <param name="properties">files,path</param>
             </result>
         </action>
+        <action name="Blob" shortcut="TestGit\Controllers\Repository:blob">
+            <result name="success" type="php">
+                <param name="file">blob.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">File not found.</param>
+            </result>
+        </action>
+        <action name="BlobInfos" shortcut="TestGit\Controllers\Repository:blobinfos">
+            <result name="success" type="json">
+                <param name="properties">path, commits, currentCommit</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">File not found.</param>
+            </result>
+        </action>
+        <action name="BlobDisplay" shortcut="TestGit\Controllers\Blob:show">
+            <result name="success" type="php">
+                <param name="file">blob.php</param>
+            </result>
+            <result name="display_markdown" type="php">
+                <param name="file">blob/display-markdown.php</param>
+            </result>
+            <result name="display_image" type="php">
+                <param name="file">blob/display-image.php</param>
+            </result>
+            <result name="display_text" type="php">
+                <param name="file">blob/display-text.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">File not found.</param>
+            </result>
+        </action>
+        <action name="BlobRaw" shortcut="TestGit\Controllers\Blob:raw" />
     </actions>
 </fwk>

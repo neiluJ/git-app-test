@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
 <?php include __DIR__ .'/_header.php'; ?>
-  <body ng-controller="RepositoryCtrl">
+  <body ng-controller="RepositoryBlob">
     <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
     <div class="container">
         <div class="starter-template">
-            <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a> @ <a id="repoBranch" ng-bind="branch" href="#">master</a></h1>
+            <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a> @ <a id="repoBranch" ng-bind="branch" href="#"><?php echo $this->branch ?></a></h1>
             <p>This is a smally-tiny-shiny nice repository description</p>
             <div class="collapse navbar-collapse repo-nav">
                 <ul class="nav navbar-nav navbar-left">
@@ -28,8 +28,6 @@
                     </li>
                 </ul>
             </div>
-            
-            <div class="clearfix"></div>
         </div>
     
         <?php if (!empty($this->path)): ?>
@@ -40,41 +38,31 @@
         <li><a href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a></li>
         <li ng-repeat="p in pathParts">
             <a ng-if="!$last" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
-            <a ng-if="$last" style="color: inherit" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
+            <a ng-if="$last" style="color: inherit" href="<?php echo $vh->url(); ?>/Blob.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
         </li>
     </ul>
         
-    <table class="table table-striped">
-        <thead>
-          <tr>
-            <th style="width: 35px;">&nbsp;</th>
-            <th style="width: 350px;">File</th>
-            <th>Message</th>
-            <th style="width: 100px;">Last update</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="file in files">
-            <td ng-if="!file.special">
-                <i ng-if="file.directory" class="glyphicon glyphicon-folder-close"></i>
-                <i ng-if="!file.directory" class="glyphicon glyphicon-file"></i>
-            </td>
-            <td ng-if="file.special">
-                &nbsp;
-            </td>
-            <td ng-if="!file.special">
-                <a ng-if="file.directory" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&branch={{ branch }}&path={{ path }}/{{ file.path }}">{{ file.path }}</a>
-                <a ng-if="!file.directory" href="<?php echo $vh->url(); ?>/Blob.action?name={{ repoName }}&branch={{ branch }}&path={{ path }}/{{ file.path }}">{{ file.path }}</a>
-            </td>
-            <td ng-if="file.special">
-                <a ng-if="file.realpath != ''" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&branch={{ branch }}&path={{ file.realpath }}">{{ file.path }}</a>
-                <a ng-if="file.realpath == ''" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&branch={{ branch }}">{{ file.path }}</a>
-            </td>
-            <td>{{ file.lastCommit.message }}</td>
-            <td>{{ file.lastCommit.date }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="row">
+        <div class="col-xs-5 col-sm-5 col-md-3 left-list">
+            <h4><a href="#" style="float:right;" title="RSS Feed"><i class="glyphicon glyphicon-signal"></i></a> File History</h4>
+            <ul class="commits-list">
+                <li ng-class="{active: currentCommit.hash == commit.hash}" ng-repeat="commit in commits">
+                    <strong><a ng-click="blobBrowseRevisions($event);" href="./Blob.action?name={{ repoName }}&branch={{ commit.hash }}&path={{ path }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
+                    <span style="font-size: 12px; color: #666;">{{ commit.date }}</span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-xs-12 col-sm-7 col-md-9">
+            <h4><a href="#" style="float:right" class="btn btn-default btn-xs">View <strong>{{ currentCommit.hash|shortHash }}</strong></a>Commit <a href="#">{{ currentCommit.hash }}</a></h4>
+            <p class="commit-infos">{{ currentCommit.message }}</p>
+            <hr style="margin:10px 0;" />
+            <div id="blobContents"></div>
+</div>
+        
+    </div><!-- /row -->
+            
+    
+    
     </div><!-- /.container -->
     
 <?php include __DIR__ .'/_footer.php'; ?>

@@ -12,3 +12,65 @@ body {
     margin-left: -30px;
     top: 0px;
 }
+
+.repo-nav {
+    display:block;
+    width: 280px;
+    margin: 0 auto;
+    float:none;
+    background: #eaeaea;
+    margin-bottom: 20px;
+    border-bottom:solid 1px #ccc;
+    border-right:solid 1px #ccc;
+}
+
+.repo-nav li a {
+    font-size: 14px;
+    padding:5px 15px !important;
+    color: #666;
+}
+.repo-nav li a:hover {
+    background-color: #efefef;
+}
+.repo-nav li a:active {
+    color: #333;
+}
+.repo-nav li.active a {
+    background-color: #fff;
+}
+
+.code-display {
+    font-family: "Courier New", Courier, monospace;
+    white-space: pre;
+}
+
+ul.commits-list {
+    display:block;
+    width:100%;
+    list-style:none;
+    list-style-type: none;
+    margin:0;
+    padding:0;
+    border:solid 1px #eee;
+    max-height: 430px;
+    overflow-x: auto;
+}
+
+ul.commits-list li {
+    display: block;
+    border-bottom: solid 1px #eee;
+    margin:0;
+    padding:10px;
+}
+
+ul.commits-list li.active {
+    background-color: #c4e3f3;
+}
+
+p.commit-infos {
+    padding: 10px; 
+    background-color: #eee; 
+    margin-bottom:0;
+    font-family: "Courier New", Courier, monospace;
+    white-space: pre;
+}

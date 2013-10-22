@@ -1,0 +1,1 @@
+<div class="code-display"><?php echo htmlentities($this->blob->getContent(), ENT_QUOTES, "utf-8"); ?></div>
