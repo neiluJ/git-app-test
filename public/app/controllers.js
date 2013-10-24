@@ -1,52 +1,138 @@
-gitApp.controller('RepositoriesCtrl', function RepositoriesCtrl($scope, $http) {
+var gitApp = angular.module('gitAppControllers', []); 
+
+gitApp.controller('RepositoriesCtrl', ['$scope', '$http', function RepositoriesCtrl($scope, $http) {
     $http.get('Repositories.action?angular').success(function(data) {
         $scope.repositories = data.repositories;
     }).error(function() {
         alert('Unable to load repositories');
     });
-});
+}]);
     
-var computePathParts = function($scope) {
-    if ($scope.path != null && $scope.path != undefined) {
-        var parts = [], split = $scope.path.split('/'), idx, link = [];
-        for (idx = 0; idx < split.length; ++idx) {
-            link.push(split[idx]);
-            parts.push({path: split[idx], link: link.join('/')});
-        }
+gitApp.controller('RepositoryMainCtrl', ['$scope', '$http', function RepositoryMainCtrl($scope, $http) {
+    $scope.repoName     = $('#repoName').html();
+    $scope.branch       = $('#repoBranch').val();
+    $scope.files        = [];
+    $scope.branches     = [];
+    $scope.path         = $('#repoPath').val();
+    $scope.repoAction   = $('#repoAction').val();
+}]);
 
-        $scope.pathParts = parts;
-    } else {
-        $scope.pathParts = [];
-    }
-};
-    
-gitApp.controller('RepositoryCtrl', function RepositoryCtrl($scope, $http) {
-        
-    $scope.repoName = $('#repoName').html();
-    $scope.branch   = $('#repoBranch').html();
-    $scope.files    = [];
-    $scope.branches = [];
-    $scope.path     = $('#repoPath').val();
-    
+gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', function RepositoryDisplayCtrl($scope, $rootScope) {
     $scope.pathParts = [];
     
-    var exploreFn = function(url, changeState) {
+    $scope.currentCommitHash = null;
+    $scope.currentCommitMessage = null;
+    $scope.currentCommitDate = null;
+    $scope.currentCommitAuthor = null;
+    
+    var computePathParts = function($scope) {
+        if ($scope.path != null && $scope.path != undefined) {
+            var parts = [], split = $scope.path.split('/'), idx, link = [];
+            for (idx = 0; idx < split.length; ++idx) {
+                link.push(split[idx]);
+                parts.push({path: split[idx], link: link.join('/')});
+            }
+
+            $scope.pathParts = parts;
+        } else {
+            $scope.pathParts = [];
+        }
+    };
+
+    computePathParts($scope);
+    
+    $scope.$on('changeCommit', function(event, currentCommit) {
+       $scope.currentCommit = currentCommit; 
+       $scope.currentCommitHash = currentCommit.hash;
+       $scope.currentCommitMessage = currentCommit.message;
+       $scope.currentCommitDate = currentCommit.date;
+       $scope.currentCommitAuthor = currentCommit.author;
+    });
+    
+    $scope.$on('changePath', function(event, newPath) {
+       $scope.path = newPath; 
+       computePathParts($scope);
+    });
+}]);
+
+gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function CommitsCtrl($scope, $http, $rootScope) {
+    $scope.commits      = [];
+    $scope.currentCommit = {
+        author: null,
+        date: null,
+        message: 'null',
+        hash: 'null'
+    };
+    
+    var loadCommits = function(url, emitEvent) {
+        $http.get(url.replace($scope.repoAction +'.action', 'Commits.action')).success(function(data) {
+            $scope.currentCommit = data.jsonCurrentCommit;
+            $scope.commits       = data.jsonCommits;
+            if (emitEvent == true) {
+                $rootScope.$broadcast('changeCommit', $scope.currentCommit);
+            }
+        }).error(function() {
+            alert('Cannot load commits :(');
+        });
+    };
+    
+    $scope.browseRevisions = function($event) {
+        $event.preventDefault();
+        if ($($event.target).parent().parent().hasClass('active')) {
+            return;
+        }
+        
+        var hashTmp = $($event.target).html();
+        $($scope.commits).each(function(i, item) {
+             if (item.hash.substring(0,6) == hashTmp) {
+                 $scope.currentCommit = item;
+             }
+        });
+        
+        $($event.target).parent().parent().find('li.active').removeClass('acitve');
+        $($event.target).parent().addClass('active');
+        
+        $rootScope.$broadcast('changeCommit', $scope.currentCommit);
+    };
+    
+    loadCommits(window.location.href, true);
+}]);
+
+gitApp.controller('BlobCtrl', ['$scope', '$http', '$rootScope', function BlobCtrl($scope, $http, $rootScope) {
+        
+    $scope.blobContents = "";
+    
+    var showBlob = function(url) {
+        $http.get(url.replace('Blob.action', 'BlobDisplay.action')).success(function(data) {
+            $scope.blobContents = data;
+            $('#blobContents').html(data);
+            $rootScope.$broadcast('changePath', $scope.path);
+        }).error(function() {
+            alert('Unable to load blob contents');
+        });
+    };
+    
+    showBlob(window.location.href);
+}]);
+
+gitApp.controller('TreeCtrl', ['$scope', '$http', '$rootScope', function TreeCtrl($scope, $http, $rootScope) {
+        
+    $scope.files = [];
+    
+    var exploreFn = function(url) {
         $scope.files = [];
         $http.get(url.replace('Repository.action', 'Tree.action')).success(function(data) {
-            if (changeState == true) {
+            /* if (changeState == true) {
                 history.pushState({path: data.path, repoName: $scope.repoName, branch: $scope.repoBranch}, null, url);
-            }
+            } */
             $scope.files = data.files;
             $scope.path = data.path;
-            computePathParts($scope);
+            
+            $rootScope.$broadcast('changePath', $scope.path);
         }).error(function() {
             alert('Unable to load repository tree');
         });
     };
-    
-    computePathParts($scope);
-    
-    exploreFn(window.location.href, true);
     
     $scope.repositoryBrowse = function($event) {
         $event.preventDefault();
@@ -54,67 +140,6 @@ gitApp.controller('RepositoryCtrl', function RepositoryCtrl($scope, $http) {
         exploreFn(url, true);
     };
     
-    window.onpopstate = function(e) {
-        exploreFn(window.location.href, false);
-    }
-});
+    exploreFn(window.location.href); 
+}]);
 
-gitApp.controller('RepositoryBlob', function RepositoryBlob($scope, $http) {
-        
-    $scope.repoName = $('#repoName').html();
-    $scope.branch   = $('#repoBranch').html();
-    $scope.commits  = [];
-    $scope.currentCommit = {
-        author: null,
-        date: null,
-        message: null,
-        hash: null
-    };
-    $scope.path         = $('#repoPath').val();
-    $scope.pathParts    = [];
-    $scope.blobContents = "";
-    
-    computePathParts($scope);
-    
-    var exploreFn = function(url, changeState, replaceCommits) {
-        $http.get(url.replace('Blob.action', 'BlobInfos.action')).success(function(data) {
-            if (changeState == true) {
-                history.pushState({path: data.path, repoName: $scope.repoName, branch: $scope.repoBranch}, null, url);
-            }
-            $scope.currentCommit = data.currentCommit;
-            if (replaceCommits == true) {
-                $scope.commits = data.commits;
-            }
-            showBlob(url);
-        }).error(function() {
-            alert('Unable to load blob revision');
-        });
-    };
-    
-    var showBlob = function(url) {
-        $http.get(url.replace('Blob.action', 'BlobDisplay.action')).success(function(data) {
-            $scope.blobContents = data;
-            $('#blobContents').html(data);
-        }).error(function() {
-            alert('Unable to load blob contents');
-        });
-    };
-    
-    exploreFn(window.location.href, false, true);
-    
-    $scope.blobBrowseRevisions = function($event) {
-        $event.preventDefault();
-        if ($($event.target).parent().parent().hasClass('active')) {
-            return;
-        }
-        
-        var url = $($event.target).attr('href');
-        $($event.target).parent().parent().find('li.active').removeClass('acitve');
-        $($event.target).parent().addClass('active');
-        exploreFn(url, true);
-    };
-    
-    window.onpopstate = function(e) {
-        exploreFn(window.location.href, false);
-    }
-});

@@ -83,15 +83,7 @@
                 <param name="errorMsg">File not found.</param>
             </result>
         </action>
-        <action name="BlobInfos" shortcut="TestGit\Controllers\Repository:blobinfos">
-            <result name="success" type="json">
-                <param name="properties">path, commits, currentCommit</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">File not found.</param>
-            </result>
-        </action>
+        
         <action name="BlobDisplay" shortcut="TestGit\Controllers\Blob:show">
             <result name="success" type="php">
                 <param name="file">blob.php</param>
@@ -114,5 +106,15 @@
             </result>
         </action>
         <action name="BlobRaw" shortcut="TestGit\Controllers\Blob:raw" />
+        
+        <action name="Commits" shortcut="TestGit\Controllers\Commits:listAction">
+            <result name="success" type="json">
+                <param name="properties">path, jsonCommits, jsonCurrentCommit, offset, limit</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Problem occured while loading commits.</param>
+            </result>
+        </action>
     </actions>
 </fwk>

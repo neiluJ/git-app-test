@@ -1,5 +1,5 @@
 @font-face {
-  font-family: "DroidSansMono";
+  font-family: "Incosolata";
   src: url(../fonts/Inconsolata.otf) format("opentype");
 }
 
@@ -7,8 +7,7 @@ body {
   padding-top: 50px;
 }
 .starter-template {
-  padding: 40px 15px 20px 15px;
-  text-align: center;
+  padding: 40px 0px 20px 0px;
 }
 #loader {
     color: #fff;
@@ -20,19 +19,26 @@ body {
 
 .repo-nav {
     display:block;
-    width: 280px;
-    margin: 0 auto;
-    float:none;
+    width: 400px;
+    float:right;
     background: #eaeaea;
-    margin-bottom: 20px;
     border-bottom:solid 1px #ccc;
     border-right:solid 1px #ccc;
+    margin-top: 26px;
+}
+.repo-path {
+    margin-bottom: 0;
 }
 
 .repo-nav li a {
     font-size: 14px;
     padding:5px 15px !important;
     color: #666;
+    line-height: 16px;
+}
+
+.repo-nav li a.txt i {
+    margin-right: 5px;
 }
 .repo-nav li a:hover {
     background-color: #efefef;
@@ -65,7 +71,12 @@ ul.commits-list li {
 }
 
 ul.commits-list li.active {
-    background-color: #c4e3f3;
+    /* background-color: #c4e3f3; */
+    border-left: solid 2px #2aabd2;
+}
+
+ul.commits-list li:active {
+    background-color: #eee;
 }
 
 p.commit-infos {
@@ -129,4 +140,23 @@ table.blob td.ln span {
 div.markdown {
     word-break:break-all;
     margin-bottom:40px;
+}
+
+div.repo-title {
+    display:block;
+}
+
+.repo-title h1 {
+    float:left;
+    margin-bottom:0;
+    padding-bottom:0;
+}
+.repo-title p {
+    margin:0;
+    padding:0;
+}
+.repo-title p.help-clone {
+    float:right;
+    color: #999;
+    font-family: Incosolata, "Courier New",Courier,monospace;
 }

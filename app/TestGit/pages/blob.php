@@ -1,62 +1,67 @@
 <?php $vh = $this->_helper; ?>
 <?php include __DIR__ .'/_header.php'; ?>
-  <body ng-controller="RepositoryBlob">
+  <body ng-controller="RepositoryMainCtrl">
     <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
     <div class="container">
         <div class="starter-template">
-            <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a> @ <a id="repoBranch" ng-bind="branch" href="#"><?php echo $this->branch ?></a></h1>
-            <p>This is a smally-tiny-shiny nice repository description</p>
-            <div class="collapse navbar-collapse repo-nav">
-                <ul class="nav navbar-nav navbar-left">
-                    <li class="active"><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Browse source"><i class="glyphicon glyphicon-list"></i></a></li>
-                    <li><a href="<?php echo $vh->url('Commits', array('name' => $this->name, 'branch' => $this->branch), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Commits History"><i class="glyphicon glyphicon-time"></i></a></li>
-                    <li><a href="#" data-placement="bottom" data-toggle="tooltip" title="Branches/Tags"><i class="glyphicon glyphicon-random"></i></a></li>
-                    <li><a href="#" data-placement="bottom" data-toggle="tooltip" title="Access Rights"><i class="glyphicon glyphicon-user"></i></a></li>
-                </ul>
-                
-                <ul class="nav navbar-nav navbar-right">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i></a>
-                        <ul class="dropdown-menu">
-                          <li><a href="#">Action</a></li>
-                          <li><a href="#">Another action</a></li>
-                          <li><a href="#">Something else here</a></li>
-                          <li><a href="#">Separated link</a></li>
-                          <li><a href="#">One more separated link</a></li>
-                        </ul>
-                    </li>
-                </ul>
+            <div class="repo-title">
+                <div class="collapse navbar-collapse repo-nav">
+                  <ul class="nav navbar-nav navbar-left">
+                      <li class="active"><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Browse source"><i class="glyphicon glyphicon-list"></i></a></li>
+                      <li><a href="<?php echo $vh->url('Commits', array('name' => $this->name, 'branch' => $this->branch), true); ?>" class="txt" data-placement="bottom" data-toggle="tooltip" title="Commits History"><i class="glyphicon glyphicon-time"></i> 256</a></li>
+                      <li><a href="#" data-placement="bottom" data-toggle="tooltip" title="Branches/Tags" class="txt"><i class="glyphicon glyphicon-random"></i> <span><?php echo (strlen($this->branch) == 40 ? substr($this->branch, 0, 6) : $this->branch); ?></span></a></li>
+                      <li><a href="#" data-placement="bottom" data-toggle="tooltip" title="Access Rights"><i class="glyphicon glyphicon-user"></i></a></li>
+                  </ul>
+
+                  <ul class="nav navbar-nav navbar-right">
+                      <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i></a>
+                          <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li><a href="#">Separated link</a></li>
+                            <li><a href="#">One more separated link</a></li>
+                          </ul>
+                      </li>
+                  </ul>
+              </div>
+                <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a></h1>
+                <div class="clearfix"></div>
+                 <p class="help-clone">git clone https://dsi-svn-prd/<?php echo $this->name; ?>.git</p>
+                <p>small repository description</p>
             </div>
-        </div>
+        </div><!-- /starter-template -->
+        
+    <input type="hidden" id="repoAction" name="repoAction" ng-bind="repoAction" value="Blob" />  
+    <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->path; ?>" />
+    <input type="hidden" id="repoBranch" name="repoBranch" ng-bind="branch" value="<?php echo $this->branch; ?>" />
     
-        <?php if (!empty($this->path)): ?>
-            <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->path; ?>" />
-        <?php endif; ?>
-        
-    <ul class="breadcrumb">
-        <li><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>"><?php echo $this->name; ?></a></li>
-        <li ng-repeat="p in pathParts">
-            <a ng-if="!$last" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
-            <a ng-if="$last" style="color: inherit" href="<?php echo $vh->url(); ?>/Blob.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
-        </li>
-    </ul>
-        
     <div class="row">
-        <div class="col-xs-5 col-sm-5 col-md-3 left-list">
+        <div class="col-xs-5 col-sm-5 col-md-3 left-list" ng-controller="CommitsCtrl">
             <h4><a href="#" style="float:right;" title="RSS Feed"><i class="glyphicon glyphicon-signal"></i></a> Commits History</h4>
             <ul class="commits-list">
                 <li ng-class="{active: currentCommit.hash == commit.hash}" ng-repeat="commit in commits">
-                    <strong><a ng-click="blobBrowseRevisions($event);" href="./Blob.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
+                    <strong><a ng-click="browseRevisions($event);" href="./{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
                     <span style="font-size: 12px; color: #666;">{{ commit.date }}</span>
                 </li>
             </ul>
         </div>
-        <div class="col-xs-12 col-sm-7 col-md-9">
-            <h4><a href="#" style="float:right" class="btn btn-default btn-xs">View <strong>{{ currentCommit.hash|shortHash }}</strong></a>Commit <a href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommit.hash }}">{{ currentCommit.hash }}</a></h4>
-            <p class="commit-infos commit-txt">{{ currentCommit.message }}</p>
+         
+        <div class="col-xs-12 col-sm-7 col-md-9" ng-controller="RepositoryDisplayCtrl">
+            <h4><a href="#" style="float:right" class="btn btn-default btn-xs">View <strong>{{ currentCommitHash|shortHash }}</strong></a>Commit <a ng-bind="currentCommitHash" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a></h4>
+            <p class="commit-infos commit-txt">{{ currentCommitMessage }}</p>
             <hr style="margin:10px 0;" />
-            <div id="blobContents"></div>
+             <ul class="breadcrumb repo-path">
+                <li><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>"><?php echo $this->name; ?></a></li>
+                <li ng-repeat="p in pathParts">
+                    <a ng-if="!$last" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
+                    <a ng-if="$last" style="color: inherit" href="<?php echo $vh->url(); ?>/{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
+                </li>
+            </ul>
+            <hr style="margin:10px 0;" />
+            <div ng-view></div>
         </div>
     </div><!-- /row -->
     

@@ -18,9 +18,6 @@ class Repository implements ServicesAware, Preparable
     
     protected $files;
     
-    protected $commits = array();
-    protected $currentCommit;
-    
     public function prepare()
     {
         if (!empty($this->path)) {
@@ -75,7 +72,7 @@ class Repository implements ServicesAware, Preparable
                     'hash'          => $commit->getHash(),
                     'author'        => $commit->getCommitterName(),
                     'date'          => $commit->getCommitterDate()->format('d/m/y'),
-                    'message'       => $commit->getShortMessage(80)
+                    'message'       => $commit->getShortMessage(60)
                 )
             );
         }
@@ -135,52 +132,6 @@ class Repository implements ServicesAware, Preparable
         return Result::SUCCESS;
     }
     
-    public function blobinfos()
-    {
-        $res = $this->blob();
-        if ($res === Result::ERROR) {
-            return Result::ERROR;
-        }
-        
-        $refs = $this->repository->getReferences();
-        if ($refs->hasBranch($this->branch)) {
-            $revision = $refs->getBranch($this->branch);
-        } else {
-            $revision = $this->repository->getRevision($this->branch);
-        }
-        
-        $commit = $revision->getCommit();
-        $tree = $commit->getTree();
-        
-        if (null !== $this->path) {
-            $tree = $tree->resolvePath($this->path);
-        }
-        
-        if (!$tree instanceof \Gitonomy\Git\Blob) {
-            return Result::ERROR;
-        }
-        
-        $finalCommits = array();
-        $commits = $this->repository->getLog(
-            $revision, ltrim($this->path,'/'), 0, 25
-        )->getCommits();
-        
-        foreach ($commits as $commit) {
-            $finalCommits[] = array(
-                'author'    => $commit->getAuthorName(),
-                'date'      => $commit->getAuthorDate()->format('d/m/Y H:i:s'),
-                'date_obj'  => $commit->getAuthorDate(),
-                'hash'      => $commit->getHash(),
-                'message'   => $commit->getMessage()
-            );
-        }
-        
-        $this->commits = $finalCommits;
-        $this->currentCommit = array_shift($finalCommits);
-        
-        return Result::SUCCESS;
-    }
-    
     public function getServices()
     {
         return $this->services;
@@ -206,15 +157,5 @@ class Repository implements ServicesAware, Preparable
     protected function getGitService()
     {
         return $this->getServices()->get('git');
-    }
-    
-    public function getCommits()
-    {
-        return $this->commits;
-    }
-    
-    public function getCurrentCommit()
-    {
-        return $this->currentCommit;
     }
 }
