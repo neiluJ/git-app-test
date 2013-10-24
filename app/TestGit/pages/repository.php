@@ -55,13 +55,48 @@
             <p class="commit-infos commit-txt">{{ currentCommitMessage }}</p>
             <hr style="margin:10px 0;" />
              <ul class="breadcrumb repo-path">
-                <li><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>"><?php echo $this->name; ?></a></li>
                 <li ng-repeat="p in pathParts">
-                    <a ng-if="!$last" ng-click="repositoryBrowse($event);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
-                    <a ng-if="$last" style="color: inherit" href="<?php echo $vh->url(); ?>/{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.link }}">{{ p.path }}</a>
+                    <a ng-if="!$last" ng-click="navigateToFile($event, p);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.realpath }}">{{ p.path }}</a>
+                    <a ng-if="$last" ng-click="navigateToFile($event, p);" style="color: inherit" href="<?php echo $vh->url(); ?>/{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.realpath }}">{{ p.path }}</a>
                 </li>
             </ul>
-            <hr style="margin:10px 0;" />
+            <div id="main">
+                <div id="blobContents" class="main-view"></div>
+                <div id="treeContents" class="main-view visible">
+                    <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th style="width: 35px;">&nbsp;</th>
+                            <th style="width: 280px;">File</th>
+                            <th>Message</th>
+                            <th style="width: 120px;">Last update</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr ng-repeat="(idx,file) in files">
+                            <td ng-if="!file.special">
+                                <i ng-if="file.directory" class="glyphicon glyphicon-folder-close"></i>
+                                <i ng-if="!file.directory" class="glyphicon glyphicon-file"></i>
+                            </td>
+                            <td ng-if="file.special">
+                                &nbsp;
+                            </td>
+                            <td ng-if="!file.special">
+                                <a ng-if="file.directory" ng-click="navigateToFile($event,file);" href="./Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ path }}/{{ file.path }}">{{ file.path }}</a>
+                                <a ng-if="!file.directory" ng-click="navigateToFile($event,file);" href="./Blob.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ path }}/{{ file.path }}">{{ file.path }}</a>
+                            </td>
+                            <td ng-if="file.special">
+                                <a ng-if="file.realpath != ''" ng-click="navigateToFile($event,file);" href="./Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ file.realpath }}">{{ file.path }}</a>
+                                <a ng-if="file.realpath == ''" ng-click="navigateToFile($event,file);" href="./Repository.action?name={{ repoName }}&amp;branch={{ branch }}">{{ file.path }}</a>
+                            </td>
+                            <td ng-if="!file.special" class="commit-txt"><a href="./Commit.action?name={{ repoName }}&amp;hash={{ file.lastCommit.hash }}" style="color:inherit">{{ file.lastCommit.message }}</a> [<a href="#">{{ file.lastCommit.author }}</a>]</td>
+                            <td ng-if="file.special">&nbsp;</td>
+                            <td>{{ file.lastCommit.date }}</td>
+                          </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <div ng-view></div>
         </div>
     </div><!-- /row -->

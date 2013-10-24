@@ -32,16 +32,6 @@ class Repository implements ServicesAware, Preparable
         } catch(\Exception $exp) {
             return Result::ERROR;
         }
-        return Result::SUCCESS;
-    }
-    
-    public function tree()
-    {
-        try {
-            $this->repository = $this->getGitService()->getRepository($this->name);
-        } catch(\Exception $exp) {
-            return Result::ERROR;
-        }
         
         $refs = $this->repository->getReferences();
         if ($refs->hasBranch($this->branch)) {
@@ -66,7 +56,7 @@ class Repository implements ServicesAware, Preparable
             $final[($infos[0] === '040000' ? 0 : 1) . $fileName] = array(
                 'path'          => $fileName,
                 'directory'     => $dir,
-                'realpath'      => $fileName,
+                'realpath'      => (!empty($this->path) ? $this->path . DIRECTORY_SEPARATOR : '') . $fileName,
                 'special'       => false,
                 'lastCommit'    => array(
                     'hash'          => $commit->getHash(),

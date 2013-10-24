@@ -160,3 +160,9 @@ div.repo-title {
     color: #999;
     font-family: Incosolata, "Courier New",Courier,monospace;
 }
+.main-view {
+    display:none;
+}
+.main-view.visible {
+    display: block;
+}

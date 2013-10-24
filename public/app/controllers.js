@@ -17,29 +17,38 @@ gitApp.controller('RepositoryMainCtrl', ['$scope', '$http', function RepositoryM
     $scope.repoAction   = $('#repoAction').val();
 }]);
 
-gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', function RepositoryDisplayCtrl($scope, $rootScope) {
-    $scope.pathParts = [];
+gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', function RepositoryDisplayCtrl($scope, $rootScope, $http) {
+    $scope.files        = [];
+    $scope.pathParts    = [];
     
     $scope.currentCommitHash = null;
     $scope.currentCommitMessage = null;
     $scope.currentCommitDate = null;
     $scope.currentCommitAuthor = null;
     
-    var computePathParts = function($scope) {
+    var computePathParts = function() {
+        var parts = [{path: $scope.repoName, realpath: '', directory: true}];
         if ($scope.path != null && $scope.path != undefined) {
-            var parts = [], split = $scope.path.split('/'), idx, link = [];
-            for (idx = 0; idx < split.length; ++idx) {
+            var split = $scope.path.split('/'), idx, link = [];
+            for (idx = 0; idx < split.length; idx++) {
                 link.push(split[idx]);
-                parts.push({path: split[idx], link: link.join('/')});
+                var isDir = (idx >= split.length-1 ? ($scope.repoAction == 'Blob' ? false : true) : true);
+                parts.push({path: split[idx], realpath: link.join('/'), directory: isDir});
             }
-
-            $scope.pathParts = parts;
-        } else {
-            $scope.pathParts = [];
         }
+        
+        $scope.pathParts = parts;
     };
 
     computePathParts($scope);
+    
+    $scope.computeUrl = function() {
+        return "./"+ $scope.repoAction 
+            +'.action?name='+ $scope.repoName 
+            +'&branch='+ $scope.branch 
+            + ($scope.path != null && $scope.path != '' ? '&path='+ $scope.path : '') 
+            + '&ng=1';
+    }
     
     $scope.$on('changeCommit', function(event, currentCommit) {
        $scope.currentCommit = currentCommit; 
@@ -47,12 +56,65 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', function Rep
        $scope.currentCommitMessage = currentCommit.message;
        $scope.currentCommitDate = currentCommit.date;
        $scope.currentCommitAuthor = currentCommit.author;
+       
+       console.log('commit changed: '+ currentCommit.hash);
     });
     
     $scope.$on('changePath', function(event, newPath) {
-       $scope.path = newPath; 
        computePathParts($scope);
     });
+    
+    $scope.repositoryBrowse = function($event) {
+        $event.preventDefault();
+        var url = $($event.target).attr('href');
+        exploreFn(url, true);
+    };
+    
+    $scope.browsePath = function() {
+        $('#blobContents').html("").hide();
+        $scope.files = [];
+        $http.get($scope.computeUrl()).success(function(data) {
+            /* if (changeState == true) {
+                history.pushState({path: data.path, repoName: $scope.repoName, branch: $scope.repoBranch}, null, url);
+            } */
+            $scope.files = data.files;
+            $scope.path = data.path;
+            $rootScope.$broadcast('changePath', $scope.path);
+            
+            $('#treeContents').show();
+        }).error(function() {
+            alert('Unable to load repository tree');
+        });
+    };
+    
+    $scope.browseBlob = function() {
+        $('#treeContents').hide();
+        $scope.files = [];
+        $http.get($scope.computeUrl().replace('Blob.action', 'BlobDisplay.action')).success(function(data) {
+            $('#blobContents').html(data).show();
+            $rootScope.$broadcast('changePath', $scope.path);
+        }).error(function() {
+            alert('Unable to load blob');
+        });
+    };
+    
+    $scope.navigateToFile = function($event, file) {
+        if ($event) {
+            $event.preventDefault();
+        }
+        
+        if (file.directory) {
+            $scope.repoAction = 'Repository';
+            $scope.path = file.realpath;
+            $scope.browsePath();
+        } else {
+            $scope.repoAction = 'Blob';
+            $scope.path = file.realpath;
+            $scope.browseBlob();
+        }
+    };
+    
+    $scope.browsePath();
 }]);
 
 gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function CommitsCtrl($scope, $http, $rootScope) {
@@ -97,49 +159,3 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
     
     loadCommits(window.location.href, true);
 }]);
-
-gitApp.controller('BlobCtrl', ['$scope', '$http', '$rootScope', function BlobCtrl($scope, $http, $rootScope) {
-        
-    $scope.blobContents = "";
-    
-    var showBlob = function(url) {
-        $http.get(url.replace('Blob.action', 'BlobDisplay.action')).success(function(data) {
-            $scope.blobContents = data;
-            $('#blobContents').html(data);
-            $rootScope.$broadcast('changePath', $scope.path);
-        }).error(function() {
-            alert('Unable to load blob contents');
-        });
-    };
-    
-    showBlob(window.location.href);
-}]);
-
-gitApp.controller('TreeCtrl', ['$scope', '$http', '$rootScope', function TreeCtrl($scope, $http, $rootScope) {
-        
-    $scope.files = [];
-    
-    var exploreFn = function(url) {
-        $scope.files = [];
-        $http.get(url.replace('Repository.action', 'Tree.action')).success(function(data) {
-            /* if (changeState == true) {
-                history.pushState({path: data.path, repoName: $scope.repoName, branch: $scope.repoBranch}, null, url);
-            } */
-            $scope.files = data.files;
-            $scope.path = data.path;
-            
-            $rootScope.$broadcast('changePath', $scope.path);
-        }).error(function() {
-            alert('Unable to load repository tree');
-        });
-    };
-    
-    $scope.repositoryBrowse = function($event) {
-        $event.preventDefault();
-        var url = $($event.target).attr('href');
-        exploreFn(url, true);
-    };
-    
-    exploreFn(window.location.href); 
-}]);
-

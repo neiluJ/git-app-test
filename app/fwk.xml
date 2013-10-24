@@ -64,14 +64,12 @@
             <result name="success" type="php">
                 <param name="file">repository.php</param>
             </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">files,path</param>
+            </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
                 <param name="errorMsg">Repository not found.</param>
-            </result>
-        </action>
-        <action name="Tree" shortcut="TestGit\Controllers\Repository:tree">
-            <result name="success" type="json">
-                <param name="properties">files,path</param>
             </result>
         </action>
         <action name="Blob" shortcut="TestGit\Controllers\Repository:blob">

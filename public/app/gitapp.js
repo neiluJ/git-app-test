@@ -1,5 +1,4 @@
 var gitApp = angular.module('gitApp', [
-    'ngRoute',
     'gitAppControllers'
 ]);
 
@@ -39,17 +38,3 @@ gitApp.filter('shortHash', function() {
         return input.substring(0,6);
     }
 });
-
-gitApp.config(['$routeProvider',function($routeProvider) {
-    $routeProvider.when('/~neiluj/test-git/public/index.php/Blob.action', {
-        templateUrl: './../app/templates/blob.html',
-        controller: 'BlobCtrl'
-    }).when('/~neiluj/test-git/public/index.php/Repository.action', {
-        templateUrl: './../app/templates/tree.html',
-        controller: 'TreeCtrl'
-    });
-}]);
-
-gitApp.config(['$locationProvider', function($locationProvider) {  
-    $locationProvider.html5Mode(true); 
-}]);
