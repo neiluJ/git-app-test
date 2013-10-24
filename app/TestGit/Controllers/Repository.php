@@ -18,6 +18,8 @@ class Repository implements ServicesAware, Preparable
     
     protected $files;
     
+    protected $repoAction = 'Repository';
+    
     public function prepare()
     {
         if (!empty($this->path)) {
@@ -118,6 +120,7 @@ class Repository implements ServicesAware, Preparable
         }
         
         $this->blob = $tree;
+        $this->repoAction = 'Blob';
         
         return Result::SUCCESS;
     }
@@ -147,5 +150,10 @@ class Repository implements ServicesAware, Preparable
     protected function getGitService()
     {
         return $this->getServices()->get('git');
+    }
+    
+    public function getRepoAction()
+    {
+        return $this->repoAction;
     }
 }

@@ -35,7 +35,7 @@
         </div><!-- /starter-template -->
         
           
-    <input type="hidden" id="repoAction" name="repoAction" ng-bind="repoAction" value="Repository" />  
+    <input type="hidden" id="repoAction" name="repoAction" ng-bind="repoAction" value="<?php echo $this->repoAction; ?>" />  
     <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->path; ?>" />
     <input type="hidden" id="repoBranch" name="repoBranch" ng-bind="branch" value="<?php echo $this->branch; ?>" />
     

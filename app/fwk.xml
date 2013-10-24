@@ -74,7 +74,7 @@
         </action>
         <action name="Blob" shortcut="TestGit\Controllers\Repository:blob">
             <result name="success" type="php">
-                <param name="file">blob.php</param>
+                <param name="file">repository.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>

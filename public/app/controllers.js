@@ -114,7 +114,11 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
         }
     };
     
-    $scope.browsePath();
+    if ($scope.repoAction == 'Repository') {
+        $scope.browsePath();
+    } else {
+        $scope.browseBlob();
+    }
 }]);
 
 gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function CommitsCtrl($scope, $http, $rootScope) {
