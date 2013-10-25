@@ -7,6 +7,7 @@ class Commits extends Repository
 {
     public $offset;
     public $limit = 25;
+    public $hash;
     
     protected $commits;
     protected $jsonCommits;
@@ -65,6 +66,11 @@ class Commits extends Repository
         $this->jsonCurrentCommit = $this->jsonCommits[$this->currentCommit->getHash()];
         
         return Result::SUCCESS;
+    }
+    
+    public function commitAction()
+    {
+        
     }
     
     public function getCommits()

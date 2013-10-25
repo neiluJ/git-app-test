@@ -83,12 +83,21 @@ p.commit-infos {
     padding: 10px; 
     background-color: #eee; 
     margin-bottom:0;
-    overflow-x: auto;
+    word-wrap: break-word;
+    line-break: strict;
+    height: 40px;
+    overflow:hidden;
+}
+p.commit-infos.collapsed {
+    height:auto;
+}
+.commit-collapse {
+    float:right;
 }
 .commit-txt {
     font-family: Inconsolata, "Courier New", Courier, monospace;
     font-size:14px;
-    white-space: pre;
+    white-space: pre-wrap;
 }
 pre {
     padding:0;
@@ -98,13 +107,13 @@ pre {
     background-color: transparent;
     border: none;
 }
-code, pre {
-    font-family: inherit;
-    border-radius:0;
-}
 code#blobCtx {
     font-family: Inconsolata, "Courier New", Courier, monospace;
-    overflow-x: auto;
+    font-size: 14px;
+    word-break: keep-all;
+    line-break: strict;
+    white-space: pre;
+    overflow-x:auto;
 }
 
 td.ln {
@@ -127,6 +136,10 @@ table.blob {
 }
 table.blob td {
     vertical-align: top;
+}
+table.blob td.contents {
+    overflow-x: auto;
+    max-width: 500px;
 }
 table.blob td.ln span {
     display:block;

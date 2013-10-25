@@ -51,7 +51,7 @@
          
         <div class="col-xs-12 col-sm-7 col-md-9" ng-controller="RepositoryDisplayCtrl">
             <h4><a href="#" style="float:right" class="btn btn-default btn-xs">View <strong>{{ currentCommitHash|shortHash }}</strong></a>Commit <a ng-bind="currentCommitHash" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a></h4>
-            <p class="commit-infos commit-txt">{{ currentCommitMessage }}</p>
+            <p class="commit-infos commit-txt"><a href="#" class="commit-collapse"><i class="glyphicon glyphicon-plus"></i></a> {{ currentCommitMessage }}</p>
             <hr style="margin:10px 0;" />
              <ul class="breadcrumb repo-path">
                 <li ng-repeat="p in pathParts">
@@ -101,4 +101,17 @@
     
     </div><!-- /.container -->
     
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.commit-collapse').bind('click', function(event) {
+       event.preventDefault();
+       $(this).parent().toggleClass('collapsed');
+       if($(this).parent().hasClass('collapsed')) {
+           $(this).find('i').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+       } else {
+           $(this).find('i').removeClass('glyphicon-minus').addClass('glyphicon-plus');
+       }
+    });
+});  
+</script>
 <?php include __DIR__ .'/_footer.php'; ?>
