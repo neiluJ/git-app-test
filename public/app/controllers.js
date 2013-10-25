@@ -135,34 +135,55 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
         hash: 'null'
     };
     
+    var _cache = [];
+    
+    var commitsCache = function(url) {
+        var hash = MD5(url);
+        if (_cache[hash] != undefined) {
+            return _cache[hash];
+        } 
+        return false;
+    };
+    
     var loadCommits = function(url, emitEvent, merge, reload) {
-        $http.get(url.replace($scope.repoAction +'.action', 'Commits.action')).success(function(data) {
-            $scope.currentCommit = data.jsonCurrentCommit;
+        var cached = commitsCache(url);
+        if (cached != false) {
+            applyCommits(url, cached, emitEvent, merge, reload);
+        } else {
+            $http.get(url.replace($scope.repoAction +'.action', 'Commits.action')).success(function(data) {
+                applyCommits(url, data, emitEvent, merge, reload);
+            }).error(function() {
+                alert('Cannot load commits :(');
+            });
+        }
+    };
+    
+    var applyCommits = function(url, data, emitEvent, merge, reload) {
+        $scope.currentCommit = data.jsonCurrentCommit;
             
-            if (!merge) {
-                $scope.commits       = data.jsonCommits;
-            } else {
-                angular.forEach(data.jsonCommits, function(commit, hash) {
-                    if ($scope.commits[commit.hash] == undefined) {
-                        $scope.commits[commit.hash] = commit;
-                    }
-                });
-                
-                angular.forEach($scope.commits, function(commit, hash) {
-                    if (data.jsonCommits[commit.hash] == undefined) {
-                        $('.commit-'+ commit.hash.substring(0,6)).hide(500);
-                    } else {
-                        $('.commit-'+ commit.hash.substring(0,6)).show(500);
-                    }
-                });
-            }
-            
-            if (emitEvent == true) {
-                $rootScope.$broadcast('changeCommit', $scope.currentCommit, reload);
-            }
-        }).error(function() {
-            alert('Cannot load commits :(');
-        });
+        if (!merge) {
+            $scope.commits       = data.jsonCommits;
+        } else {
+            angular.forEach(data.jsonCommits, function(commit, hash) {
+                if ($scope.commits[commit.hash] == undefined) {
+                    $scope.commits[commit.hash] = commit;
+                }
+            });
+
+            angular.forEach($scope.commits, function(commit, hash) {
+                if (data.jsonCommits[commit.hash] == undefined) {
+                    $('.commit-'+ commit.hash.substring(0,6)).hide(500);
+                } else {
+                    $('.commit-'+ commit.hash.substring(0,6)).show(500);
+                }
+            });
+        }
+
+        if (emitEvent == true) {
+            $rootScope.$broadcast('changeCommit', $scope.currentCommit, reload);
+        }
+        
+        _cache[MD5(url)] = data;
     };
     
     $scope.browseRevisions = function($event, commit) {

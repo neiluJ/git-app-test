@@ -9,7 +9,6 @@
                 <div class="collapse navbar-collapse repo-nav">
                   <ul class="nav navbar-nav navbar-left">
                       <li class="active"><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Browse source"><i class="glyphicon glyphicon-list"></i></a></li>
-                      <li><a href="<?php echo $vh->url('Commits', array('name' => $this->name, 'branch' => $this->branch), true); ?>" class="txt" data-placement="bottom" data-toggle="tooltip" title="Commits History"><i class="glyphicon glyphicon-time"></i> 256</a></li>
                       <li><a href="#" data-placement="bottom" data-toggle="tooltip" title="Branches/Tags" class="txt"><i class="glyphicon glyphicon-random"></i> <span><?php echo (strlen($this->branch) == 40 ? substr($this->branch, 0, 6) : $this->branch); ?></span></a></li>
                       <li><a href="#" data-placement="bottom" data-toggle="tooltip" title="Access Rights"><i class="glyphicon glyphicon-user"></i></a></li>
                   </ul>
@@ -44,7 +43,7 @@
             <h4><a href="#" style="float:right;" title="RSS Feed"><i class="glyphicon glyphicon-signal"></i></a> Commits History</h4>
             <ul class="commits-list">
                 <li class="commit-{{ commit.hash|shortHash }} ng-class: {active: currentCommit.hash == commit.hash}" ng-repeat="commit in commits | orderObjectBy:commit.ts">
-                    <strong><a class="commit-{{ commit.hash|shortHash }}" ng-click="browseRevisions($event, commit);" href="./{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
+                    <strong><a class="commit-{{ commit.hash|shortHash }}" ng-click="browseRevisions($event, commit);" href="./{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}" title="{{ commit.message }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
                     <span style="font-size: 12px; color: #666;">{{ commit.date }}</span>
                 </li>
             </ul>
@@ -67,9 +66,9 @@
                         <thead>
                           <tr>
                             <th style="width: 35px;">&nbsp;</th>
-                            <th style="width: 230px;">File</th>
+                            <th style="width: 220px;">File</th>
                             <th>Message</th>
-                            <th style="width: 120px;">Last update</th>
+                            <th style="width: 130px;">Last update</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -97,7 +96,6 @@
                     </table>
                 </div>
             </div>
-            <div ng-view></div>
         </div>
     </div><!-- /row -->
     

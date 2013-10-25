@@ -12,6 +12,41 @@ class Blob extends Repository implements ContextAware
     
     protected $context;
     
+    protected $language;
+    
+    protected static $languages = array(
+        'php'   => array('php', 'phtml', 'php3', 'php4', 'php5'),
+        'xml'   => array('html', 'xml', 'xhtml'),
+        'c'     => array('c', 'h'),
+        'asp'   => array('asp', 'axd'),
+        'css'   => array('css'),
+        'cfm'   => array('cfm'),
+        'erlang' => array('yaws'),
+        'python'  => array('py'),
+        'haml'  => array('haml'),
+        'perl'  => array('pl'),
+        'scala' => array('scala'),
+        'java'  => array('java', 'jsp', 'jsf'),
+        'go'    => array('go'),
+        'lasso' => array('lasso'),
+        'scss'  => array('scss'),
+        'handlebars'    => array('hb'),
+        'json'  => array('json'),
+        'javascript'    => array('javascript', 'js'),
+        'coffeescript'  => array('coffee'),
+        'actionscript'  => array('as'),
+        'vbscript' => array('vb'),
+        'lua'   => array('lua'),
+        'cpp'   => array('cpp'),
+        'objectivec' => array('m', 'h'),
+        'cs'    => array('cs'),
+        'sql'   => array('sql'),
+        'ini'   => array('ini'),
+        'apache'    => array('htaccess'),
+        'diff'  => array('patch', 'diff'),
+        'bash'  => array('sh', 'bash')
+    ); 
+    
     public function show()
     {
         $res = $this->blob();
@@ -27,6 +62,7 @@ class Blob extends Repository implements ContextAware
         } elseif ($this->isMarkdown($this->blob)) {
             return "display_markdown";
         } elseif ($this->blob->isText()) {
+            $this->language = $this->findLanguageByExtension($this->path);
             return "display_text";
         }
         
@@ -113,7 +149,7 @@ class Blob extends Repository implements ContextAware
         return in_array($mime, $imagesTypes);
     }
     
-    public function isMarkdown($blob)
+    protected function isMarkdown($blob)
     {
         if (!$blob->isText()) {
             return false;
@@ -136,5 +172,22 @@ class Blob extends Repository implements ContextAware
     public function getContext()
     {
         return $this->context;
+    }
+    
+    public function getLanguage()
+    {
+        return $this->language;
+    }
+    
+    protected function findLanguageByExtension($fullpath)
+    {
+        $ext = pathinfo($fullpath, PATHINFO_EXTENSION);
+        foreach (self::$languages as $lang => $exts) {
+            if (in_array($ext, $exts, true)) {
+                return $lang;
+            }
+        }
+        
+        return false;
     }
 }

@@ -9,7 +9,7 @@
                 }
                 ?>
             </td>
-            <td class="contents code-display"><pre><code id="blobCtx"><?php echo htmlentities($this->blob->getContent(), ENT_QUOTES, "utf-8"); ?></code></pre></td>
+            <td class="contents code-display"><pre><code id="blobCtx"<?php if($this->language != false): ?> class="<?php echo $this->language; ?>"<?php endif; ?>><?php echo htmlentities($this->blob->getContent(), ENT_QUOTES, "utf-8"); ?></code></pre></td>
         </tr>
     </tbody>
 </table>
