@@ -43,7 +43,7 @@
         <div class="col-xs-5 col-sm-5 col-md-3 left-list" ng-controller="CommitsCtrl">
             <h4><a href="#" style="float:right;" title="RSS Feed"><i class="glyphicon glyphicon-signal"></i></a> Commits History</h4>
             <ul class="commits-list">
-                <li class="commit-{{ commit.hash|shortHash }} ng-class: {active: currentCommit.hash == commit.hash}" ng-repeat="commit in commits | orderBy:'commit.ts'">
+                <li class="commit-{{ commit.hash|shortHash }} ng-class: {active: currentCommit.hash == commit.hash}" ng-repeat="commit in commits | orderObjectBy:commit.ts">
                     <strong><a class="commit-{{ commit.hash|shortHash }}" ng-click="browseRevisions($event, commit);" href="./{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
                     <span style="font-size: 12px; color: #666;">{{ commit.date }}</span>
                 </li>

@@ -48,13 +48,7 @@ class Commits extends Repository
             $revision, ltrim($this->path,'/'), $this->offset, $this->limit
         )->getCommits();
         
-        $idx = 0;
-        foreach ($commits as $idx => $commit) {
-            $sort[$commit->getAuthorDate()->format('U')] = $commit;
-        }
-        
-        krsort($sort);
-        foreach ($sort as $commit) {
+        foreach ($commits as $commit) {
             $finalCommits[$commit->getHash()] = array(
                 'author'    => $commit->getAuthorName(),
                 'date'      => $commit->getAuthorDate()->format('d/m/Y H:i:s'),
@@ -65,9 +59,9 @@ class Commits extends Repository
             );
         }
         
-        $this->commits = $sort;
+        $this->commits = $commits;
         $this->jsonCommits = $finalCommits;
-        $this->currentCommit = array_shift($sort);
+        $this->currentCommit = array_shift($commits);
         $this->jsonCurrentCommit = $this->jsonCommits[$this->currentCommit->getHash()];
         
         return Result::SUCCESS;
