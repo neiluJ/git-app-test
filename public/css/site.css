@@ -179,3 +179,88 @@ div.repo-title {
 .main-view.visible {
     display: block;
 }
+
+table.difftable {
+    min-width:100%;
+    font-size:14px;
+    overflow-x: auto;
+    margin-bottom: 20px;
+    border: solid 1px #ccc;
+}
+table.difftable tr, table.difftable td {
+    padding:0px 3px;
+    font-family: Incosolata, "Courier New",Courier,monospace !important;
+    font-size: 14px !important;
+}
+table.difftable code {
+    font-weight: normal;
+    color: inherit;
+    padding:0;
+    white-space: nowrap;
+}
+table.difftable td.code {
+    white-space: nowrap;
+}
+table.difftable tr.infos {
+    background-color: #ececec;
+}
+table.difftable tr.infos td {
+    color: #999 !important;
+    font-weight: bold;
+}
+table.difftable tr.infos td.ln {
+    background-color: #ececec;
+}
+table.difftable tr.addition {
+    background-color: #D2FFAA;
+}
+table.difftable tr.deletion {
+    background-color: #FCA9A9;
+}
+table.difftable tr:hover {
+    background-color: #fdf6e3 !important;
+}
+table.difftable tr:hover td.ln {
+    background-color: #fdf6e3 !important;
+}
+ul.diff-files {
+    list-style:none;
+    list-style-type:none;
+    list-style-position:inside;
+    font-size: 12px;
+    margin-bottom: 40px;
+    padding:0;
+}
+ul.diff-files li { padding: 0; margin: 0; }
+ul.diff-files li span.stats {
+    color: #999;
+}
+ul.diff-files li.stats span {
+    display:inline-block;
+    padding-top: 5px;
+    border-top: solid 1px #ccc;
+    margin-top: 5px;
+}
+
+.commit-head {
+    background-color: aliceblue;
+    padding: 10px;
+}
+.commit-head p { margin: 0; }
+.commit-infos {
+    padding: 10px;
+    font-size:12px;
+}
+.commit-infos p.author {
+    font-size:14px;
+    color: #999;
+}
+.commit-infos p.author span {
+    color: #666;
+    font-weight:bold;
+}
+.commit-infos p.author i {
+    color: #000;
+    margin-right:5px;
+    font-size: 16px;
+}

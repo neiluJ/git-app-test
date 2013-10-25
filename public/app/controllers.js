@@ -62,6 +62,8 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
             $scope.browsePath(false, true);
         } else if(reload && $scope.repoAction == 'Blob') {
             $scope.browseBlob(false, true);
+        } else if(reload && $scope.repoAction == 'Commit') {
+            $scope.browseCommit(currentCommit.hash);
         }
     });
     
@@ -69,14 +71,9 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
        computePathParts($scope);
     });
     
-    $scope.repositoryBrowse = function($event) {
-        $event.preventDefault();
-        var url = $($event.target).attr('href');
-        exploreFn(url, true);
-    };
-    
     $scope.browsePath = function(mergeCommits, fromCommits) {
         $('#blobContents').html("").hide();
+        $('#commitContents').html("").hide();
         $scope.files = [];
         $http.get($scope.computeUrl()).success(function(data) {
             /* if (changeState == true) {
@@ -97,6 +94,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
     
     $scope.browseBlob = function(mergeCommits, fromCommits) {
         $('#treeContents').hide();
+        $('#commitContents').hide();
         $scope.files = [];
         $http.get($scope.computeUrl().replace('Blob.action', 'BlobDisplay.action')).success(function(data) {
             $('#blobContents').html(data).show();
@@ -105,6 +103,16 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
             }
         }).error(function() {
             alert('Unable to load blob');
+        });
+    };
+    
+    $scope.browseCommit = function(commitHash) {
+        $('#treeContents').hide();
+        $('#blobContents').html("").hide();
+        $http.get('./Commit.action?name='+ $scope.repoName +'&hash='+ commitHash).success(function(data) {
+            $('#commitContents').html(data).show();
+        }).error(function() {
+            alert('Unable to load commit');
         });
     };
     
@@ -122,6 +130,15 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
             $scope.path = file.realpath;
             $scope.browseBlob(true);
         }
+        $scope.$emit('viewChange');
+    };
+    
+    $scope.navigateToCommit = function($event, commit) {
+        if ($event) {
+            $event.preventDefault();
+        }
+        $scope.repoAction = 'Commit';
+        $scope.browseCommit(commit.hash);
         $scope.$emit('viewChange');
     };
 }]);

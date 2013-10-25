@@ -61,12 +61,13 @@
             </ul>
             <div id="main">
                 <div id="blobContents" class="main-view"></div>
+                <div id="commitContents" class="main-view"></div>
                 <div id="treeContents" class="main-view visible">
                     <table class="table table-striped">
                         <thead>
                           <tr>
                             <th style="width: 35px;">&nbsp;</th>
-                            <th style="width: 220px;">File</th>
+                            <th style="width: 200px;">File</th>
                             <th>Message</th>
                             <th style="width: 130px;">Last update</th>
                           </tr>
@@ -88,7 +89,7 @@
                                 <a ng-if="file.realpath != ''" ng-click="navigateToFile($event,file);" href="./Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ file.realpath }}">{{ file.path }}</a>
                                 <a ng-if="file.realpath == ''" ng-click="navigateToFile($event,file);" href="./Repository.action?name={{ repoName }}&amp;branch={{ branch }}">{{ file.path }}</a>
                             </td>
-                            <td ng-if="!file.special" class="commit-txt"><a href="./Commit.action?name={{ repoName }}&amp;hash={{ file.lastCommit.hash }}" style="color:inherit">{{ file.lastCommit.message }}</a> [<a href="#">{{ file.lastCommit.author }}</a>]</td>
+                            <td ng-if="!file.special" class="commit-txt"><a href="./Commit.action?name={{ repoName }}&amp;hash={{ file.lastCommit.hash }}" ng-click="navigateToCommit($event, file.lastCommit);" style="color:inherit">{{ file.lastCommit.message }}</a> [<a href="#">{{ file.lastCommit.author }}</a>]</td>
                             <td ng-if="file.special">&nbsp;</td>
                             <td>{{ file.lastCommit.date }}</td>
                           </tr>

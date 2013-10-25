@@ -13,6 +13,7 @@ class Commits extends Repository
     protected $jsonCommits;
     protected $currentCommit;
     protected $jsonCurrentCommit;
+    protected $diff;
     
     public function prepare()
     {
@@ -70,7 +71,32 @@ class Commits extends Repository
     
     public function commitAction()
     {
+        try {
+            $this->repository = $this->getGitService()->getRepository($this->name);
+        } catch(\Exception $exp) {
+            return Result::ERROR;
+        }
         
+        $revision = $this->repository->getRevision($this->hash);
+        
+        $commit = $revision->getCommit();
+        
+        $this->commits = array($commit);
+        $this->currentCommit = $commit;
+        $this->jsonCommits[$commit->getHash()] = array(
+            'author'    => $commit->getAuthorName(),
+            'date'      => $commit->getAuthorDate()->format('d/m/Y H:i:s'),
+            'ts'        => $commit->getAuthorDate()->format('U'),
+            'date_obj'  => $commit->getAuthorDate(),
+            'hash'      => $commit->getHash(),
+            'message'   => $commit->getMessage()
+        );
+        $this->jsonCurrentCommit = $this->jsonCommits[$commit->getHash()];
+        
+        $diff = $this->diff = $commit->getDiff();
+        $this->repoAction = 'Commit';
+        
+        return Result::SUCCESS;
     }
     
     public function getCommits()
@@ -89,5 +115,10 @@ class Commits extends Repository
 
     public function getJsonCurrentCommit() {
         return $this->jsonCurrentCommit;
+    }
+    
+    public function getDiff()
+    {
+        return $this->diff;
     }
 }
