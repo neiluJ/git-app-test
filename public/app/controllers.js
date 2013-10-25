@@ -138,7 +138,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
             $event.preventDefault();
         }
         $scope.repoAction = 'Commit';
-        $scope.browseCommit(commit.hash);
+        $scope.browseCommit((angular.isObject(commit) ? commit.hash : commit));
         $scope.$emit('viewChange');
     };
 }]);

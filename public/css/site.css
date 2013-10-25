@@ -185,7 +185,7 @@ table.difftable {
     font-size:14px;
     overflow-x: auto;
     margin-bottom: 20px;
-    border: solid 1px #ccc;
+    border: solid 1px #eaeaea;
 }
 table.difftable tr, table.difftable td {
     padding:0px 3px;

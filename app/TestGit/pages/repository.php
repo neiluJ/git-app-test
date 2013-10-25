@@ -50,7 +50,7 @@
         </div>
          
         <div class="col-xs-12 col-sm-7 col-md-9" ng-controller="RepositoryDisplayCtrl">
-            <h4><a href="#" style="float:right" class="btn btn-default btn-xs">View <strong>{{ currentCommitHash|shortHash }}</strong></a>Commit <a ng-bind="currentCommitHash" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a></h4>
+            <h4><a href="#" style="float:right" class="btn btn-default btn-xs" ng-click="navigateToCommit($event, currentCommitHash);">View <strong>{{ currentCommitHash|shortHash }}</strong></a>Commit <a ng-bind="currentCommitHash" ng-click="navigateToCommit($event, currentCommitHash);" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a></h4>
             <p class="commit-infos commit-txt"><a href="#" class="commit-collapse"><i class="glyphicon glyphicon-plus"></i></a> {{ currentCommitMessage }}</p>
             <hr style="margin:10px 0;" />
              <ul class="breadcrumb repo-path">
