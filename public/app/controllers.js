@@ -48,7 +48,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
             +'&branch='+ $scope.branch 
             + ($scope.path != null && $scope.path != '' ? '&path='+ $scope.path : '') 
             + '&ng=1';
-    }
+    };
     
     $scope.$on('changeCommit', function(event, currentCommit) {
        $scope.currentCommit = currentCommit; 
@@ -70,7 +70,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
         exploreFn(url, true);
     };
     
-    $scope.browsePath = function() {
+    $scope.browsePath = function(mergeCommits) {
         $('#blobContents').html("").hide();
         $scope.files = [];
         $http.get($scope.computeUrl()).success(function(data) {
@@ -79,7 +79,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
             } */
             $scope.files = data.files;
             $scope.path = data.path;
-            $rootScope.$broadcast('changePath', $scope.path);
+            $rootScope.$broadcast('changePath', $scope.path, mergeCommits);
             
             $('#treeContents').show();
         }).error(function() {
@@ -87,12 +87,12 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
         });
     };
     
-    $scope.browseBlob = function() {
+    $scope.browseBlob = function(mergeCommits) {
         $('#treeContents').hide();
         $scope.files = [];
         $http.get($scope.computeUrl().replace('Blob.action', 'BlobDisplay.action')).success(function(data) {
             $('#blobContents').html(data).show();
-            $rootScope.$broadcast('changePath', $scope.path);
+            $rootScope.$broadcast('changePath', $scope.path, mergeCommits);
         }).error(function() {
             alert('Unable to load blob');
         });
@@ -106,18 +106,19 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
         if (file.directory) {
             $scope.repoAction = 'Repository';
             $scope.path = file.realpath;
-            $scope.browsePath();
+            $scope.browsePath(true);
         } else {
             $scope.repoAction = 'Blob';
             $scope.path = file.realpath;
-            $scope.browseBlob();
+            $scope.browseBlob(true);
         }
+        $scope.$emit('viewChange');
     };
     
     if ($scope.repoAction == 'Repository') {
-        $scope.browsePath();
+        $scope.browsePath(false);
     } else {
-        $scope.browseBlob();
+        $scope.browseBlob(false);
     }
 }]);
 
@@ -130,10 +131,28 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
         hash: 'null'
     };
     
-    var loadCommits = function(url, emitEvent) {
+    var loadCommits = function(url, emitEvent, merge) {
         $http.get(url.replace($scope.repoAction +'.action', 'Commits.action')).success(function(data) {
             $scope.currentCommit = data.jsonCurrentCommit;
-            $scope.commits       = data.jsonCommits;
+            
+            if (!merge) {
+                $scope.commits       = data.jsonCommits;
+            } else {
+                angular.forEach(data.jsonCommits, function(commit, hash) {
+                    if ($scope.commits[commit.hash] == undefined) {
+                        $scope.commits[commit.hash] = commit;
+                    }
+                });
+                
+                angular.forEach($scope.commits, function(commit, hash) {
+                    if (data.jsonCommits[commit.hash] == undefined) {
+                        $('.commit-'+ commit.hash.substring(0,6)).hide(500);
+                    } else {
+                        $('.commit-'+ commit.hash.substring(0,6)).show(500);
+                    }
+                });
+            }
+            
             if (emitEvent == true) {
                 $rootScope.$broadcast('changeCommit', $scope.currentCommit);
             }
@@ -142,24 +161,29 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
         });
     };
     
-    $scope.browseRevisions = function($event) {
+    $scope.browseRevisions = function($event, commit) {
         $event.preventDefault();
-        if ($($event.target).parent().parent().hasClass('active')) {
+        if ($scope.currentCommit.hash == commit.hash) {
             return;
         }
         
-        var hashTmp = $($event.target).html();
-        $($scope.commits).each(function(i, item) {
-             if (item.hash.substring(0,6) == hashTmp) {
-                 $scope.currentCommit = item;
-             }
-        });
+        $scope.currentCommit = commit;
         
-        $($event.target).parent().parent().find('li.active').removeClass('acitve');
+        $($event.target).parent().parent().find('li.active').removeClass('active');
         $($event.target).parent().addClass('active');
         
-        $rootScope.$broadcast('changeCommit', $scope.currentCommit);
+        $rootScope.$broadcast('changeCommit', commit);
     };
     
-    loadCommits(window.location.href, true);
+    $scope.computeUrl = function(path) {
+        return "./"+ $scope.repoAction 
+            +'.action?name='+ $scope.repoName 
+            +'&branch='+ $scope.branch 
+            + (path != null && path != '' ? '&path='+ path : '') 
+            + '&ng=1';
+    };
+    
+    $rootScope.$on('changePath', function($event, path, mergeCommits) {
+        loadCommits($scope.computeUrl(path), true, mergeCommits);
+    });
 }]);
