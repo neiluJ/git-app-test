@@ -14,3 +14,4 @@
     </tbody>
 </table>
 <script type="text/javascript">hljs.highlightBlock($('#blobCtx')[0]);</script>
+<p>Download this file: <a href="<?php echo $this->_helper->url('BlobRaw', array('name' => $this->name, 'path' => $this->path, 'branch' => $this->branch), true); ?>">click here</a></p>

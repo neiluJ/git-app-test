@@ -37,6 +37,7 @@
     <input type="hidden" id="repoAction" name="repoAction" ng-bind="repoAction" value="<?php echo $this->repoAction; ?>" />  
     <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->path; ?>" />
     <input type="hidden" id="repoBranch" name="repoBranch" ng-bind="branch" value="<?php echo $this->branch; ?>" />
+    <input type="hidden" id="commitHash" name="commitHash" value="<?php echo (isset($this->hash) ? $this->hash : null); ?>" />
     
     <div class="row">
         <div class="col-xs-5 col-sm-5 col-md-3 left-list" ng-controller="CommitsCtrl">
@@ -50,10 +51,12 @@
         </div>
          
         <div class="col-xs-12 col-sm-7 col-md-9" ng-controller="RepositoryDisplayCtrl">
-            <h4><a href="#" style="float:right" class="btn btn-default btn-xs" ng-click="navigateToCommit($event, currentCommitHash);">View <strong>{{ currentCommitHash|shortHash }}</strong></a>Commit <a ng-bind="currentCommitHash" ng-click="navigateToCommit($event, currentCommitHash);" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a></h4>
-            <p class="commit-infos commit-txt"><a href="#" class="commit-collapse"><i class="glyphicon glyphicon-plus"></i></a>{{ currentCommitMessage }}</p>
-            <hr style="margin:10px 0;" />
-             <ul class="breadcrumb repo-path">
+            <div id="repo-commit">
+                <h4><a href="#" style="float:right" class="btn btn-default btn-xs" ng-click="navigateToCommit($event, currentCommitHash);">View <strong>{{ currentCommitHash|shortHash }}</strong></a>Commit <a ng-bind="currentCommitHash" ng-click="navigateToCommit($event, currentCommitHash);" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a></h4>
+                <p class="commit-infos commit-txt"><a href="#" class="commit-collapse"><i class="glyphicon glyphicon-plus"></i></a>{{ currentCommitMessage }}</p>
+                <hr style="margin:10px 0;" />
+            </div> 
+            <ul class="breadcrumb repo-path">
                 <li ng-repeat="p in pathParts">
                     <a ng-if="!$last" ng-click="navigateToFile($event, p);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.realpath }}">{{ p.path }}</a>
                     <a ng-if="$last" ng-click="navigateToFile($event, p);" style="color: inherit" href="<?php echo $vh->url(); ?>/{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.realpath }}">{{ p.path }}</a>

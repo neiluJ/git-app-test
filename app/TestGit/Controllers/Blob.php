@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Fwk\Core\ContextAware;
 use Fwk\Core\Context;
 
-class Blob extends Repository implements ContextAware
+class Blob extends Commits implements ContextAware
 {
     protected $blob;
     
@@ -47,9 +47,43 @@ class Blob extends Repository implements ContextAware
         'bash'  => array('sh', 'bash')
     ); 
     
+    public function blobAction()
+    {
+        try {
+            $this->repository = $this->getGitService()->getRepository($this->name);
+        } catch(\Exception $exp) {
+            return Result::ERROR;
+        }
+        
+        $refs = $this->repository->getReferences();
+        if ($refs->hasBranch($this->branch)) {
+            $revision = $refs->getBranch($this->branch);
+        } else {
+            $revision = $this->repository->getRevision($this->branch);
+        }
+        
+        $commit = $revision->getCommit();
+        $this->currentCommit = $commit;
+        
+        $tree = $commit->getTree();
+        
+        if (null !== $this->path) {
+            $tree = $tree->resolvePath($this->path);
+        }
+        
+        if (!$tree instanceof \Gitonomy\Git\Blob) {
+            return Result::ERROR;
+        }
+        
+        $this->blob = $tree;
+        $this->repoAction = 'Blob';
+        
+        return Result::SUCCESS;
+    }
+    
     public function show()
     {
-        $res = $this->blob();
+        $res = $this->blobAction();
         
         if ($res == Result::ERROR || !$this->blob instanceof \Gitonomy\Git\Blob) {
             return Result::ERROR;
@@ -71,7 +105,7 @@ class Blob extends Repository implements ContextAware
     
     public function raw()
     {
-        $res = $this->blob();
+        $res = $this->blobAction();
         
         if ($res == Result::ERROR || !$this->blob instanceof \Gitonomy\Git\Blob) {
             return Result::ERROR;
@@ -85,10 +119,10 @@ class Blob extends Repository implements ContextAware
         $lastModified = $this->getCurrentCommit();
         
         if (false !== $lastModified) {
-            $response->setLastModified($lastModified['date_obj']);
+            $response->setLastModified($lastModified->getAuthorDate());
         }
         
-        $response->setETag($lastModified['hash']);
+        $response->setETag($lastModified->getHash());
         if ($response->isNotModified($this->context->getRequest())) {
             return $response;
         }

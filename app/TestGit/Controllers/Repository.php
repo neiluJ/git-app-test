@@ -93,38 +93,6 @@ class Repository implements ServicesAware, Preparable
         return Result::SUCCESS;
     }
     
-    public function blob()
-    {
-        try {
-            $this->repository = $this->getGitService()->getRepository($this->name);
-        } catch(\Exception $exp) {
-            return Result::ERROR;
-        }
-        
-        $refs = $this->repository->getReferences();
-        if ($refs->hasBranch($this->branch)) {
-            $revision = $refs->getBranch($this->branch);
-        } else {
-            $revision = $this->repository->getRevision($this->branch);
-        }
-        
-        $commit = $revision->getCommit();
-        $tree = $commit->getTree();
-        
-        if (null !== $this->path) {
-            $tree = $tree->resolvePath($this->path);
-        }
-        
-        if (!$tree instanceof \Gitonomy\Git\Blob) {
-            return Result::ERROR;
-        }
-        
-        $this->blob = $tree;
-        $this->repoAction = 'Blob';
-        
-        return Result::SUCCESS;
-    }
-    
     public function getServices()
     {
         return $this->services;

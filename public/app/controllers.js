@@ -71,11 +71,16 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
        computePathParts($scope);
     });
     
+    $scope.$on('compare', function(event, url) {
+       $scope.browseCompare(url);
+    });
+    
     $scope.browsePath = function(mergeCommits, fromCommits) {
         $('#blobContents').html("").hide();
         $('#commitContents').html("").hide();
         $scope.files = [];
         $('.repo-path').show(400);
+        $('#repo-commit').show(400);
         $http.get($scope.computeUrl()).success(function(data) {
             /* if (changeState == true) {
                 history.pushState({path: data.path, repoName: $scope.repoName, branch: $scope.repoBranch}, null, url);
@@ -97,6 +102,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
         $('#treeContents').hide();
         $('#commitContents').hide();
         $('.repo-path').show(400);
+        $('#repo-commit').show(400);
         $scope.files = [];
         $http.get($scope.computeUrl().replace('Blob.action', 'BlobDisplay.action')).success(function(data) {
             $('#blobContents').html(data).show();
@@ -111,11 +117,24 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
     $scope.browseCommit = function(commitHash) {
         $('#treeContents').hide();
         $('#blobContents').html("").hide();
+        $('#repo-commit').show(400);
         $('.repo-path').hide(400);
         $http.get('./Commit.action?name='+ $scope.repoName +'&hash='+ commitHash).success(function(data) {
             $('#commitContents').html(data).show();
         }).error(function() {
             alert('Unable to load commit');
+        });
+    };
+    
+    $scope.browseCompare = function(url) {
+        $('#treeContents').hide();
+        $('#blobContents').html("").hide();
+        $('#repo-commit').hide(400);
+        $('.repo-path').hide(400);
+        $http.get(url).success(function(data) {
+            $('#commitContents').html(data).show();
+        }).error(function() {
+            alert('Unable to load comparision');
         });
     };
     
@@ -165,22 +184,26 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
         return false;
     };
     
-    var loadCommits = function(url, emitEvent, merge, reload) {
+    var loadCommits = function(url, emitEvent, merge, reload, current) {
         var cached = commitsCache(url);
         if (cached != false) {
-            applyCommits(url, cached, emitEvent, merge, reload);
+            applyCommits(url, cached, emitEvent, merge, reload, current);
         } else {
             $http.get(url.replace($scope.repoAction +'.action', 'Commits.action')).success(function(data) {
-                applyCommits(url, data, emitEvent, merge, reload);
+                applyCommits(url, data, emitEvent, merge, reload, current);
             }).error(function() {
                 alert('Cannot load commits :(');
             });
         }
     };
     
-    var applyCommits = function(url, data, emitEvent, merge, reload) {
-        $scope.currentCommit = data.jsonCurrentCommit;
-            
+    var applyCommits = function(url, data, emitEvent, merge, reload, current) {
+        if (!current) {
+            $scope.currentCommit = data.jsonCurrentCommit;
+        } else {
+            $scope.currentCommit = data.jsonCommits[current];
+        } 
+        
         if (!merge) {
             $scope.commits       = data.jsonCommits;
         } else {
@@ -207,14 +230,15 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
         _cache[MD5(url)] = data;
     };
     
-    var initComparision = function(commit1, commit2, path) {
-        var url = "./Compare"
+    var initComparision = function(commit1, commit2) {
+        var path = $('#repoPath').val(),
+            url = "./Compare"
             +'.action?name='+ $scope.repoName
-            +'&compare='+ commit1.hash.substring(0,6) +'..'+ commit2.hash.substring(0,6) 
-            + (path != null && path != '' ? '&path='+ path : '') 
+            +'&compare='+ commit2.hash.substring(0,6) +'..'+ commit1.hash.substring(0,6) 
+            + ($scope.path != null && $scope.path != '' ? '&path='+ $scope.path : '') 
             + '&ng=1';
         
-        console.log(url);
+        $rootScope.$broadcast('compare', url);
     };
     
     $scope.browseRevisions = function($event, commit) {
@@ -228,10 +252,12 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
 
             $($event.target).parent().parent().find('li.active').removeClass('active');
             $($event.target).parent().addClass('active');
-
+            $($event.target).parent().parent().parent().find('li.compare').removeClass('compare');
+            
             $rootScope.$broadcast('changeCommit', commit, true);
             $('#repoBranch').val(commit.hash);
         } else {
+            $($event.target).parent().parent().parent().find('li.compare').removeClass('compare');
             $($event.target).parent().parent().addClass('compare');
             initComparision($scope.currentCommit, commit, $scope.path);
         }
@@ -246,8 +272,13 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
     };
     
     $rootScope.$on('changePath', function($event, path, mergeCommits) {
+        $scope.path = path;
         loadCommits($scope.computeUrl(path), true, mergeCommits, false);
     });
     
-    loadCommits($scope.computeUrl(), true, false, true);
+    if (!$scope.repoAction == 'Commit') {
+        loadCommits($scope.computeUrl(), true, false, true);
+    } else {
+        loadCommits($scope.computeUrl(), true, false, true, $('#commitHash').val());
+    }
 }]);

@@ -72,7 +72,7 @@
                 <param name="errorMsg">Repository not found.</param>
             </result>
         </action>
-        <action name="Blob" shortcut="TestGit\Controllers\Repository:blob">
+        <action name="Blob" shortcut="TestGit\Controllers\Blob:blobAction">
             <result name="success" type="php">
                 <param name="file">repository.php</param>
             </result>
@@ -126,5 +126,15 @@
                 <param name="errorMsg">Problem occured while loading the commit.</param>
             </result>
         </action>
+        <action name="Compare" shortcut="TestGit\Controllers\Commits:compareAction">
+            <result name="success" type="php">
+                <param name="file">compare.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Problem occured while loading the comparision</param>
+            </result>
+        </action>
+        <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction" />
     </actions>
 </fwk>

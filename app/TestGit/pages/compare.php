@@ -1,27 +1,12 @@
-<div class="commit-head">
-    <?php foreach ($this->currentCommit->getIncludingBranches(true, false) as $branch): ?>
-        <i class="icon-sitemap"></i> <a href="#"><?php echo $branch->getName(); ?></a>,
-    <?php endforeach; ?>
-</div>
-<div class="commit-infos">
-    <div class="commit" style="float:right">
-        <?php $parents = $this->currentCommit->getParents(); if (!count($parents)): ?>
-            <pre><strong>initial commit</strong></pre>
-        <?php elseif (count($parents) == 1): ?>
-            <pre><strong>parent</strong> <a href="#"><?php echo $parents[0]->getHash(); ?></a>, </pre>
-        <?php else: ?>
-            <pre><strong>parents</strong> <?php foreach($parents as $parent): ?><a href="#"><?php echo substr($parent->getHash(), 0, 6); ?></a>, <?php endforeach; ?></pre>
-        <?php endif; ?>
-    </div>
-    <p class="author"><i class="icon-user"></i> <span><?php echo $this->currentCommit->getCommitterName(); ?></span> authored on <span class="date"> <?php echo $this->currentCommit->getCommitterDate()->format('l F d Y H:i:s'); ?></span></p>
-</div>
+<h4><a style="float:right" class="btn btn-default btn-xs" href="<?php echo $this->_helper->url('Diff', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>">Raw diff</a> Differences between <?php echo $this->compare; ?></a></h4>
 
-<h3>Diff informations</h3>
-
-<ul class="diff-files">
+<ul class="diff-files" style="clear:both;">
     <?php $files = 0; $adds = 0; $dels = 0; ?>
     <?php 
     foreach ($this->diff->getFiles() as $file): 
+        if (!empty($this->path) && strpos($file->getName(), $this->path, 0) === false) {
+            continue;
+        }
         $files++;
         $adds += $file->getAdditions();
         $dels += $file->getDeletions();
@@ -45,14 +30,17 @@
 
 <h3>Changes</h3>
 <?php 
-    foreach ($this->diff->getFiles() as $file): 
+    foreach ($this->diff->getFiles() as $file):
+        if (!empty($this->path) && strpos($file->getName(), $this->path, 0) === false) {
+            continue;
+        }
+        
         $changes = $file->getChanges();
         if (count($changes) == 0) {
             continue;
         }
 ?>
 <div class="diff-head" style="clear:both;">
-    <a href="#" class="btn btn-xs btn-default" style="float:right;">View file @<strong><?php echo substr($this->currentCommit->getHash(),0,6); ?></strong></a>
     <h4><a name="<?php echo $file->getName(); ?>"></a> <?php echo $file->getName(); ?></h4>
 </div>
 

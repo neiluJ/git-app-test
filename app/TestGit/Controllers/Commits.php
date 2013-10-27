@@ -2,12 +2,14 @@
 namespace TestGit\Controllers;
 
 use Fwk\Core\Action\Result;
+use Symfony\Component\HttpFoundation\Response;
 
 class Commits extends Repository 
 {
     public $offset;
     public $limit = 25;
     public $hash;
+    public $compare;
     
     protected $commits;
     protected $jsonCommits;
@@ -97,6 +99,34 @@ class Commits extends Repository
         $this->repoAction = 'Commit';
         
         return Result::SUCCESS;
+    }
+    
+    public function compareAction()
+    {
+        try {
+            $this->repository = $this->getGitService()->getRepository($this->name);
+        
+        } catch(\Exception $exp) {
+            return Result::ERROR;
+        }
+        
+        $this->diff = $this->repository->getDiff($this->compare);
+        $this->repoAction = 'Compare';
+            
+        return Result::SUCCESS;
+    }
+    
+    public function diffAction()
+    {
+        $this->compareAction();
+        
+        $response   = new Response();
+        $response->setExpires(new \DateTime());
+        $response->headers->set('Content-Type', 'text/plain');
+        
+        $response->setContent($this->diff->getRawDiff());
+        
+        return $response;
     }
     
     public function getCommits()
