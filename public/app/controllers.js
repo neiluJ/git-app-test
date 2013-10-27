@@ -75,6 +75,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
         $('#blobContents').html("").hide();
         $('#commitContents').html("").hide();
         $scope.files = [];
+        $('.repo-path').show(400);
         $http.get($scope.computeUrl()).success(function(data) {
             /* if (changeState == true) {
                 history.pushState({path: data.path, repoName: $scope.repoName, branch: $scope.repoBranch}, null, url);
@@ -95,6 +96,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
     $scope.browseBlob = function(mergeCommits, fromCommits) {
         $('#treeContents').hide();
         $('#commitContents').hide();
+        $('.repo-path').show(400);
         $scope.files = [];
         $http.get($scope.computeUrl().replace('Blob.action', 'BlobDisplay.action')).success(function(data) {
             $('#blobContents').html(data).show();
@@ -109,6 +111,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', fun
     $scope.browseCommit = function(commitHash) {
         $('#treeContents').hide();
         $('#blobContents').html("").hide();
+        $('.repo-path').hide(400);
         $http.get('./Commit.action?name='+ $scope.repoName +'&hash='+ commitHash).success(function(data) {
             $('#commitContents').html(data).show();
         }).error(function() {

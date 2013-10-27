@@ -87,6 +87,7 @@ p.commit-infos {
     line-break: strict;
     height: 40px;
     overflow:hidden;
+    line-height: 23px;
 }
 p.commit-infos.collapsed {
     height:auto;

@@ -43,7 +43,7 @@
             <h4><a href="#" style="float:right;" title="RSS Feed"><i class="glyphicon glyphicon-signal"></i></a> Commits History</h4>
             <ul class="commits-list">
                 <li class="commit-{{ commit.hash|shortHash }} ng-class: {active: currentCommit.hash == commit.hash}" ng-repeat="commit in commits | orderObjectBy:commit.ts">
-                    <strong><a class="commit-{{ commit.hash|shortHash }}" ng-click="browseRevisions($event, commit);" href="./{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}" title="{{ commit.message }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
+                    <strong><a data-placement="top" data-toggle="tooltip" class="commit commit-{{ commit.hash|shortHash }}" ng-click="browseRevisions($event, commit);" href="./{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}" title="{{ commit.message }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
                     <span style="font-size: 12px; color: #666;">{{ commit.date }}</span>
                 </li>
             </ul>
@@ -51,7 +51,7 @@
          
         <div class="col-xs-12 col-sm-7 col-md-9" ng-controller="RepositoryDisplayCtrl">
             <h4><a href="#" style="float:right" class="btn btn-default btn-xs" ng-click="navigateToCommit($event, currentCommitHash);">View <strong>{{ currentCommitHash|shortHash }}</strong></a>Commit <a ng-bind="currentCommitHash" ng-click="navigateToCommit($event, currentCommitHash);" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a></h4>
-            <p class="commit-infos commit-txt"><a href="#" class="commit-collapse"><i class="glyphicon glyphicon-plus"></i></a> {{ currentCommitMessage }}</p>
+            <p class="commit-infos commit-txt"><a href="#" class="commit-collapse"><i class="glyphicon glyphicon-plus"></i></a>{{ currentCommitMessage }}</p>
             <hr style="margin:10px 0;" />
              <ul class="breadcrumb repo-path">
                 <li ng-repeat="p in pathParts">

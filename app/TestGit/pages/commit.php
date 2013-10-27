@@ -94,3 +94,10 @@
     <?php endif; ?>
 </div>
 <?php endforeach; ?>
+<script type="text/javascript">
+$(function() {
+   if (!$('.commit-collapse').parent().hasClass('collapsed')) {
+       $('.commit-collapse').click(); 
+   }
+});
+</script>
