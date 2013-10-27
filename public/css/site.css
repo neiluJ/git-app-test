@@ -74,6 +74,10 @@ ul.commits-list li.active {
     /* background-color: #c4e3f3; */
     border-left: solid 2px #2aabd2;
 }
+ul.commits-list li.compare {
+    /* background-color: #c4e3f3; */
+    border-left: solid 2px #d9534f;
+}
 
 ul.commits-list li:active {
     background-color: #eee;
@@ -184,7 +188,6 @@ div.repo-title {
 table.difftable {
     min-width:100%;
     font-size:14px;
-    overflow-x: auto;
     margin-bottom: 20px;
     border: solid 1px #eaeaea;
 }
@@ -197,11 +200,9 @@ table.difftable code {
     font-weight: normal;
     color: inherit;
     padding:0;
-    white-space: nowrap;
+    white-space: pre;
 }
-table.difftable td.code {
-    white-space: nowrap;
-}
+
 table.difftable tr.infos {
     background-color: #ececec;
 }

@@ -83,7 +83,7 @@
                     <tr<?php if ($line[0] == -1): ?> class="deletion"<?php elseif ($line[0] == 1): ?> class="addition"<?php endif; ?>>
                         <td class="ln"><?php if ($line[0] == -1 || $line[0] == 0): ?><?php echo $idxIn; ?><?php endif; ?></td>
                         <td class="ln"><?php if ($line[0] == 1 || $line[0] == 0): ?><?php echo $idxOut; ?><?php endif; ?></td>
-                        <td class="code"><pre style="white-space:pre;"><?php echo ($line[0] == -1 ? '-' : '+'); ?> <?php echo htmlentities($line[1], ENT_QUOTES, "utf-8"); ?></pre></td>
+                        <td class="code"><pre><code><?php echo ($line[0] == -1 ? '-' : '+'); ?> <?php echo htmlentities($line[1], ENT_QUOTES, "utf-8"); ?></code></pre></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endforeach; ?>

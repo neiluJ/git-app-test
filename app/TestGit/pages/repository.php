@@ -62,7 +62,7 @@
             <div id="main">
                 <div id="blobContents" class="main-view"></div>
                 <div id="commitContents" class="main-view"></div>
-                <div id="treeContents" class="main-view visible">
+                <div id="treeContents" class="main-view">
                     <table class="table table-striped">
                         <thead>
                           <tr>

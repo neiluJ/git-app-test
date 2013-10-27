@@ -190,13 +190,14 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
                 }
             });
 
+
             angular.forEach($scope.commits, function(commit, hash) {
                 if (data.jsonCommits[commit.hash] == undefined) {
                     $('.commit-'+ commit.hash.substring(0,6)).hide(500);
                 } else {
                     $('.commit-'+ commit.hash.substring(0,6)).show(500);
                 }
-            });
+            }); 
         }
 
         if (emitEvent == true) {
@@ -206,19 +207,34 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', function Comm
         _cache[MD5(url)] = data;
     };
     
+    var initComparision = function(commit1, commit2, path) {
+        var url = "./Compare"
+            +'.action?name='+ $scope.repoName
+            +'&compare='+ commit1.hash.substring(0,6) +'..'+ commit2.hash.substring(0,6) 
+            + (path != null && path != '' ? '&path='+ path : '') 
+            + '&ng=1';
+        
+        console.log(url);
+    };
+    
     $scope.browseRevisions = function($event, commit) {
         $event.preventDefault();
         if ($scope.currentCommit.hash == commit.hash) {
             return;
         }
         
-        $scope.currentCommit = commit;
-        
-        $($event.target).parent().parent().find('li.active').removeClass('active');
-        $($event.target).parent().addClass('active');
-        
-        $rootScope.$broadcast('changeCommit', commit, true);
-        $('#repoBranch').val(commit.hash);
+        if (!$event.ctrlKey) {
+            $scope.currentCommit = commit;
+
+            $($event.target).parent().parent().find('li.active').removeClass('active');
+            $($event.target).parent().addClass('active');
+
+            $rootScope.$broadcast('changeCommit', commit, true);
+            $('#repoBranch').val(commit.hash);
+        } else {
+            $($event.target).parent().parent().addClass('compare');
+            initComparision($scope.currentCommit, commit, $scope.path);
+        }
     };
     
     $scope.computeUrl = function(path) {
