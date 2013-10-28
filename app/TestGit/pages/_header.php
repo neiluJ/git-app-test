@@ -25,5 +25,6 @@
     <script src="<?php echo str_replace('/index.php', '', $vh->url()); ?>/js/jquery.min.js"></script>
     <script src="<?php echo str_replace('/index.php', '', $vh->url()); ?>/js/angular.min.js"></script>
     <script src="<?php echo str_replace('/index.php', '', $vh->url()); ?>/app/gitapp.js"></script>
+    <script src="<?php echo str_replace('/index.php', '', $vh->url()); ?>/app/services.js"></script>
     <script src="<?php echo str_replace('/index.php', '', $vh->url()); ?>/app/controllers.js"></script>
   </head>

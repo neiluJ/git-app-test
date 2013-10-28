@@ -1,4 +1,5 @@
 var gitApp = angular.module('gitApp', [
+    'gitAppServices',
     'gitAppControllers'
 ]);
 

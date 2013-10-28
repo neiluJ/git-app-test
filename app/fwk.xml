@@ -76,6 +76,9 @@
             <result name="success" type="php">
                 <param name="file">repository.php</param>
             </result>
+            <result name="ajax:success" type="chain">
+                <param name="actionName">BlobDisplay</param>
+            </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
                 <param name="errorMsg">File not found.</param>
