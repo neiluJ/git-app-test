@@ -147,8 +147,6 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
         return RepoNavService.showCommit($scope, commit);
     };
     
-    RepoNavService.init($scope.repoName, $scope.repoAction, $scope.path, $scope.branch, $scope);
-    
     $scope.$on('init', function() {
         if ($scope.repoAction == 'Repository' || $scope.repoAction == 'Blob') {
             RepoNavService.changePath($scope, $scope.path, ($scope.repoAction == 'Blob'), true, false);
@@ -165,6 +163,8 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
             RepoNavService.showCommit($scope, commit.hash, true);
         }
     });
+    
+    RepoNavService.init($scope.repoName, $scope.repoAction, $scope.path, $scope.branch, $scope);
 }]);
 
 // -----------------------
