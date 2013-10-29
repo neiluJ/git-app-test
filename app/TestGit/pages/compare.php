@@ -28,7 +28,6 @@
     </li>
 </ul>
 
-<h3>Changes</h3>
 <?php 
     foreach ($this->diff->getFiles() as $file):
         if (!empty($this->path) && strpos($file->getName(), $this->path, 0) === false) {

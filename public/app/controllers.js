@@ -80,68 +80,62 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
     });
     
     $scope.$on('compare', function(event, commit1, commit2, browsing) {
-       RepoNavService.showCompare($scope, commit1.hash.substring(0,6) + '..' + commit2.hash.substring(0,6), browsing);
+       RepoNavService.showCompare($scope, commit2.hash.substring(0,6) + '..' + commit1.hash.substring(0,6), browsing);
     });
     
     $scope.$watch('files', function() {
-       $('.repo-path').show(400);
-       $('#repo-commit').show(400);
        if (!$scope.files || $scope.files.length == 0) {
            $('#treeContents').hide();
            return;
        }
-       $('#commitContents').html("").hide();
+       $scope.blob          = null;
+       $scope.commitInfos   = null;
+       $scope.compareCommit = null;
+       $('.repo-path').show(400);
+       $('#repo-commit').show(200);
        $('#treeContents').show();
     });
     
     $scope.$watch('blob', function() {
-        $('.repo-path').show(400);
-        $('#repo-commit').show(400);
         if ($scope.blob == null) {
             $('#blobContents').html("").hide();
             return;
         }
-        $('#commitContents').html("").hide();
+        $scope.files         = [];
+        $scope.commitInfos   = null;
+        $scope.compareCommit = null;
+        $('.repo-path').show(400);
+        $('#repo-commit').show(200);
         $('#blobContents').html($scope.blob).show();
     });
     
     $scope.$watch('commitInfos', function() {
         if ($scope.commitInfos == null) {
-            $('#commitContents').html("").hide();
+            $('#commitContents').html("");
             return;
         }
-        $('#treeContents').hide();
-        $('#blobContents').html("").hide();
-        $('#repo-commit').show(400);
+        $scope.blob             = null;
+        $scope.files            = [];
+        
         $('.repo-path').hide(400);
-        $('#commitContents').html($scope.commitInfos).show();
+        $('#commitContents').show();
+        $('#repo-commit').show(200);
+        
         $('.commits-list').find('li.active').removeClass('active');
         $('.commits-list').find('a.commit-'+ $scope.commitInfosHash.substring(0,6)).parent().parent().addClass('active');
     });
     
     $scope.$watch('compareCommit', function() {
         if ($scope.compareCommit == null) {
-            $('#commitContents').html("").hide();
+            $('#commitContents').html("");
             return;
         }
-        $('#treeContents').hide();
-        $('#blobContents').html("").hide();
-        $('#repo-commit').hide(400);
+        $scope.blob             = null;
+        $scope.files            = [];
         $('.repo-path').hide(400);
-        $('#commitContents').html($scope.compareCommit).show();
+        $('#repo-commit').hide(200);
+        $('#commitContents').show();
     });
-    
-    $scope.browseCompare = function(url) {
-        $('#treeContents').hide();
-        $('#blobContents').html("").hide();
-        $('#repo-commit').hide(400);
-        $('.repo-path').hide(400);
-        $http.get(url).success(function(data) {
-            $('#commitContents').html(data).show();
-        }).error(function() {
-            alert('Unable to load comparision');
-        });
-    };
     
     $scope.navigateToFile = function($event, file) {
         if ($event) {
@@ -159,6 +153,15 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
         return RepoNavService.showCommit($scope, commit, true);
     };
     
+    $scope.navigateToRoot = function($event, hash) {
+        if ($event) {
+            $event.preventDefault();
+        }
+        
+        $scope.branch = hash;
+        return RepoNavService.changePath($scope, null, false, ($event != undefined ? true : false), true);
+    };
+    
     $scope.$on('init', function() {
         if ($scope.repoAction == 'Repository' || $scope.repoAction == 'Blob') {
             RepoNavService.changePath($scope, $scope.path, ($scope.repoAction == 'Blob'), false, false);
@@ -171,6 +174,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
     });
     
     $scope.$on('changeCommit', function($event, commit) { 
+        $scope.branch = commit.hash;
         if ($scope.repoAction == 'Repository' || $scope.repoAction == 'Blob') {
             RepoNavService.changePath($scope, $scope.path, ($scope.repoAction == 'Blob'), true, false);
         } else {
@@ -206,17 +210,6 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', 'RepoNavServi
        $rootScope.$broadcast('currentCommitChange', $scope.currentCommit);
     });
     
-    var initComparision = function(commit1, commit2) {
-        var path = $('#repoPath').val(),
-            url = "./Compare"
-            +'.action?name='+ $scope.repoName
-            +'&compare='+ commit2.hash.substring(0,6) +'..'+ commit1.hash.substring(0,6) 
-            + ($scope.path != null && $scope.path != '' ? '&path='+ $scope.path : '') 
-            + '&ng=1';
-        
-        $rootScope.$broadcast('compare', url);
-    };
-    
     $scope.browseRevisions = function($event, commit) {
         $event.preventDefault();
         if ($scope.currentCommit.hash == commit.hash) {
@@ -237,11 +230,6 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', 'RepoNavServi
         }
     };
     
-    setTimeout(function() {
-        RepoNavService.loadCommits($scope, true, ($scope.repoAction == 'Commit' ? $('#commitHash').val() : false));
-        $rootScope.$broadcast('init')
-    }, 1);
-    
     $rootScope.$on('changePath', function(event) {
        RepoNavService.loadCommits($scope, true);
     });
@@ -249,4 +237,9 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', 'RepoNavServi
     $scope.$on('changedCommit', function($event, commit) {
        $rootScope.$broadcast('changeCommit', commit);
     });
+    
+    setTimeout(function() {
+        RepoNavService.loadCommits($scope, true, ($scope.repoAction == 'Commit' ? $('#commitHash').val() : false));
+        $rootScope.$broadcast('init')
+    }, 1);
 }]);

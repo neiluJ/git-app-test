@@ -21,9 +21,6 @@ RepoNavService.prototype.init = function(name, action, path, branch, $scope) {
     
     window.__repoNav    = this;
     this.lastScope      = $scope;
-    
-    // load the view
-    console.log('initializing : '+ this.repoAction +': '+ (this.repoPath || '/') +' ('+ this.repoBranch +')');
 };
 
 RepoNavService.prototype.defineCurrentCommit = function($scope, commit, browsing) {
@@ -33,8 +30,6 @@ RepoNavService.prototype.defineCurrentCommit = function($scope, commit, browsing
     if (browsing) {
         $scope.$broadcast('changedCommit', commit);
     }
-    
-    console.log('changed commit : '+ this.repoAction +' -> '+ this.repoPath +' ('+ this.repoBranch +'): '+ commit.hash);
 };
 
 RepoNavService.prototype.changePath = function($scope, newPath, isBlob, browsing, notifyPath) {
@@ -45,7 +40,7 @@ RepoNavService.prototype.changePath = function($scope, newPath, isBlob, browsing
     
     var url = "./"+ this.repoAction 
             +'.action?name='+ this.repoName 
-            +'&branch='+ (this.currentCommit == undefined ? this.repoBranch : this.currentCommit.hash)
+            +'&branch='+ $scope.branch 
             + (this.repoPath != null && this.repoPath != '' ? '&path='+ this.repoPath : '') 
             + '&ng=1',  self = this;
     
@@ -85,7 +80,8 @@ RepoNavService.prototype.showCommit = function($scope, commit, browsing) {
     
     this.$http.get(url).success(function(data) {
         $scope.commitInfosHash = commit;
-        $scope.commitInfos = data;
+        $scope.commitInfos = Math.random();
+        $('#commitContents').html(data);
         self.navigate($scope, browsing);
     }).error(function() {
         alert('Unable to load commit');
@@ -104,7 +100,8 @@ RepoNavService.prototype.showCompare = function($scope, comparision, browsing) {
     this.repoCompare = comparision;
     
     this.$http.get(url).success(function(data) {
-        $scope.compareCommit = data;
+        $scope.compareCommit = Math.random();
+        $('#commitContents').html(data);
         self.navigate($scope, browsing);
     }).error(function() {
         alert('Unable to load comparision');
@@ -168,7 +165,7 @@ RepoNavService.prototype.loadCommits = function($scope, merge, current) {
 
 RepoNavService.prototype.navigate = function($scope, pushState) {
     
-    if (!pushState) { return; }
+    if (!pushState) {return;}
     
     var url = "./"+ this.repoAction +'.action?name='+ this.repoName;
             
@@ -189,11 +186,10 @@ RepoNavService.prototype.navigate = function($scope, pushState) {
         currentCommit: (this.currentCommit == undefined ? this.repoBranch : this.currentCommit.hash),
         comparision: this.repoCompare
     }, null, url);
-    console.log(url, this.currentCommit);    
 };
 
 RepoNavService.prototype.reverseNavigate = function(state) {
-    if (!state || !this.lastScope) { return; }
+    if (!state || !this.lastScope) {return;}
     
     if (state.action == 'Repository' || state.action == 'Blob') {
         this.changePath(this.lastScope, state.path, (state.action == 'Blob'), false, true);
@@ -210,7 +206,7 @@ gitAppServices.factory('RepoNavService', ['$http', function($http) {
 }]);
 
 window.onpopstate = function(event) {
-    if (!window.__repoNav) { return; }
+    if (!window.__repoNav) {return;}
     window.__repoNav.reverseNavigate(event.state);
 };
 /*

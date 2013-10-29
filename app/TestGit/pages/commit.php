@@ -43,7 +43,6 @@
     </li>
 </ul>
 
-<h3>Changes</h3>
 <?php 
     foreach ($this->diff->getFiles() as $file): 
         $changes = $file->getChanges();
@@ -94,10 +93,3 @@
     <?php endif; ?>
 </div>
 <?php endforeach; ?>
-<script type="text/javascript">
-$(function() {
-   if (!$('.commit-collapse').parent().hasClass('collapsed')) {
-       $('.commit-collapse').click(); 
-   }
-});
-</script>
