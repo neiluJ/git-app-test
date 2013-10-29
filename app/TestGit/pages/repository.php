@@ -38,6 +38,7 @@
     <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->path; ?>" />
     <input type="hidden" id="repoBranch" name="repoBranch" ng-bind="branch" value="<?php echo ($this->repoAction == 'Commit' ? $this->hash : $this->branch); ?>" />
     <input type="hidden" id="commitHash" name="commitHash" value="<?php echo (isset($this->hash) ? $this->hash : null); ?>" />
+    <input type="hidden" id="repoCompare" name="repoCompare" value="<?php echo (isset($this->compare) ? $this->compare : null); ?>" />
     
     <div class="row">
         <div class="col-xs-5 col-sm-5 col-md-3 left-list" ng-controller="CommitsCtrl">

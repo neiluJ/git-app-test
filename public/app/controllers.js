@@ -40,8 +40,8 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
     $scope.pathParts    = [];
     $scope.blob         = "";
     $scope.commitInfos  = "";
-    $scope.commitInfosHash = "";
-    
+    $scope.commitInfosHash   = "";
+    $scope.compareCommit     = "";
     $scope.currentCommitHash = null;
     $scope.currentCommitMessage = null;
     $scope.currentCommitDate = null;
@@ -79,8 +79,8 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
        computePathParts(newPath);
     });
     
-    $scope.$on('compare', function(event, url) {
-       $scope.browseCompare(url);
+    $scope.$on('compare', function(event, commit1, commit2, browsing) {
+       RepoNavService.showCompare($scope, commit1.hash.substring(0,6) + '..' + commit2.hash.substring(0,6), browsing);
     });
     
     $scope.$watch('files', function() {
@@ -119,6 +119,18 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
         $('.commits-list').find('a.commit-'+ $scope.commitInfosHash.substring(0,6)).parent().parent().addClass('active');
     });
     
+    $scope.$watch('compareCommit', function() {
+        if ($scope.compareCommit == null) {
+            $('#commitContents').html("").hide();
+            return;
+        }
+        $('#treeContents').hide();
+        $('#blobContents').html("").hide();
+        $('#repo-commit').hide(400);
+        $('.repo-path').hide(400);
+        $('#commitContents').html($scope.compareCommit).show();
+    });
+    
     $scope.browseCompare = function(url) {
         $('#treeContents').hide();
         $('#blobContents').html("").hide();
@@ -149,19 +161,21 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
     
     $scope.$on('init', function() {
         if ($scope.repoAction == 'Repository' || $scope.repoAction == 'Blob') {
-            RepoNavService.changePath($scope, $scope.path, ($scope.repoAction == 'Blob'), true, false);
+            RepoNavService.changePath($scope, $scope.path, ($scope.repoAction == 'Blob'), false, false);
             computePathParts($scope.path);
         } else if ($scope.repoAction == 'Commit') {
-            RepoNavService.showCommit($scope, $('#commitHash').val(), true);
+            RepoNavService.showCommit($scope, $('#commitHash').val(), false);
+        } else if ($scope.repoAction == 'Compare') {
+            RepoNavService.showCompare($scope, $('#repoCompare').val(), false);
         }
     });
     
     $scope.$on('changeCommit', function($event, commit) { 
         if ($scope.repoAction == 'Repository' || $scope.repoAction == 'Blob') {
             RepoNavService.changePath($scope, $scope.path, ($scope.repoAction == 'Blob'), true, false);
-        } else if ($scope.repoAction == 'Commit') {
+        } else {
             RepoNavService.showCommit($scope, commit.hash, true);
-        }
+        } 
     });
     
     RepoNavService.init($scope.repoName, $scope.repoAction, $scope.path, $scope.branch, $scope);
@@ -219,8 +233,7 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', 'RepoNavServi
             $($event.target).parent().parent().parent().find('li.compare').removeClass('compare');
             $($event.target).parent().parent().addClass('compare');
             
-            return RepoNavService.showCompare($scope.currentCommit, commit, true);
-            initComparision($scope.currentCommit, commit, $scope.path);
+            $rootScope.$broadcast('compare', $scope.currentCommit, commit, true);
         }
     };
     
@@ -229,7 +242,7 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', 'RepoNavServi
         $rootScope.$broadcast('init')
     }, 1);
     
-    $rootScope.$on('changePath', function(event, newPath) {
+    $rootScope.$on('changePath', function(event) {
        RepoNavService.loadCommits($scope, true);
     });
     

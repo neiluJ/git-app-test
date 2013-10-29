@@ -87,11 +87,22 @@ RepoNavService.prototype.showCommit = function($scope, commit, browsing) {
     });
 };
 
-RepoNavService.prototype.showCompare = function(commit, commit2, browsing) {
+RepoNavService.prototype.showCompare = function($scope, comparision, browsing) {
     
-    this.navigate(browsing);
+    var url = "./Compare"
+            +'.action?name='+ this.repoName 
+            +'&compare='+ comparision
+            +'&path='+ this.repoPath
+            +'&ng=1', self = this;
     
-    console.log('showing compare between : '+ commit.hash + ' and '+ commit2.hash);
+    this.repoAction = $scope.repoAction = 'Compare';
+    
+    this.$http.get(url).success(function(data) {
+        $scope.compareCommit = data;
+        self.navigate(browsing);
+    }).error(function() {
+        alert('Unable to load comparision');
+    });
 };
 
 RepoNavService.prototype._loadCommitsFromCache = function(url) {
