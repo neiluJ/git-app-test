@@ -142,5 +142,14 @@
             </result>
         </action>
         <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction" />
+        <action name="Branches" shortcut="TestGit\Controllers\Branches:show">
+            <result name="success" type="php">
+                <param name="file">branches.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Problem occured while loading branches</param>
+            </result>
+        </action>
     </actions>
 </fwk>

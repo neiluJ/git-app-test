@@ -266,3 +266,31 @@ ul.diff-files li.stats span {
     margin-right:5px;
     font-size: 16px;
 }
+
+ul.tags-list {
+    list-style:none;
+    list-style-type:none;
+    list-style-position: inside;
+    display:block;
+    padding:0;
+    margin:0;
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+ul.tags-list li {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: solid 1px #eee;
+    margin-left:0;
+    padding-left:0;
+}
+
+h3 i {
+    vertical-align: top;
+    margin-top:-2px;
+}
+
+ul.tags-list li a i {
+    margin-top:2px;
+}

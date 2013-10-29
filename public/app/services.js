@@ -11,12 +11,16 @@ var RepoNavService = function($http) {
     this.commitsCache   = [];
 };
 
-RepoNavService.prototype.init = function(name, action, path, branch) {
+RepoNavService.prototype.init = function(name, action, path, branch, $scope) {
     this.repoName       = name;
     this.repoAction     = action;
     this.repoPath       = path;
     this.repoBranch     = branch;
     this.currentCommit  = undefined;
+    this.repoCompare    = undefined;
+    
+    window.__repoNav    = this;
+    this.lastScope      = $scope;
     
     // load the view
     console.log('initializing : '+ this.repoAction +': '+ (this.repoPath || '/') +' ('+ this.repoBranch +')');
@@ -49,7 +53,7 @@ RepoNavService.prototype.changePath = function($scope, newPath, isBlob, browsing
         if (notifyPath == true) {
             $scope.$emit('changePath', newPath, true);
         }
-        self.navigate(browsing);
+        self.navigate($scope, browsing);
     };
     
     if (this.repoAction == 'Repository') {
@@ -77,11 +81,12 @@ RepoNavService.prototype.showCommit = function($scope, commit, browsing) {
     var url = './Commit.action?name='+ this.repoName +'&hash='+ commit, self = this;
     this.repoAction     = 'Commit';
     $scope.repoAction   = 'Commit';
+    this.currentCommit  = commit;
     
     this.$http.get(url).success(function(data) {
         $scope.commitInfosHash = commit;
         $scope.commitInfos = data;
-        self.navigate(browsing);
+        self.navigate($scope, browsing);
     }).error(function() {
         alert('Unable to load commit');
     });
@@ -96,10 +101,11 @@ RepoNavService.prototype.showCompare = function($scope, comparision, browsing) {
             +'&ng=1', self = this;
     
     this.repoAction = $scope.repoAction = 'Compare';
+    this.repoCompare = comparision;
     
     this.$http.get(url).success(function(data) {
         $scope.compareCommit = data;
-        self.navigate(browsing);
+        self.navigate($scope, browsing);
     }).error(function() {
         alert('Unable to load comparision');
     });
@@ -116,7 +122,7 @@ RepoNavService.prototype._loadCommitsFromCache = function(url) {
 RepoNavService.prototype.loadCommits = function($scope, merge, current) {
     var url = "./Commits"
             +'.action?name='+ this.repoName 
-            +'&branch='+ (this.currentCommit == undefined ? this.repoBranch : this.currentCommit.hash)
+            +'&branch='+ (this.currentCommit == undefined ? this.repoBranch : (angular.isObject(this.currentCommit) ? this.currentCommit.hash : this.currentCommit))
             + (this.repoPath != null && this.repoPath != '' ? '&path='+ this.repoPath : '') 
             + '&ng=1', self = this;
     
@@ -160,21 +166,53 @@ RepoNavService.prototype.loadCommits = function($scope, merge, current) {
     }
 };
 
-RepoNavService.prototype.navigate = function(pushState) {
+RepoNavService.prototype.navigate = function($scope, pushState) {
     
-    var url = "./"+ this.repoAction 
-            +'.action?name='+ this.repoName 
-            +'&branch='+ (this.currentCommit == undefined ? this.repoBranch : this.currentCommit.hash)
-            + (this.repoPath != null && this.repoPath != '' ? '&path='+ this.repoPath : '') 
-            + '&ng=1';
-        
-    // console.log(url);    
+    if (!pushState) { return; }
+    
+    var url = "./"+ this.repoAction +'.action?name='+ this.repoName;
+            
+    if (this.repoAction == 'Repository' || this.repoAction == 'Blob') {
+        url += '&branch='+ (this.currentCommit == undefined ? this.repoBranch : (angular.isObject(this.currentCommit) ? this.currentCommit.hash : this.currentCommit))
+         + (this.repoPath != null && this.repoPath != '' ? '&path='+ this.repoPath : '');
+    } else if (this.repoAction == 'Commit') {
+        url += '&hash='+ (this.currentCommit == undefined ? this.repoBranch : (angular.isObject(this.currentCommit) ? this.currentCommit.hash : this.currentCommit));    
+    } else if (this.repoAction == 'Compare') {
+        url += '&compare='+ this.repoCompare
+            + (this.repoPath != null && this.repoPath != '' ? '&path='+ this.repoPath : '');
+    }
+    
+    window.history.pushState({
+        action: this.repoAction,
+        path: this.repoPath,
+        branch: this.repoBranch,
+        currentCommit: (this.currentCommit == undefined ? this.repoBranch : this.currentCommit.hash),
+        comparision: this.repoCompare
+    }, null, url);
+    console.log(url, this.currentCommit);    
 };
+
+RepoNavService.prototype.reverseNavigate = function(state) {
+    if (!state || !this.lastScope) { return; }
+    
+    if (state.action == 'Repository' || state.action == 'Blob') {
+        this.changePath(this.lastScope, state.path, (state.action == 'Blob'), false, true);
+    } else if (state.action == 'Commit') {
+        this.showCommit(this.lastScope, state.currentCommit, false);
+    } else if (state.action == 'Compare') {
+        this.showCompare(this.lastScope, state.comparision, false);
+    }
+};
+
 
 gitAppServices.factory('RepoNavService', ['$http', function($http) {
     return new RepoNavService($http);
 }]);
 
+window.onpopstate = function(event) {
+    if (!window.__repoNav) { return; }
+    window.__repoNav.reverseNavigate(event.state);
+};
 /*
  * window.onpopstate = function(event) {
         var state = event.state;

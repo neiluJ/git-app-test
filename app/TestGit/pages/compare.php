@@ -1,4 +1,4 @@
-<h4><a style="float:right" class="btn btn-default btn-xs" href="<?php echo $this->_helper->url('Diff', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>">Raw diff</a> Differences between <strong><a href="<?php $this->_helper->url('Compare', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>"><?php echo $this->compare; ?></a></strong></h4>
+<h4><a style="float:right" class="btn btn-default btn-xs" href="<?php echo $this->_helper->url('Diff', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>">Raw diff</a> Differences between <strong><a href="<?php echo $this->_helper->url('Compare', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>"><?php echo $this->compare; ?></a></strong></h4>
 
 <ul class="diff-files" style="clear:both;">
     <?php $files = 0; $adds = 0; $dels = 0; ?>
@@ -71,7 +71,7 @@
                     <tr<?php if ($line[0] == -1): ?> class="deletion"<?php elseif ($line[0] == 1): ?> class="addition"<?php endif; ?>>
                         <td class="ln"><?php if ($line[0] == -1 || $line[0] == 0): ?><?php echo $idxIn; ?><?php endif; ?></td>
                         <td class="ln"><?php if ($line[0] == 1 || $line[0] == 0): ?><?php echo $idxOut; ?><?php endif; ?></td>
-                        <td class="code"><pre><code><?php echo ($line[0] == -1 ? '-' : '+'); ?> <?php echo htmlentities($line[1], ENT_QUOTES, "utf-8"); ?></code></pre></td>
+                        <td class="code"><pre><code><?php echo ($line[0] == -1 ? '-' : ($line[0] == +1 ? '+' : ' ')); ?> <?php echo htmlentities($line[1], ENT_QUOTES, "utf-8"); ?></code></pre></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endforeach; ?>

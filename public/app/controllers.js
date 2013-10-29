@@ -156,7 +156,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
             $event.preventDefault();
         }
         
-        return RepoNavService.showCommit($scope, commit);
+        return RepoNavService.showCommit($scope, commit, true);
     };
     
     $scope.$on('init', function() {
