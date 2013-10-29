@@ -8,7 +8,7 @@
         <?php $parents = $this->currentCommit->getParents(); if (!count($parents)): ?>
             <pre><strong>initial commit</strong></pre>
         <?php elseif (count($parents) == 1): ?>
-            <pre><strong>parent</strong> <a href="#"><?php echo $parents[0]->getHash(); ?></a>, </pre>
+            <pre><strong>parent</strong> <a href="#" ng-click="navigateToCommit($event, '<?php echo $parents[0]->getHash(); ?>')"><?php echo $parents[0]->getHash(); ?></a>, </pre>
         <?php else: ?>
             <pre><strong>parents</strong> <?php foreach($parents as $parent): ?><a href="#"><?php echo substr($parent->getHash(), 0, 6); ?></a>, <?php endforeach; ?></pre>
         <?php endif; ?>
@@ -51,7 +51,8 @@
         }
 ?>
 <div class="diff-head" style="clear:both;">
-    <a href="#" class="btn btn-xs btn-default" style="float:right;">View file @<strong><?php echo substr($this->currentCommit->getHash(),0,6); ?></strong></a>
+    <!-- <?php echo $this->_helper->url('Blob', array('name' => $this->name, 'branch' => $this->currentCommit->getHash(), 'path' => $file->getName()), true); ?> -->
+    <a href="#" ng-click="navigateToBlob($event, '<?php echo $file->getName(); ?>', '<?php echo $this->currentCommit->getHash(); ?>');" class="btn btn-xs btn-default" style="float:right;">View file @<strong><?php echo substr($this->currentCommit->getHash(),0,6); ?></strong></a>
     <h4><a name="<?php echo $file->getName(); ?>"></a> <?php echo $file->getName(); ?></h4>
 </div>
 

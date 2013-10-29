@@ -35,7 +35,7 @@ gitApp.controller('RepositoryMainCtrl', ['$scope', '$http', 'RepoNavService', fu
 // 
 // This controller is responsible of the global repository navigation.
 //
-gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'RepoNavService', function RepositoryDisplayCtrl($scope, $rootScope, $http, RepoNavService) {
+gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', '$compile', 'RepoNavService', function RepositoryDisplayCtrl($scope, $rootScope, $http, $compile, RepoNavService) {
     $scope.files        = [];
     $scope.pathParts    = [];
     $scope.blob         = "";
@@ -118,9 +118,10 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
         $scope.files            = [];
         
         $('.repo-path').hide(400);
-        $('#commitContents').show();
         $('#repo-commit').show(200);
-        
+        $('#commitContents').show().html(
+            $compile($('#commitContents').html())($scope)
+        );
         $('.commits-list').find('li.active').removeClass('active');
         $('.commits-list').find('a.commit-'+ $scope.commitInfosHash.substring(0,6)).parent().parent().addClass('active');
     });
@@ -134,7 +135,9 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
         $scope.files            = [];
         $('.repo-path').hide(400);
         $('#repo-commit').hide(200);
-        $('#commitContents').show();
+        $('#commitContents').show().html(
+            $compile($('#commitContents').html())($scope)
+        );
     });
     
     $scope.navigateToFile = function($event, file) {
@@ -143,6 +146,17 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
         }
         
         return RepoNavService.changePath($scope, file.realpath, !file.directory, ($event != undefined ? true : false), true);
+    };
+    
+    $scope.navigateToBlob = function($event, realpath, hash) {
+        if ($event) {
+            $event.preventDefault();
+        }
+        if (hash !== undefined && hash != null) {
+            $scope.branch = hash;
+        }
+        
+        return RepoNavService.changePath($scope, realpath, true, ($event != undefined ? true : false), true);
     };
     
     $scope.navigateToCommit = function($event, commit) {
@@ -164,12 +178,12 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', 'Re
     
     $scope.$on('init', function() {
         if ($scope.repoAction == 'Repository' || $scope.repoAction == 'Blob') {
-            RepoNavService.changePath($scope, $scope.path, ($scope.repoAction == 'Blob'), false, false);
+            RepoNavService.changePath($scope, $scope.path, ($scope.repoAction == 'Blob'), true, false);
             computePathParts($scope.path);
         } else if ($scope.repoAction == 'Commit') {
-            RepoNavService.showCommit($scope, $('#commitHash').val(), false);
+            RepoNavService.showCommit($scope, $('#commitHash').val(), true);
         } else if ($scope.repoAction == 'Compare') {
-            RepoNavService.showCompare($scope, $('#repoCompare').val(), false);
+            RepoNavService.showCompare($scope, $('#repoCompare').val(), true);
         }
     });
     
@@ -230,8 +244,10 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', 'RepoNavServi
         }
     };
     
-    $rootScope.$on('changePath', function(event) {
-       RepoNavService.loadCommits($scope, true);
+    $rootScope.$on('changePath', function(event, newPath, pathChanged) {
+        if (pathChanged) {
+            RepoNavService.loadCommits($scope, true);
+        }
     });
     
     $scope.$on('changedCommit', function($event, commit) {

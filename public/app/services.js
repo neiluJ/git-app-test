@@ -15,6 +15,7 @@ RepoNavService.prototype.init = function(name, action, path, branch, $scope) {
     this.repoName       = name;
     this.repoAction     = action;
     this.repoPath       = path;
+    this.oldRepoPath    = "";
     this.repoBranch     = branch;
     this.currentCommit  = undefined;
     this.repoCompare    = undefined;
@@ -34,9 +35,10 @@ RepoNavService.prototype.defineCurrentCommit = function($scope, commit, browsing
 
 RepoNavService.prototype.changePath = function($scope, newPath, isBlob, browsing, notifyPath) {
      
-    this.repoPath       = newPath;
+    this.oldRepoPath    = this.repoPath;
     this.repoAction     = (isBlob ? 'Blob' : 'Repository');
     $scope.repoAction   = this.repoAction;
+    this.repoPath = $scope.path = newPath;
     
     var url = "./"+ this.repoAction 
             +'.action?name='+ this.repoName 
@@ -46,16 +48,15 @@ RepoNavService.prototype.changePath = function($scope, newPath, isBlob, browsing
     
     var afterHttpGet = function($scope, newPath, browsing, notifyPath) {
         if (notifyPath == true) {
-            $scope.$emit('changePath', newPath, true);
+            $scope.$emit('changePath', newPath, true, (self.oldRepoPath == newPath));
         }
         self.navigate($scope, browsing);
     };
     
     if (this.repoAction == 'Repository') {
         this.$http.get(url).success(function(data) {
-            $scope.blob     = "";
-            $scope.files    = data.files;
-            $scope.path     = newPath;
+            $scope.blob         = "";
+            $scope.files        = data.files;
             afterHttpGet($scope, newPath, browsing, notifyPath);
         }).error(function() {
             alert('Unable to load repository tree');
@@ -64,7 +65,6 @@ RepoNavService.prototype.changePath = function($scope, newPath, isBlob, browsing
         this.$http.get(url).success(function(data) {
             $scope.files    = [];
             $scope.blob     = data;
-            $scope.path     = newPath;
             afterHttpGet($scope, newPath, browsing, notifyPath);
         }).error(function() {
             alert('Unable to load blob');
@@ -73,14 +73,15 @@ RepoNavService.prototype.changePath = function($scope, newPath, isBlob, browsing
 };
 
 RepoNavService.prototype.showCommit = function($scope, commit, browsing) {
-    var url = './Commit.action?name='+ this.repoName +'&hash='+ commit, self = this;
-    this.repoAction     = 'Commit';
-    $scope.repoAction   = 'Commit';
-    this.currentCommit  = commit;
+    var url = './Commit.action?name='+ this.repoName +'&hash='+ commit, 
+        self = this;
     
     this.$http.get(url).success(function(data) {
-        $scope.commitInfosHash = commit;
-        $scope.commitInfos = Math.random();
+        self.currentCommit      = commit;
+        $scope.commitInfosHash  = commit;
+        $scope.commitInfos      = Math.random();
+        self.repoAction = $scope.repoAction = 'Commit';
+        self.repoBranch         = commit;
         $('#commitContents').html(data);
         self.navigate($scope, browsing);
     }).error(function() {
@@ -89,17 +90,15 @@ RepoNavService.prototype.showCommit = function($scope, commit, browsing) {
 };
 
 RepoNavService.prototype.showCompare = function($scope, comparision, browsing) {
-    
     var url = "./Compare"
             +'.action?name='+ this.repoName 
             +'&compare='+ comparision
             +'&path='+ this.repoPath
             +'&ng=1', self = this;
     
-    this.repoAction = $scope.repoAction = 'Compare';
-    this.repoCompare = comparision;
-    
     this.$http.get(url).success(function(data) {
+        self.repoAction = $scope.repoAction = 'Compare';
+        self.repoCompare = comparision;
         $scope.compareCommit = Math.random();
         $('#commitContents').html(data);
         self.navigate($scope, browsing);
@@ -126,8 +125,10 @@ RepoNavService.prototype.loadCommits = function($scope, merge, current) {
     var applyCommits = function($scope, url, data, merge, current) {
         if (!current) {
             $scope.currentCommit = data.jsonCurrentCommit;
+            self.currentCommit = data.jsonCurrentCommit;
         } else {
             $scope.currentCommit = data.jsonCommits[current];
+            self.currentCommit  = data.jsonCommits[current];
         }
         
         if (!merge) {
@@ -141,9 +142,9 @@ RepoNavService.prototype.loadCommits = function($scope, merge, current) {
             
             for(var key in $scope.commits) {
                 if (data.jsonCommits[key] == undefined) {
-                    $('.commit-'+ key.substring(0,6)).hide(500);
+                    $('.commit-'+ key.substring(0,6)).hide(250);
                 } else {
-                    $('.commit-'+ key.substring(0,6)).show(500);
+                    $('.commit-'+ key.substring(0,6)).show(250);
                 }
             }
         }
@@ -167,10 +168,18 @@ RepoNavService.prototype.navigate = function($scope, pushState) {
     
     if (!pushState) {return;}
     
-    var url = "./"+ this.repoAction +'.action?name='+ this.repoName;
+    var url = "./"+ this.repoAction +'.action?name='+ this.repoName, 
+        self = this,
+        data = {
+        action: this.repoAction,
+        path: this.repoPath,
+        branch: this.repoBranch,
+        currentCommit: (this.currentCommit.hash ? this.currentCommit.hash : this.currentCommit),
+        comparision: this.repoCompare
+    };
             
     if (this.repoAction == 'Repository' || this.repoAction == 'Blob') {
-        url += '&branch='+ (this.currentCommit == undefined ? this.repoBranch : (angular.isObject(this.currentCommit) ? this.currentCommit.hash : this.currentCommit))
+        url += '&branch='+ (this.currentCommit.hash ? this.currentCommit.hash : this.currentCommit)
          + (this.repoPath != null && this.repoPath != '' ? '&path='+ this.repoPath : '');
     } else if (this.repoAction == 'Commit') {
         url += '&hash='+ (this.currentCommit == undefined ? this.repoBranch : (angular.isObject(this.currentCommit) ? this.currentCommit.hash : this.currentCommit));    
@@ -179,19 +188,15 @@ RepoNavService.prototype.navigate = function($scope, pushState) {
             + (this.repoPath != null && this.repoPath != '' ? '&path='+ this.repoPath : '');
     }
     
-    window.history.pushState({
-        action: this.repoAction,
-        path: this.repoPath,
-        branch: this.repoBranch,
-        currentCommit: (this.currentCommit == undefined ? this.repoBranch : this.currentCommit.hash),
-        comparision: this.repoCompare
-    }, null, url);
+    window.history.pushState(data, null, url);
 };
 
 RepoNavService.prototype.reverseNavigate = function(state) {
     if (!state || !this.lastScope) {return;}
     
     if (state.action == 'Repository' || state.action == 'Blob') {
+        this.currentCommit  = state.currentCommit;
+        this.branch         = state.branch;
         this.changePath(this.lastScope, state.path, (state.action == 'Blob'), false, true);
     } else if (state.action == 'Commit') {
         this.showCommit(this.lastScope, state.currentCommit, false);
