@@ -1,19 +1,19 @@
 <div class="commit-head">
     <?php foreach ($this->currentCommit->getIncludingBranches(true, false) as $branch): ?>
-        <i class="icon-sitemap"></i> <a href="#"><?php echo $branch->getName(); ?></a>,
+        <i class="icon-sitemap"></i> <a href="<?php echo $this->_helper->url('Repository', array('name' => $this->name, 'branch' => $branch->getName()), true); ?>"><?php echo $branch->getName(); ?></a>,
     <?php endforeach; ?>
 </div>
 <div class="commit-infos">
-    <div class="commit" style="float:right">
+    <p class="commit-txt" style="float:right; text-align:right; white-space: normal">
         <?php $parents = $this->currentCommit->getParents(); if (!count($parents)): ?>
-            <pre><strong>initial commit</strong></pre>
+            <strong>initial commit</strong>
         <?php elseif (count($parents) == 1): ?>
-            <pre><strong>parent</strong> <a href="#" ng-click="navigateToCommit($event, '<?php echo $parents[0]->getHash(); ?>')"><?php echo $parents[0]->getHash(); ?></a>, </pre>
+            <strong>parent</strong> <a href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $parents[0]->getHash()), true); ?>" ng-click="navigateToCommit($event, '<?php echo $parents[0]->getHash(); ?>')"><?php echo $parents[0]->getHash(); ?></a>
         <?php else: ?>
-            <pre><strong>parents</strong> <?php foreach($parents as $parent): ?><a href="#"><?php echo substr($parent->getHash(), 0, 6); ?></a>, <?php endforeach; ?></pre>
+            <strong>parents</strong> <?php foreach($parents as $parent): ?><a ng-click="navigateToCommit($event, '<?php echo $parent->getHash(); ?>')" href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $parent->getHash()), true); ?>"><?php echo substr($parent->getHash(), 0, 6); ?></a>, <?php endforeach; ?>
         <?php endif; ?>
-    </div>
-    <p class="author"><i class="icon-user"></i> <span><?php echo $this->currentCommit->getCommitterName(); ?></span> authored on <span class="date"> <?php echo $this->currentCommit->getCommitterDate()->format('l F d Y H:i:s'); ?></span></p>
+    </p>
+    <p class="author"><i class="glyphicon glyphicon-user"></i> <span><?php echo $this->currentCommit->getCommitterName(); ?></span> authored on <span class="date"> <?php echo $this->currentCommit->getCommitterDate()->format('l F d Y H:i:s'); ?></span></p>
 </div>
 
 <h3>Diff informations</h3>
@@ -51,8 +51,7 @@
         }
 ?>
 <div class="diff-head" style="clear:both;">
-    <!-- <?php echo $this->_helper->url('Blob', array('name' => $this->name, 'branch' => $this->currentCommit->getHash(), 'path' => $file->getName()), true); ?> -->
-    <a href="#" ng-click="navigateToBlob($event, '<?php echo $file->getName(); ?>', '<?php echo $this->currentCommit->getHash(); ?>');" class="btn btn-xs btn-default" style="float:right;">View file @<strong><?php echo substr($this->currentCommit->getHash(),0,6); ?></strong></a>
+    <a href="<?php echo $this->_helper->url('Blob', array('name' => $this->name, 'branch' => $this->currentCommit->getHash(), 'path' => $file->getName()), true); ?>" ng-click="navigateToBlob($event, '<?php echo $file->getName(); ?>', '<?php echo $this->currentCommit->getHash(); ?>');" class="btn btn-xs btn-default" style="float:right;">View file @<strong><?php echo substr($this->currentCommit->getHash(),0,6); ?></strong></a>
     <h4><a name="<?php echo $file->getName(); ?>"></a> <?php echo $file->getName(); ?></h4>
 </div>
 
