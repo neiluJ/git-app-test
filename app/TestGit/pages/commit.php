@@ -1,5 +1,5 @@
 <div class="commit-head">
-    <?php foreach ($this->currentCommit->getIncludingBranches(true, false) as $branch): ?>
+    <?php foreach ($this->currentCommit->getIncludingBranches(true, true) as $branch): ?>
         <i class="icon-sitemap"></i> <a href="<?php echo $this->_helper->url('Repository', array('name' => $this->name, 'branch' => $branch->getName()), true); ?>"><?php echo $branch->getName(); ?></a>,
     <?php endforeach; ?>
 </div>

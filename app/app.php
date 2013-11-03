@@ -16,7 +16,6 @@ $app->addListener(new ErrorReporterListener(array(
     'catch_ajax_errors' => true,
     'snippet_num_lines' => 10
 )));
-
 $app->setDefaultAction('Home');
 
 return $app;

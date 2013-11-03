@@ -151,5 +151,14 @@
                 <param name="errorMsg">Problem occured while loading branches</param>
             </result>
         </action>
+        <action name="Users" shortcut="TestGit\Controllers\Users:show">
+            <result name="success" type="php">
+                <param name="file">users.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Problem occured while loading users</param>
+            </result>
+        </action>
     </actions>
 </fwk>
