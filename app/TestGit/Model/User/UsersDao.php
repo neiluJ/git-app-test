@@ -1,7 +1,7 @@
 <?php
 namespace TestGit\Model\User;
 
-use TestGit\Model\Dao as DaoBase;
+use TestGit\Model\Dao;
 use Fwk\Security\User\Provider;
 use Fwk\Security\Exceptions\UserNotFound;
 use Fwk\Security\User;
@@ -10,7 +10,7 @@ use TestGit\StringUtils;
 use Fwk\Db\Query;
 use TestGit\Model\Tables;
 
-class Dao extends DaoBase implements Provider
+class UsersDao extends Dao implements Provider
 {
     /**
      * Constantes pour les types de recherches
@@ -23,7 +23,7 @@ class Dao extends DaoBase implements Provider
     const FIND_ID       = 'id';
     const FIND_SLUG     = 'slug';
     
-    const ENTITY_USER   = 'Forgery\\User\\User';
+    const ENTITY_USER   = 'TestGit\\Model\\User\\User';
     
     /**
      * Constructeur 
@@ -85,7 +85,7 @@ class Dao extends DaoBase implements Provider
     {
         $query = Query::factory()
                         ->select()
-                        ->from($this->get('usersTable'));
+                        ->from($this->getOption('usersTable'));
 
         $params = array($text);
         switch($search)
@@ -137,6 +137,26 @@ class Dao extends DaoBase implements Provider
     }
     
     /**
+     * @param boolean $onlyActive Search only active accounts
+     * 
+     * @return array 
+     */
+    public function findAll($onlyActive = false)
+    {
+        $query = Query::factory()
+                        ->select()
+                        ->from($this->getOption('usersTable'));
+
+        if($onlyActive === true) {
+            $query->where('active = 1');
+        }
+        
+        $query->entity(self::ENTITY_USER);
+        
+        return $this->getDb()->execute($query);
+    }
+    
+    /**
      * Sauvegarde un utilisateur (nouveau ou existant)
      * 
      * @param User $user Utilisateur à sauvegarder
@@ -145,7 +165,7 @@ class Dao extends DaoBase implements Provider
      */
     public function save(User $user)
     {
-        return $this->getDb()->table($this->get('usersTable'))->save($user);
+        return $this->getDb()->table($this->getOption('usersTable'))->save($user);
     }
     
     public function supports(User $user)

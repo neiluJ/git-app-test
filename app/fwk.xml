@@ -155,6 +155,9 @@
             <result name="success" type="php">
                 <param name="file">users.php</param>
             </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">jsonUsers</param>
+            </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
                 <param name="errorMsg">Problem occured while loading users</param>

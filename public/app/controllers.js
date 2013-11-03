@@ -7,10 +7,18 @@ var gitApp = angular.module('gitAppControllers', ['gitAppServices']);
 // This controller is used to fetch the repositories list
 //
 gitApp.controller('RepositoriesCtrl', ['$scope', '$http', function RepositoriesCtrl($scope, $http) {
-    $http.get('Repositories.action?angular').success(function(data) {
+    $http.get('Repositories.action?ng=1').success(function(data) {
         $scope.repositories = data.repositories;
     }).error(function() {
         alert('Unable to load repositories');
+    });
+}]);
+
+gitApp.controller('UsersCtrl', ['$scope', '$http', function RepositoriesCtrl($scope, $http) {
+    $http.get('Users.action?ng=1').success(function(data) {
+        $scope.users = data.jsonUsers;
+    }).error(function() {
+        alert('Unable to load users');
     });
 }]);
 

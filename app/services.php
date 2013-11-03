@@ -43,7 +43,7 @@ $container->set(
 
 $container->set(
    'usersDao',
-   new ClassDefinition('TestGit\Model\User\Dao', 
+   new ClassDefinition('TestGit\Model\User\UsersDao', 
    array(
        '@db',
        array(
