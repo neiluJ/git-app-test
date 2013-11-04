@@ -5,7 +5,7 @@ use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
 
-class Users implements ServicesAware
+class Users extends Repository 
 {
     protected $users = array();
     protected $jsonUsers = array();
@@ -15,7 +15,22 @@ class Users implements ServicesAware
     public function show()
     {
         $this->users = $this->getUsersDao()->findAll(false);
+        $this->buildJsonUsers();
         
+        return Result::SUCCESS;
+    }
+    
+    public function repositoryUsers()
+    {
+        $this->users = $this->getUsersDao()
+                ->findRepositoryUsers($this->repository);
+        
+        $this->buildJsonUsers();
+    }
+    
+    
+    protected function buildJsonUsers()
+    {
         $final = array();
         foreach ($this->users as $user) {
             $final[$user->getId()] = array(
@@ -28,10 +43,7 @@ class Users implements ServicesAware
             );
         }
         $this->jsonUsers = $final;
-        
-        return Result::SUCCESS;
     }
-    
     
     public function getServices()
     {

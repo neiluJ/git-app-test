@@ -27,7 +27,8 @@ class User implements UserInterface, PasswordAware,
     protected $notifications;
     
     protected $sshKeys;
-    // protected $repositories;
+    
+    protected $accesses;
     
     public function __construct()
     {
@@ -45,6 +46,9 @@ class User implements UserInterface, PasswordAware,
         
         $this->sshKeys = new One2Many('id', 'user_id', Tables::SSH_KEYS);
         $this->sshKeys->setFetchMode(Relation::FETCH_LAZY);
+        
+        $this->accesses = new One2Many('id', 'user_id', Tables::ACCESSES);
+        $this->accesses->setFetchMode(Relation::FETCH_LAZY);
         
         /*
         $this->repositories = new One2Many('id', 'owner_id', Tables::REPOSITORIES);
@@ -188,4 +192,14 @@ class User implements UserInterface, PasswordAware,
     public function getSshKeys() {
         return $this->sshKeys;
     }
+    
+    /**
+     *
+     * @return One2Many
+     */
+    public function getRepositories() {
+        return $this->repositories;
+    }
+
+
 }

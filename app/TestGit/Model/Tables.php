@@ -12,6 +12,7 @@ final class Tables
     const ACL_PERMISSIONS   = 'acls_permissions';
     
     const REPOSITORIES  = 'repositories';
+    const ACCESSES      = 'accesses';
     
     private function __construct()
     {

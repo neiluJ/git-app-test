@@ -145,13 +145,27 @@ class UsersDao extends Dao implements Provider
     {
         $query = Query::factory()
                         ->select()
+                        ->entity(self::ENTITY_USER)
                         ->from($this->getOption('usersTable'));
 
         if($onlyActive === true) {
             $query->where('active = 1');
         }
         
-        $query->entity(self::ENTITY_USER);
+        return $this->getDb()->execute($query);
+    }
+    
+    public function findRepositoryUsers($repoName, $onlyActive = true)
+    {
+        $query = Query::factory()
+                        ->select()
+                        ->entity(self::ENTITY_USER)
+                        ->from($this->getOption('usersTable'))
+                        ->where("1 = 1");
+                        
+        if($onlyActive === true) {
+            $query->andWhere('active = 1');
+        }
         
         return $this->getDb()->execute($query);
     }

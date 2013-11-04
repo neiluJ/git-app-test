@@ -52,4 +52,17 @@ $container->set(
    )),
    true
 );
+
+$container->set(
+   'gitDao',
+   new ClassDefinition('TestGit\Model\Git\GitDao', 
+   array(
+       '@db',
+       array(
+           'repositoriesTable' => '@repos.table',
+           'repositoriesBasePath' => '@repos.basePath'
+       )
+   )),
+   true
+);
 return $container;
