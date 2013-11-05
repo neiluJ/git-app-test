@@ -23,10 +23,10 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS `accesses` (
   `user_id` int(11) NOT NULL,
   `repository_id` int(11) NOT NULL,
-  `read` tinyint(1) NOT NULL DEFAULT '0',
-  `write` tinyint(1) NOT NULL DEFAULT '0',
-  `special` tinyint(1) NOT NULL DEFAULT '0',
-  `admin` tinyint(1) NOT NULL DEFAULT '0',
+  `readAccess` tinyint(1) NOT NULL DEFAULT '0',
+  `writeAccess` tinyint(1) NOT NULL DEFAULT '0',
+  `specialAccess` tinyint(1) NOT NULL DEFAULT '0',
+  `adminAccess` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`user_id`,`repository_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 

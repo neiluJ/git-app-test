@@ -7,8 +7,9 @@ use Fwk\Db\Query;
 use TestGit\Model\Tables;
 use TestGit\Model\User\User;
 use \Exception as RepositoryNotFound;
+use TestGit\Model\Git\Repository;
 
-class Dao extends DaoBase
+class GitDao extends DaoBase
 {
     /**
      * Constantes pour les types de recherches
@@ -20,7 +21,8 @@ class Dao extends DaoBase
     const FIND_OWNER    = 'owner';
     
     const ENTITY_REPO   = 'TestGit\\Model\\Git\\Repository';
-    
+    const ENTITY_ACCESS = 'TestGit\\Model\\Git\\Access';
+     
     const TYPE_REPOSITORY   = 'repository';
     const TYPE_FORK         = 'fork';
     
@@ -37,6 +39,7 @@ class Dao extends DaoBase
     {
         $options = array_merge(array(
             'repositoriesTable'     => Tables::REPOSITORIES,
+            'accessesTable'         => Tables::ACCESSES,
             'repositoriesBasePath'  => '/home/git/repositories'
         ), $options);
         
@@ -116,9 +119,7 @@ class Dao extends DaoBase
               ->limit($limit)
               ->orderBy('last_commit_date', false);
         
-        $res = $this->getDb()->execute($query, $params);
-        
-        return $res;
+        return $this->getDb()->execute($query, $params);
     }
     
     /**
@@ -234,5 +235,56 @@ class Dao extends DaoBase
         }
         
         return $final;
+    }
+    
+    
+    public function getRepositoryAccesses($repoId)
+    {
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('accessesTable'))
+                ->entity(self::ENTITY_ACCESS)
+                ->where('repository_id = ?');
+        
+        return $this->getDb()->execute($query, array($repoId));
+    }
+    
+    public function addRepositoryAccess($repoId, $userId, $read = true, 
+        $write = true, $special = false, $admin = false)
+    {
+        $access = new Access();
+        $access->setRepository_id($repoId);
+        $access->setUser_id($userId);
+        $access->setReadAccess((int)$read);
+        $access->setWriteAccess((int)$write);
+        $access->setSpecialAccess((int)$special);
+        $access->setAdminAccess((int)$admin);
+        
+        return $this->getDb()
+                    ->table($this->getOption('accessesTable'))
+                    ->save($access);
+    }
+    
+    public function removeRepositoryAccess($repoId, $userId)
+    {
+        $query = Query::factory()
+                ->delete($this->getOption('accessesTable'))
+                ->where('user_id = ? AND repository_id = ?')
+                ->limit(1);
+        
+        return $this->getDb()->execute($query, array($userId, $repoId));
+    }
+    
+    /**
+     * 
+     * @param Access $access
+     * 
+     * @return boolean 
+     */
+    public function saveAccess(Access $access)
+    {
+        return $this->getDb()
+                    ->table($this->getOption('accessesTable'))
+                    ->save($access);
     }
 }

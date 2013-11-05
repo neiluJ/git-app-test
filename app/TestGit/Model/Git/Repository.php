@@ -38,7 +38,7 @@ class Repository implements ResourceInterface
             'owner_id', 
             'id', 
             Tables::USERS, 
-            UserDao::ENTITY_USER
+            UsersDao::ENTITY_USER
         );
         
         $this->owner->setFetchMode(Relation::FETCH_LAZY);

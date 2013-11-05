@@ -29,8 +29,10 @@
         />
         <result-type
             name="redirect"
-            class="Fwk\Core\Components\ResultType\RedirectResultType"
-        />
+            class="Fwk\Core\Components\ResultType\RedirectResultType">
+            <param name="requestMatcher">:requestMatcherService</param>
+            <param name="urlRewriter">:urlRewriterService</param>
+        </result-type>
     </result-types>
     
     <actions>
@@ -161,6 +163,35 @@
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
                 <param name="errorMsg">Problem occured while loading users</param>
+            </result>
+        </action>
+        <action name="Accesses" shortcut="TestGit\Controllers\Users:repositoryUsers">
+            <result name="success" type="php">
+                <param name="file">accesses.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Problem occured while loading accesses</param>
+            </result>
+        </action>
+        <action name="AddAccess" shortcut="TestGit\Controllers\Users:addAccess">
+            <result name="success" type="redirect">
+                <param name="actionName">Accesses</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="RemoveAccess" shortcut="TestGit\Controllers\Users:removeAccess">
+            <result name="success" type="redirect">
+                <param name="actionName">Accesses</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
     </actions>

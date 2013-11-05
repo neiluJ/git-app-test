@@ -155,19 +155,19 @@ class UsersDao extends Dao implements Provider
         return $this->getDb()->execute($query);
     }
     
-    public function findRepositoryUsers($repoName, $onlyActive = true)
+    public function findNonAuthorized($repoId, $onlyActive = true)
     {
         $query = Query::factory()
                         ->select()
                         ->entity(self::ENTITY_USER)
-                        ->from($this->getOption('usersTable'))
-                        ->where("1 = 1");
+                        ->from($this->getOption('usersTable') .' u')
+                        ->where("u.id NOT IN (SELECT user_id FROM ". Tables::ACCESSES ." WHERE repository_id = ?)");
                         
         if($onlyActive === true) {
-            $query->andWhere('active = 1');
+            $query->andWhere('u.active = 1');
         }
         
-        return $this->getDb()->execute($query);
+        return $this->getDb()->execute($query, array($repoId));
     }
     
     /**

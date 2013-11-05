@@ -60,9 +60,11 @@ $container->set(
        '@db',
        array(
            'repositoriesTable' => '@repos.table',
+           'accessesTable'      => '@repos.accesses.table',
            'repositoriesBasePath' => '@repos.basePath'
        )
    )),
    true
 );
+
 return $container;
