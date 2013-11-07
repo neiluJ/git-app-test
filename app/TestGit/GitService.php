@@ -1,7 +1,6 @@
 <?php
 namespace TestGit;
 
-use Symfony\Component\Finder\Finder;
 use TestGit\Model\Git\Repository as RepositoryEntity;
 use Gitonomy\Git\Repository as GitRepository;
 
@@ -24,33 +23,6 @@ class GitService
         $this->repositoriesDir = $repositoriesDir;
         $this->workDir = $workDir;
         $this->dateFormat = $dateFormat;
-    }
-    
-    public function listRepositories()
-    {
-        $finder = new Finder();
-        $result = array();
-        
-        foreach ($finder->directories()->in($this->repositoriesDir)->depth(0) as $k => $dir) {
-            $repo = new \Gitonomy\Git\Repository($dir, array(
-                'working_dir' => null
-            ));
-            
-            $headCommit = $repo->getHeadCommit();
-            $infos = array(
-                'name'  => basename($k),
-                'size'  => $repo->getSize(),
-                'lastCommit' => array(
-                    'message'   => $headCommit->getShortMessage(),
-                    'author'    => $headCommit->getAuthorName(),
-                    'date'      => $headCommit->getAuthorDate()->format($this->dateFormat),
-                    'hash'      => $headCommit->getHash()
-                )
-            );
-            
-            array_push($result, $infos);
-        }
-        return $result;
     }
     
     /**

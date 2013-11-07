@@ -15,7 +15,6 @@
         "fwk/xml": "dev-master",
         "symfony/http-foundation": "dev-master",
         "gitonomy/gitlib": "dev-master", 
-        "symfony/finder": "dev-master",
         "dflydev/markdown": "dev-master",
         "fwk/db": "dev-master",
         "fwk/security": "dev-master"
