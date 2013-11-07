@@ -5,14 +5,16 @@ use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
 use Fwk\Core\Preparable;
+use TestGit\Model\Git\Repository as RepositoryEntity;
 
 class Repository implements ServicesAware, Preparable
 {
     public $name;
-    public $branch = 'master';
+    public $branch;
     public $path;
     
     protected $repository;
+    protected $entity;
     
     protected $services;
     
@@ -20,17 +22,21 @@ class Repository implements ServicesAware, Preparable
     
     protected $repoAction = 'Repository';
     
+    protected $cloneHost;
+    
     public function prepare()
     {
         if (!empty($this->path)) {
             $this->path = rtrim($this->path, '/');
         }
+        
+        $this->cloneHost = $this->getServices()->get('git.clone.hostname');
     }
     
     public function show()
     {
         try {
-            $this->repository = $this->getGitService()->getRepository($this->name);
+            $this->loadRepository();
         } catch(\Exception $exp) {
             return Result::ERROR;
         }
@@ -120,8 +126,45 @@ class Repository implements ServicesAware, Preparable
         return $this->getServices()->get('git');
     }
     
+    /**
+     * @return \TestGit\Model\Git\GitDao
+     */
+    protected function getGitDao()
+    {
+        return $this->getServices()->get('gitDao');
+    }
+    
     public function getRepoAction()
     {
         return $this->repoAction;
+    }
+    
+    /**
+     *
+     */
+    protected function loadRepository()
+    {
+        $this->entity = $this->getGitDao()
+                ->findOne($this->name, \TestGit\Model\Git\GitDao::FIND_NAME);
+    
+        if (!$this->entity instanceof RepositoryEntity) {
+            throw new \Exception('repository not found');
+        }
+        
+        $this->repository = $this->getGitService()->transform($this->entity);
+        $this->branch = (!isset($this->branch) ? $this->entity->getDefault_branch() : $this->branch);
+    }
+    
+    /**
+     *
+     * @return RepositoryEntity
+     */
+    public function getEntity()
+    {
+        return $this->entity;
+    }
+    
+    public function getCloneHost() {
+        return $this->cloneHost;
     }
 }

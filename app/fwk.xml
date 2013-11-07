@@ -59,7 +59,7 @@
                 <param name="actionName">Home</param>
             </result>
             <result name="ajax:success" type="json">
-                <param name="properties">repositories</param>
+                <param name="properties">jsonRepositories</param>
             </result>
         </action>
         <action name="Repository" shortcut="TestGit\Controllers\Repository:show">

@@ -106,6 +106,7 @@ INSERT INTO `acls_roles` (`role`, `description`, `parent`, `sort`, `default`) VA
 -- Structure de la table `repositories`
 --
 
+
 CREATE TABLE IF NOT EXISTS `repositories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `owner_id` int(11) DEFAULT NULL,
@@ -115,6 +116,7 @@ CREATE TABLE IF NOT EXISTS `repositories` (
   `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `description` varchar(512) COLLATE utf8_unicode_ci DEFAULT NULL,
   `path` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `default_branch` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'master',
   `created_at` datetime NOT NULL,
   `last_commit_date` datetime DEFAULT NULL,
   `last_commit_hash` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
@@ -128,7 +130,7 @@ CREATE TABLE IF NOT EXISTS `repositories` (
   KEY `parent_id` (`parent_id`),
   KEY `owner_id` (`owner_id`),
   KEY `last_commit` (`last_commit_date`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=25 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci  ;
 
 --
 -- Contenu de la table `repositories`

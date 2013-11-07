@@ -29,7 +29,13 @@ class Users extends Repository implements ContextAware
     
     public function repositoryUsers()
     {
-        $repoId = 3;  /** @todo */
+        try {
+            $this->loadRepository();
+        } catch(\Exception $exp) {
+            return Result::ERROR;
+        }
+        
+        $repoId = $this->getEntity()->getId(); 
         $request = $this->getContext()->getRequest();
         
         $this->accesses = $this->getGitDao()->getRepositoryAccesses($repoId);
@@ -86,7 +92,13 @@ class Users extends Repository implements ContextAware
         
         $post = $request->request;
         
-        $repoId = 3; /** @todo */
+        try {
+            $this->loadRepository();
+        } catch(\Exception $exp) {
+            return Result::ERROR;
+        }
+        
+        $repoId = $this->getEntity()->getId();
         $userId = $post->getInt('userid', 0);
         $read = (bool)$post->get('read', false);
         $write = (bool)$post->get('write', false);
@@ -135,7 +147,13 @@ class Users extends Repository implements ContextAware
     
     public function removeAccess()
     {
-        $repoId = 3; /** @todo */
+        try {
+            $this->loadRepository();
+        } catch(\Exception $exp) {
+            return Result::ERROR;
+        }
+        
+        $repoId = $this->getEntity()->getId();
         $userId = (int)$this->userId;
         
         if (0 === $userId) {

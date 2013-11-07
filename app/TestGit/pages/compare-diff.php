@@ -1,1 +1,1 @@
-<?php echo htmlentities($this->diff->getRawDiff(), ENT_QUOTES, "utf-8"); ?>
+<?php echo $this->_helper->escape($this->diff->getRawDiff()); ?>

@@ -1,4 +1,4 @@
-<h4><a style="float:right" class="btn btn-default btn-xs" href="<?php echo $this->_helper->url('Diff', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>">Raw diff</a> Differences between <strong><a href="<?php echo $this->_helper->url('Compare', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>"><?php echo $this->compare; ?></a></strong></h4>
+<h4><a style="float:right" class="btn btn-default btn-xs" href="<?php echo $this->_helper->url('Diff', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>">Raw diff</a> Differences between <strong><a href="<?php echo $this->_helper->url('Compare', array('name' => $this->name, 'compare' => $this->compare, 'path' => $this->path), true); ?>"><?php echo $this->_helper->escape($this->compare); ?></a></strong></h4>
 
 <ul class="diff-files" style="clear:both;">
     <?php $files = 0; $adds = 0; $dels = 0; ?>

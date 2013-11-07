@@ -8,7 +8,7 @@ var gitApp = angular.module('gitAppControllers', ['gitAppServices']);
 //
 gitApp.controller('RepositoriesCtrl', ['$scope', '$http', function RepositoriesCtrl($scope, $http) {
     $http.get('Repositories.action?ng=1').success(function(data) {
-        $scope.repositories = data.repositories;
+        $scope.repositories = data.jsonRepositories;
     }).error(function() {
         alert('Unable to load repositories');
     });

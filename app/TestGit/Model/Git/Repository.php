@@ -20,6 +20,7 @@ class Repository implements ResourceInterface
     protected $name;
     protected $description;
     protected $path;
+    protected $default_branch;
     protected $created_at;
     protected $last_commit_date;
     protected $last_commit_hash;
@@ -41,7 +42,7 @@ class Repository implements ResourceInterface
             UsersDao::ENTITY_USER
         );
         
-        $this->owner->setFetchMode(Relation::FETCH_LAZY);
+        $this->owner->setFetchMode(Relation::FETCH_EAGER);
         
         $this->parent = new One2One(
             'parent_id', 
@@ -115,6 +116,14 @@ class Repository implements ResourceInterface
 
     public function setPath($path) {
         $this->path = $path;
+    }
+
+    public function getDefault_branch() {
+        return $this->default_branch;
+    }
+
+    public function setDefault_branch($default_branch) {
+        $this->default_branch = $default_branch;
     }
 
     public function getCreated_at() {
@@ -192,7 +201,7 @@ class Repository implements ResourceInterface
     
     /**
      *
-     * @return One2One
+     * @return \TestGit\Model\User\User
      */
     public function getOwner()
     {
@@ -220,5 +229,11 @@ class Repository implements ResourceInterface
     public function isPrivate()
     {
         return $this->type === Repository::TYPE_PRIVATE;
+    }
+    
+    public function getFullname()
+    {
+        return $this->getOwner()->getUsername() . '/' . 
+                $this->name;
     }
 }

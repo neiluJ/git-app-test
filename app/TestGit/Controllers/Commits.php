@@ -28,7 +28,7 @@ class Commits extends Repository
     public function listAction()
     {
         try {
-            $this->repository = $this->getGitService()->getRepository($this->name);
+            $this->loadRepository();
         } catch(\Exception $exp) {
             return Result::ERROR;
         }
@@ -74,7 +74,7 @@ class Commits extends Repository
     public function commitAction()
     {
         try {
-            $this->repository = $this->getGitService()->getRepository($this->name);
+            $this->loadRepository();
         } catch(\Exception $exp) {
             return Result::ERROR;
         }
@@ -104,8 +104,7 @@ class Commits extends Repository
     public function compareAction()
     {
         try {
-            $this->repository = $this->getGitService()->getRepository($this->name);
-        
+            $this->loadRepository();
         } catch(\Exception $exp) {
             return Result::ERROR;
         }

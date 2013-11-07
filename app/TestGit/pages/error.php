@@ -9,7 +9,7 @@
       </div>
 
        <div class="well" style="font-weight: bold; text-align:center;">
-        <?php echo $this->errorMsg; ?>
+        <?php echo $this->_helper->escape($this->errorMsg); ?>
        </div>
     </div><!-- /.container -->
     

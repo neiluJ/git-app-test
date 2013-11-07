@@ -50,7 +50,7 @@ class Blob extends Commits implements ContextAware
     public function blobAction()
     {
         try {
-            $this->repository = $this->getGitService()->getRepository($this->name);
+            $this->loadRepository();
         } catch(\Exception $exp) {
             return Result::ERROR;
         }

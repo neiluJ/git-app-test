@@ -14,7 +14,7 @@ $container->set('resultTypeService', new \Fwk\Core\Components\ResultType\ResultT
 // git service
 $container->set(
    'git',
-   new ClassDefinition('TestGit\\GitService', array('/home/neiluj/tmp/repositories')),
+   new ClassDefinition('TestGit\\GitService', array('@repos.dir', '@repos.working.dir')),
     true
 );
 
@@ -22,6 +22,7 @@ $container->set(
 $viewHelperClassDef = new ClassDefinition('Fwk\Core\Components\ViewHelper\ViewHelperService');
 $viewHelperClassDef->addMethodCall('add', array('embed', new ClassDefinition('Fwk\Core\Components\ViewHelper\EmbedViewHelper')));
 $viewHelperClassDef->addMethodCall('add', array('url', new ClassDefinition('Fwk\Core\Components\UrlRewriter\UrlViewHelper', array('requestMatcher', 'urlRewriter'))));
+$viewHelperClassDef->addMethodCall('add', array('escape', new ClassDefinition('Fwk\Core\Components\ViewHelper\EscapeViewHelper', array(ENT_QUOTES, "utf-8"))));
 
 $container->set('viewHelper', $viewHelperClassDef, true);
 

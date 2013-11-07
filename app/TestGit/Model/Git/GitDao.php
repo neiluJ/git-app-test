@@ -181,6 +181,23 @@ class GitDao extends DaoBase
     
     /**
      * 
+     * 
+     * @return \Fwk\Db\ResultSet; 
+     */
+    public function findAll()
+    {
+        $query = Query::factory()
+                        ->select()
+                        ->from($this->getOption('repositoriesTable'));
+
+        $query->entity(self::ENTITY_REPO)
+              ->orderBy('last_commit_date', false);
+        
+        return $this->getDb()->execute($query);
+    }
+    
+    /**
+     * 
      * @param Repository $repo 
      * 
      * @return boolean 

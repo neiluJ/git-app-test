@@ -11,7 +11,7 @@ class Branches extends Repository
     public function show()
     {
         try {
-            $this->repository = $this->getGitService()->getRepository($this->name);
+            $this->loadRepository();
         } catch(\Exception $exp) {
             return Result::ERROR;
         }

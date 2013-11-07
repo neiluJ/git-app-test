@@ -26,10 +26,10 @@
                       </li>
                   </ul>
               </div>
-                <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a></h1>
+                <h1><a id="repoOwner" href="<?php echo $vh->url('Profile', array('username' => $this->entity->getOwner()->getUsername()), true); ?>"><?php echo $this->_helper->escape($this->entity->getOwner()->getUsername()); ?></a>/<a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->_helper->escape($this->name); ?></a></h1>
                 <div class="clearfix"></div>
-                 <p class="help-clone">git clone https://dsi-svn-prd/<?php echo $this->name; ?>.git</p>
-                <p>small repository description</p>
+                 <p class="help-clone">git clone https://<?php echo $this->_helper->escape($this->cloneHost); ?>/<?php echo $this->_helper->escape($this->entity->getFullname()); ?>.git</p>
+                 <p><?php echo $this->_helper->escape($this->entity->getDescription()); ?></p>
             </div>
         </div><!-- /starter-template -->
         

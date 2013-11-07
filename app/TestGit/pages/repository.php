@@ -26,19 +26,19 @@
                       </li>
                   </ul>
               </div>
-                <h1><a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->name; ?></a></h1>
+                <h1><a id="repoOwner" href="<?php echo $vh->url('Profile', array('username' => $this->entity->getOwner()->getUsername()), true); ?>"><?php echo $this->entity->getOwner()->getUsername(); ?></a>/<a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->_helper->escape($this->name); ?></a></h1>
                 <div class="clearfix"></div>
-                 <p class="help-clone">git clone https://dsi-svn-prd/<?php echo $this->name; ?>.git</p>
-                <p>small repository description</p>
+                 <p class="help-clone">git clone https://<?php echo $this->_helper->escape($this->cloneHost); ?>/<?php echo $this->_helper->escape($this->entity->getFullname()); ?>.git</p>
+                <p><?php echo $this->_helper->escape($this->entity->getDescription()); ?></p>
             </div>
         </div><!-- /starter-template -->
         
           
-    <input type="hidden" id="repoAction" name="repoAction" ng-bind="repoAction" value="<?php echo $this->repoAction; ?>" />  
-    <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->path; ?>" />
-    <input type="hidden" id="repoBranch" name="repoBranch" ng-bind="branch" value="<?php echo ($this->repoAction == 'Commit' ? $this->hash : $this->branch); ?>" />
-    <input type="hidden" id="commitHash" name="commitHash" value="<?php echo (isset($this->hash) ? $this->hash : null); ?>" />
-    <input type="hidden" id="repoCompare" name="repoCompare" value="<?php echo (isset($this->compare) ? $this->compare : null); ?>" />
+    <input type="hidden" id="repoAction" name="repoAction" ng-bind="repoAction" value="<?php echo $this->_helper->escape($this->repoAction); ?>" />  
+    <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->_helper->escape($this->path); ?>" />
+    <input type="hidden" id="repoBranch" name="repoBranch" ng-bind="branch" value="<?php echo $this->_helper->escape(($this->repoAction == 'Commit' ? $this->hash : $this->branch)); ?>" />
+    <input type="hidden" id="commitHash" name="commitHash" value="<?php echo $this->_helper->escape((isset($this->hash) ? $this->hash : null)); ?>" />
+    <input type="hidden" id="repoCompare" name="repoCompare" value="<?php echo $this->_helper->escape((isset($this->compare) ? $this->compare : null)); ?>" />
     
     <div class="row">
         <div class="col-xs-5 col-sm-5 col-md-3 left-list" ng-controller="CommitsCtrl">

@@ -24,6 +24,7 @@
           <tr>
             <th style="width: 35px;">&nbsp;</th>
             <th style="width: 280px;">Repository</th>
+            <th style="width: 120px;">Owner</th>
             <th style="width: 130px;">Last Update</th>
             <th>Message</th>
             <th style="width: 50px;">Size</th>
@@ -33,6 +34,7 @@
           <tr ng-repeat="repo in repositories | filter:query">
             <td><i class="glyphicon glyphicon-list"></i></td>
             <td><a href="<?php echo $vh->url(); ?>/Repository.action?name={{ repo.name }}">{{ repo.name }}</a></td>
+            <td><a href="<?php echo $vh->url(); ?>/Profile.action?name={{ repo.ownerName }}">{{ repo.ownerName }}</a></td>
             <td>{{ repo.lastCommit.date }}</td>
             <td class="commit-txt">[<a href="#">{{ repo.lastCommit.author }}</a>] {{ repo.lastCommit.message }} (<a href="#">{{ repo.lastCommit.hash|shortHash }}</a>)</td>
             <td>{{ repo.size }}</td>
