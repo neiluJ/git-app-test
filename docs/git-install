@@ -1,0 +1,89 @@
+; -----------------------------------------------------------------------
+; configure setup & install gitolite
+; documentation: http://gitolite.com/gitolite/qi.html
+; -----------------------------------------------------------------------
+
+root# adduser git
+git~$ cd /home/git
+git~$ mkdir bin
+git~$ git clone https://github.com/sitaramc/gitolite
+git~$ gitolite/install -ln
+
+
+; -----------------------------------------------------------------------
+; install ssh and setup gitolite
+; documentation: https://help.github.com/articles/generating-ssh-keys
+; -----------------------------------------------------------------------
+
+neiluj~$ ssh-keygen -t rsa -C "julien@nitronet.org"
+neiluj~$ ssh-add id_rsa
+neiluj~$ sudo cp id_rsa.pub /home/git/neiluJ.pub
+neiluj~$ sudo chown git:git /home/git/neiluJ.pub
+
+git~$ export PATH=$PATH:/home/git/bin
+git~$ gitolite setup -pk neiluJ.pub
+
+; -----------------------------------------------------------------------
+; HTTP(s) access
+; documentation: http://gitolite.com/gitolite/ssh-and-http.html
+; htpassword (MD5): http://aspirine.org/htpasswd.html
+; -----------------------------------------------------------------------
+
+neiluj~$ sudo apt-get install git-core apache2-suexec
+neiluj~$ sudo a2enmod suexec
+neiluj~$ sudo service apache2 restart
+neiluj~$ cd /var/www
+neiluj~$ sudo install -d -m 0755 -o apache -g apache /var/www/git
+neiluj~$ sudo install -d -m 0755 -o www-data -g www-data /var/www/git
+neiluj~$ sudo nano bin/gitolite-suexec-wrapper.sh
+
+; ---
+; contenu de gitolite-suexec-wrapper.sh
+; ---
+#!/bin/bash
+#
+# Suexec wrapper for gitolite-shell
+#
+
+export GIT_PROJECT_ROOT="/home/git/repositories"
+export GITOLITE_HTTP_HOME="/home/git"
+
+exec ${GITOLITE_HTTP_HOME}/gitolite/src/gitolite-shell
+;---
+
+neiluj~$ sudo chown git:git bin/gitolite-suexec-wrapper.sh 
+neiluj~$ sudo chmod 0700 bin/gitolite-suexec-wrapper.sh 
+
+; ---
+; contenu du virtualhost 
+; ---
+<VirtualHost *:80>
+    ServerName        git.localhost
+    ServerAlias       git
+    ServerAdmin       julien@nitronet.org
+
+    DocumentRoot /var/www/git
+    <Directory /var/www/git>
+        Options       None
+        AllowOverride none
+        Order         allow,deny
+        Allow         from all
+    </Directory>
+ 
+    SetEnv GIT_PROJECT_ROOT /home/git/repositories
+    SuexecUserGroup git git
+    ScriptAlias /git/ /var/www/bin/gitolite-suexec-wrapper.sh/
+    ScriptAlias /gitmob/ /var/www/bin/gitolite-suexec-wrapper.sh/
+    SetEnv GITOLITE_HTTP_HOME /home/git
+    SetEnv GIT_HTTP_EXPORT_ALL	
+
+    <Location /git>
+        AuthType Basic
+        AuthName "Git Access"
+        Require valid-user
+        AuthUserFile /etc/apache2/git.passwd
+    </Location>
+</VirtualHost>
+; ---
+
+
