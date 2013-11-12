@@ -18,20 +18,33 @@ class Gitolite extends Command implements ServicesAware
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $dao = $this->getGitDao();
-        $repos = $dao->findAll();
+        $output->writeln($this->getGitoliteConfigAsString());
+    }
+    
+    protected function getGitoliteConfigAsString()
+    {
+        $str    = "";
+        $dao    = $this->getGitDao();
+        $repos  = $dao->findAll();
+        
         foreach ($repos as $repository) {
-            $output->write("repo ". $repository->getFullname(), true); 
+            $str .= "repo ". $repository->getFullname() ."\n"; 
             
             $accesses = $repository->getAccesses();
             foreach ($accesses as $access) {
-                $output->write("\t" . $access->getGitoliteAccessString() 
+                $str .= "\t" . $access->getGitoliteAccessString() 
                     . "\t=\t" 
-                    . $access->getUser()->getUsername(), true);
+                    . $access->getUser()->getUsername() ."\n";
             }
             
-            $output->write("", true);
+            if ((bool)$repository->getHttp_access()) {
+                $str .= "\tR\t=\tdaemon\n";
+            }
+            
+            $str .= "\n";
         }
+        
+        return $str;
     }
     
     /**

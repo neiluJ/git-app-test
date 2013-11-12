@@ -26,7 +26,7 @@
                       </li>
                   </ul>
               </div>
-                <h1><a id="repoOwner" href="<?php echo $vh->url('Profile', array('username' => $this->entity->getOwner()->getUsername()), true); ?>"><?php echo $this->_helper->escape($this->entity->getOwner()->getUsername()); ?></a>/<a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->_helper->escape($this->entity->getName()); ?></a></h1>
+                <h1><?php $own = $this->entity->getOwner_id(); if(!empty($own)): ?><a id="repoOwner" href="<?php echo $vh->url('Profile', array('username' => $this->entity->getOwner()->getUsername()), true); ?>"><?php echo $this->entity->getOwner()->getUsername(); ?></a><?php else: ?>special<?php endif; ?>/<a href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->_helper->escape($this->entity->getName()); ?></a></h1>
                 <div class="clearfix"></div>
                  <p class="help-clone">git clone https://<?php echo $this->_helper->escape($this->cloneHost); ?>/<?php echo $this->_helper->escape($this->entity->getFullname()); ?>.git</p>
                 <p><?php echo $this->_helper->escape($this->entity->getDescription()); ?></p>

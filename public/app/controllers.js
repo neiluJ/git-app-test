@@ -56,7 +56,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', '$c
     $scope.currentCommitAuthor = null;
     
     var computePathParts = function(path) {
-        var parts = [{path: $scope.repoName.split("/")[1], realpath: '', directory: true}];
+        var parts = [{path: ($scope.repoName.indexOf('/') !== -1 ? $scope.repoName.split("/")[1] : $scope.repoName), realpath: '', directory: true}];
         if (!path) {
             path = "";
         }

@@ -63,11 +63,11 @@ class GitService
             throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
         }
         
-        $proc = new Process('git reset --hard HEAD && git clean -f -d && git fetch --all', $workDirPath);
+        $proc = new Process('git pull', $workDirPath);
         $proc->run(function ($type, $buffer) use ($output) {
             if (null === $output) {
                 return;
-            }
+           }
             
             if ('err' !== $type) {
                 $output->write($buffer);

@@ -40,6 +40,7 @@
     
     <commands>
         <command name="gitolite:show" class="TestGit\Commands\Gitolite" />
+        <command name="gitolite:configure" class="TestGit\Commands\GitoliteAdmin" />
         <command name="repository:update" class="TestGit\Commands\RepoUpdate" />
     </commands>
     
