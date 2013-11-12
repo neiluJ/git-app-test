@@ -17,7 +17,9 @@
         "gitonomy/gitlib": "dev-master", 
         "dflydev/markdown": "dev-master",
         "fwk/db": "dev-master",
-        "fwk/security": "dev-master"
+        "fwk/security": "dev-master",
+        "symfony/console": "dev-master",
+        "symfony/process": "dev-master"
     },
     "require-dev": {
         "joseph-lenton/php-error": "dev-master"
