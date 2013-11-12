@@ -26,7 +26,7 @@
                       </li>
                   </ul>
               </div>
-                <h1><a id="repoOwner" href="<?php echo $vh->url('Profile', array('username' => $this->entity->getOwner()->getUsername()), true); ?>"><?php echo $this->entity->getOwner()->getUsername(); ?></a>/<a id="repoName" href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->_helper->escape($this->name); ?></a></h1>
+                <h1><a id="repoOwner" href="<?php echo $vh->url('Profile', array('username' => $this->entity->getOwner()->getUsername()), true); ?>"><?php echo $this->entity->getOwner()->getUsername(); ?></a>/<a href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->_helper->escape($this->entity->getName()); ?></a></h1>
                 <div class="clearfix"></div>
                  <p class="help-clone">git clone https://<?php echo $this->_helper->escape($this->cloneHost); ?>/<?php echo $this->_helper->escape($this->entity->getFullname()); ?>.git</p>
                 <p><?php echo $this->_helper->escape($this->entity->getDescription()); ?></p>
@@ -34,6 +34,7 @@
         </div><!-- /starter-template -->
         
           
+    <input type="hidden" id="repoName" name="repoName" ng-bind="repoName" value="<?php echo $this->_helper->escape($this->entity->getFullname()); ?>" />    
     <input type="hidden" id="repoAction" name="repoAction" ng-bind="repoAction" value="<?php echo $this->_helper->escape($this->repoAction); ?>" />  
     <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->_helper->escape($this->path); ?>" />
     <input type="hidden" id="repoBranch" name="repoBranch" ng-bind="branch" value="<?php echo $this->_helper->escape(($this->repoAction == 'Commit' ? $this->hash : $this->branch)); ?>" />

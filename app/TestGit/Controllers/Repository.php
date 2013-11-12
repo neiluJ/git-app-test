@@ -145,7 +145,7 @@ class Repository implements ServicesAware, Preparable
     protected function loadRepository()
     {
         $this->entity = $this->getGitDao()
-                ->findOne($this->name, \TestGit\Model\Git\GitDao::FIND_NAME);
+                ->findOne($this->name, \TestGit\Model\Git\GitDao::FIND_FULLNAME);
     
         if (!$this->entity instanceof RepositoryEntity) {
             throw new \Exception('repository not found');

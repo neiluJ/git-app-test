@@ -6,6 +6,7 @@ use Fwk\Db\Relations\One2One;
 use TestGit\Model\Tables;
 use TestGit\Model\User\UsersDao;
 use Fwk\Db\Relation;
+use Fwk\Db\Relations\One2Many;
 
 class Repository implements ResourceInterface
 {
@@ -18,6 +19,7 @@ class Repository implements ResourceInterface
     protected $public;
     protected $parent_id;
     protected $name;
+    protected $fullname;
     protected $description;
     protected $path;
     protected $default_branch;
@@ -32,6 +34,7 @@ class Repository implements ResourceInterface
     
     protected $owner;
     protected $parent;
+    protected $accesses;
     
     public function __construct()
     {
@@ -52,6 +55,15 @@ class Repository implements ResourceInterface
         );
         
         $this->parent->setFetchMode(Relation::FETCH_LAZY);
+        
+        $this->accesses = new One2Many(
+            'id', 
+            'repository_id', 
+            Tables::ACCESSES, 
+            GitDao::ENTITY_ACCESS
+        );
+        
+        $this->accesses->setFetchMode(Relation::FETCH_LAZY);
     }
     
     public function getId() {
@@ -218,6 +230,15 @@ class Repository implements ResourceInterface
     }
 
     /**
+     * 
+     * @return One2Many
+     */
+    public function getAccesses()
+    {
+        return $this->accesses;
+    }
+
+        /**
      *
      * @return boolean
      */
@@ -233,7 +254,11 @@ class Repository implements ResourceInterface
     
     public function getFullname()
     {
-        return $this->getOwner()->getUsername() . '/' . 
-                $this->name;
+        return $this->fullname;
+    }
+    
+    public function setFullname($fullname)
+    {
+        $this->fullname = $fullname;
     }
 }

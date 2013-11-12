@@ -106,4 +106,14 @@ class Access
     {
         return $this->repository;
     }
+    
+    public function getGitoliteAccessString()
+    {
+        return sprintf(
+            '%s%s%s', 
+            ($this->readAccess == true ? 'R' : ''),
+            ($this->writeAccess == true ? 'W' : ''),
+            ($this->specialAccess == true ? '+' : '')    
+        );
+    }
 }

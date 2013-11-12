@@ -3,6 +3,8 @@ namespace TestGit;
 
 use TestGit\Model\Git\Repository as RepositoryEntity;
 use Gitonomy\Git\Repository as GitRepository;
+use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 
 class GitService
 {
@@ -52,5 +54,36 @@ class GitService
         return rtrim($this->workDir, DIRECTORY_SEPARATOR) . 
                 DIRECTORY_SEPARATOR . 
                 $repoPath;
+    }
+    
+    public function updateWorkdir(RepositoryEntity $repository, OutputInterface $output = null)
+    {
+        $workDirPath = $this->getWorkDirPath($repository);
+        if (!is_dir($workDirPath)) {
+            throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
+        }
+        
+        $proc = new Process('git pull', $workDirPath);
+        $proc->run(function ($type, $buffer) use ($output) {
+            if (null === $output) {
+                return;
+            }
+            
+            if ('err' !== $type) {
+                $output->write($buffer);
+            }
+        });
+        
+        if (!$proc->isSuccessful()) {
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+    }
+    
+    public function getLastCommit(RepositoryEntity $repository)
+    {
+        $gitRepo = $this->transform($repository);
+        $revision = $gitRepo->getLog(null, null, null, 1);
+       
+        return $revision->getSingleCommit();
     }
 }

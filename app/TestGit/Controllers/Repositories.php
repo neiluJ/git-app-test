@@ -62,6 +62,7 @@ class Repositories implements ServicesAware
             $infos = array(
                 'name'  => $repo->getName(),
                 'ownerName' => $repo->getOwner()->getUsername(),
+                'fullname'  => $repo->getFullname(),
                 'size'  => 0,
                 'lastCommit' => array(
                     'message'   => $repo->getLast_commit_msg(),

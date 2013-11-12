@@ -29,7 +29,7 @@ gitApp.controller('UsersCtrl', ['$scope', '$http', function RepositoriesCtrl($sc
 // This controller is the main controller for repository display
 //
 gitApp.controller('RepositoryMainCtrl', ['$scope', '$http', 'RepoNavService', function RepositoryMainCtrl($scope, $http, RepoNavService) {
-    $scope.repoName     = $('#repoName').html();
+    $scope.repoName     = $('#repoName').val();
     $scope.branch       = $('#repoBranch').val();
     $scope.files        = [];
     $scope.branches     = [];
@@ -56,7 +56,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', '$c
     $scope.currentCommitAuthor = null;
     
     var computePathParts = function(path) {
-        var parts = [{path: $scope.repoName, realpath: '', directory: true}];
+        var parts = [{path: $scope.repoName.split("/")[1], realpath: '', directory: true}];
         if (!path) {
             path = "";
         }

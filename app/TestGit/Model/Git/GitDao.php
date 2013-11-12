@@ -19,6 +19,7 @@ class GitDao extends DaoBase
     const FIND_NAME     = 'name';
     const FIND_ID       = 'id';
     const FIND_OWNER    = 'owner';
+    const FIND_FULLNAME = 'fullname';
     
     const ENTITY_REPO   = 'TestGit\\Model\\Git\\Repository';
     const ENTITY_ACCESS = 'TestGit\\Model\\Git\\Access';
@@ -134,7 +135,7 @@ class GitDao extends DaoBase
     {
         $query = Query::factory()
                         ->select()
-                        ->from($this->getOption('repositoriesTable'));
+                        ->from($this->getOption('repositoriesTable'), 'r');
 
         if ($search !== self::FIND_OWNER) {
             $params = array($text);
@@ -145,16 +146,20 @@ class GitDao extends DaoBase
         switch($search)
         {
             case self::FIND_OWNER:
-                $query->where('owner_id = ?');
-                $query->andWhere('name = ?');
+                $query->where('r.owner_id = ?');
+                $query->andWhere('r.name = ?');
                 break;
             
             case self::FIND_ID:
-                $query->where('id = ?');
+                $query->where('r.id = ?');
                 break;
             
             case self::FIND_NAME:
-                $query->where('name = ?');
+                $query->where('r.name = ?');
+                break;
+            
+            case self::FIND_FULLNAME:
+                $query->where('r.fullname = ?');
                 break;
             
             default:
@@ -166,14 +171,13 @@ class GitDao extends DaoBase
                 );
         }
         
-        $query->limit(1)
-              ->entity(self::ENTITY_REPO);
+        $query->entity(self::ENTITY_REPO);
         
         $res = $this->getDb()->execute($query, $params);
         
         $repo = (count($res) ? $res[0] : null);
         if (!$repo instanceof Repository) {
-            throw new RepositoryNotFound();
+            throw new RepositoryNotFound('Repository not found: '. $text);
         }
         
         return $repo;

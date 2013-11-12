@@ -12,6 +12,9 @@
     <listener class="Fwk\Core\Components\UrlRewriter\UrlRewriterListener">
         <param>:urlRewriterService</param>
     </listener>
+    <listener class="Fwk\Core\Components\ConsoleListener">
+        <param>:consoleService</param>
+    </listener>
     
     <result-types>
         <result-type
@@ -34,6 +37,11 @@
             <param name="urlRewriter">:urlRewriterService</param>
         </result-type>
     </result-types>
+    
+    <commands>
+        <command name="gitolite:show" class="TestGit\Commands\Gitolite" />
+        <command name="repository:update" class="TestGit\Commands\RepoUpdate" />
+    </commands>
     
     <actions>
         <action name="Home" shortcut="TestGit\Controllers\Home:show">

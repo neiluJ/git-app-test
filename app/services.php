@@ -3,6 +3,7 @@
 use Fwk\Di\Container;
 use Fwk\Di\ClassDefinition;
 use Fwk\Core\Components\RequestMatcher\RequestMatcher;
+use Symfony\Component\Console\Application as CliApplication;
 
 $container = new Container();
 $container->iniProperties(__DIR__ .'/config.ini', 'services');
@@ -15,6 +16,14 @@ $container->set('resultTypeService', new \Fwk\Core\Components\ResultType\ResultT
 $container->set(
    'git',
    new ClassDefinition('TestGit\\GitService', array('@repos.dir', '@repos.working.dir')),
+    true
+);
+
+// console App
+$container->set(
+    'consoleApp',
+    new ClassDefinition('\Symfony\Component\Console\Application', 
+    array('TestGit', '1.0')),
     true
 );
 
@@ -67,5 +76,7 @@ $container->set(
    )),
    true
 );
+
+
 
 return $container;
