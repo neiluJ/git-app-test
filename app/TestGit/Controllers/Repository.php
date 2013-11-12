@@ -6,8 +6,10 @@ use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
 use Fwk\Core\Preparable;
 use TestGit\Model\Git\Repository as RepositoryEntity;
+use Fwk\Core\ContextAware;
+use Fwk\Core\Context;
 
-class Repository implements ServicesAware, Preparable
+class Repository implements ContextAware, ServicesAware, Preparable
 {
     public $name;
     public $branch;
@@ -17,6 +19,7 @@ class Repository implements ServicesAware, Preparable
     protected $entity;
     
     protected $services;
+    protected $context;
     
     protected $files;
     
@@ -39,6 +42,10 @@ class Repository implements ServicesAware, Preparable
             $this->loadRepository();
         } catch(\Exception $exp) {
             return Result::ERROR;
+        }
+        
+        if (!$this->context->getRequest()->isXmlHttpRequest()) {
+            return Result::SUCCESS;
         }
         
         $refs = $this->repository->getReferences();
@@ -167,4 +174,16 @@ class Repository implements ServicesAware, Preparable
     public function getCloneHost() {
         return $this->cloneHost;
     }
+    
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function setContext(Context $context)
+    {
+        $this->context = $context;
+    }
+
+
 }
