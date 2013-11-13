@@ -1,0 +1,24 @@
+[fwk]
+requestMatcherService = requestMatcher
+resultTypeService = resultTypeService
+viewHelperService = viewHelper
+urlRewriterService = urlRewriter
+consoleService = consoleApp
+
+[services]
+db.hostname = localhost
+db.user = forgery
+db.password = forgery
+db.driver = pdo_mysql
+db.database = forgery
+
+users.table = users
+
+repos.dir = /home/git/repositories
+repos.working.dir = /home/git/workdir
+repos.table = repositories
+repos.accesses.table = accesses
+repos.basePath = /home/git/repositories
+
+git.clone.hostname = localhost
+git.date.format = d/m/Y
