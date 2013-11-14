@@ -63,7 +63,7 @@ class GitService
             throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
         }
         
-        $proc = new Process('git pull', $workDirPath);
+        $proc = new Process(sprintf('cd %s && git pull', $workDirPath), $this->workDir);
         $proc->run(function ($type, $buffer) use ($output) {
             if (null === $output) {
                 return;
