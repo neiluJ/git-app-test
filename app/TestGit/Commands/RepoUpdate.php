@@ -26,12 +26,14 @@ class RepoUpdate extends Command implements ServicesAware
             $repository = $dao->findOne($input->getArgument('name'), GitDao::FIND_FULLNAME);
         } catch(\Exception $exp) {
             $this->getApplication()->renderException($exp, $output);
+            exit(2);
         }
         
         try {
             $this->getGitService()->updateWorkdir($repository, $output);
         } catch(\RuntimeException $exp) {
             $this->getApplication()->renderException($exp, $output);
+            exit(2);
         }
         
         $commit = $this->getGitService()->getLastCommit($repository);

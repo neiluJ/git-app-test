@@ -22,3 +22,5 @@ repos.basePath = /home/git/repositories
 
 git.clone.hostname = localhost
 git.date.format = d/m/Y
+
+php.executable = /usr/bin/php
