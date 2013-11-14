@@ -64,7 +64,7 @@ class GitService
             throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
         }
         
-        $proc = new Process(sprintf('git --git-dir %s --work-tree . pull file://%s', $repoPath, $repoPath), $workDirPath);
+        $proc = new Process(sprintf('git fetch -f -m --all', $repoPath, $repoPath), $workDirPath);
         $proc->run(function ($type, $buffer) use ($output) {
             if (null === $output) {
                 return;
