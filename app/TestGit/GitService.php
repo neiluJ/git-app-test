@@ -64,7 +64,7 @@ class GitService
             throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
         }
         
-        $proc = new Process(sprintf('cd %s && git --git-tree %s --work-tree . checkout -f', $workDirPath, $repoPath), $this->workDir);
+        $proc = new Process(sprintf('cd %s && git --git-dir %s --work-tree . checkout -f', $workDirPath, $repoPath), $this->workDir);
         $proc->run(function ($type, $buffer) use ($output) {
             if (null === $output) {
                 return;
