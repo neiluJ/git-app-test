@@ -59,11 +59,12 @@ class GitService
     public function updateWorkdir(RepositoryEntity $repository, OutputInterface $output = null)
     {
         $workDirPath = $this->getWorkDirPath($repository);
+        $repoPath = $this->getRepositoryPath($repository);
         if (!is_dir($workDirPath)) {
             throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
         }
         
-        $proc = new Process(sprintf('cd %s && git pull', $workDirPath), $this->workDir);
+        $proc = new Process(sprintf('cd %s && git --git-tree %s --work-tree . checkout -f', $workDirPath, $repoPath), $this->workDir);
         $proc->run(function ($type, $buffer) use ($output) {
             if (null === $output) {
                 return;
