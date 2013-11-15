@@ -15,6 +15,8 @@ $active = $this->active;
         <li<?php if($active == "users"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Users', array(), true); ?>"><i class="glyphicon glyphicon-user"></i> Users</a></li>
         <li<?php if($active == "admin"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Admin', array(), true); ?>">Admin</a></li>
       </ul>
+        
+     <?php echo $vh->embed('UserMenu'); ?>
     </div>
   </div>
 </div>

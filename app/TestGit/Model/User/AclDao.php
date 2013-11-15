@@ -11,7 +11,7 @@ use TestGit\Model\Tables;
 class AclDao extends Dao implements Provider
 {
     const ENTITY_ROLE       = 'TestGit\\Model\\User\\Role';
-    const ENTITY_RESOURCE   = 'Forgery\\Model\\User\\Resource';
+    const ENTITY_RESOURCE   = 'TestGit\\Model\\User\\Resource';
     
     /**
      * Constructeur 

@@ -3,7 +3,7 @@
 use Fwk\Di\Container;
 use Fwk\Di\ClassDefinition;
 use Fwk\Core\Components\RequestMatcher\RequestMatcher;
-use Symfony\Component\Console\Application as CliApplication;
+use Fwk\Security\Service as SecurityService;
 
 $container = new Container();
 $container->iniProperties(__DIR__ .'/config.ini', 'services');
@@ -32,6 +32,7 @@ $viewHelperClassDef = new ClassDefinition('Fwk\Core\Components\ViewHelper\ViewHe
 $viewHelperClassDef->addMethodCall('add', array('embed', new ClassDefinition('Fwk\Core\Components\ViewHelper\EmbedViewHelper')));
 $viewHelperClassDef->addMethodCall('add', array('url', new ClassDefinition('Fwk\Core\Components\UrlRewriter\UrlViewHelper', array('requestMatcher', 'urlRewriter'))));
 $viewHelperClassDef->addMethodCall('add', array('escape', new ClassDefinition('Fwk\Core\Components\ViewHelper\EscapeViewHelper', array(ENT_QUOTES, "utf-8"))));
+$viewHelperClassDef->addMethodCall('add', array('form', new ClassDefinition('TestGit\Form\RendererViewHelper', array('formRenderer'))));
 
 $container->set('viewHelper', $viewHelperClassDef, true);
 
@@ -64,6 +65,20 @@ $container->set(
 );
 
 $container->set(
+   'aclsDao',
+   new ClassDefinition('TestGit\Model\User\AclDao', 
+   array(
+       '@db',
+       array(
+            'rolesTable'        => '@acls.table.roles',
+            'resourcesTable'    => '@acls.table.resources',
+            'permissionsTable'  => '@acls.table.permissions'
+       )
+   )),
+   true
+);
+
+$container->set(
    'gitDao',
    new ClassDefinition('TestGit\Model\Git\GitDao', 
    array(
@@ -77,6 +92,56 @@ $container->set(
    true
 );
 
+$container->set(
+  'securitySessionStorage',
+  new ClassDefinition('Fwk\Security\Http\SessionStorage',
+    array(
+       '@session'
+    )        
+));
 
+$container->set(
+    'authManager',
+    new ClassDefinition('Fwk\Security\Authentication\Manager',
+    array(
+       '@securitySessionStorage'
+    ) 
+));
+
+$container->set(
+    'aclsManager',
+    new ClassDefinition('Fwk\Security\Acl\Manager',
+    array(
+       '@aclsDao'
+    ) 
+));
+
+$container->set(
+   'security',
+   new ClassDefinition('Fwk\Security\Service', 
+   array(
+       '@authManager',
+       '@usersDao',
+       '@aclsManager'
+   )),
+   true
+);
+
+$container->set(
+    'authFilter',
+    new ClassDefinition('TestGit\Form\AuthenticationFilter',
+    array(
+        '@usersDao',
+        '@security'
+    ))
+);
+
+$container->set(
+    'formRenderer',
+    new ClassDefinition('Fwk\Form\Renderer',
+    array(
+        array('resourcesDir' => __DIR__ .'/TestGit/pages/form')
+    ))
+);
 
 return $container;

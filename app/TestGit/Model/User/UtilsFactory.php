@@ -19,7 +19,7 @@ class UtilsFactory
     public static function newSaltClosure()
     {
         return function(User $user) {
-            return sha256(strrev(strtolower($user->getUsername())));
+            return md5(strrev(strtolower($user->getUsername())));
         };
     }
     

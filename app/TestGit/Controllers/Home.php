@@ -11,6 +11,7 @@ class Home implements ServicesAware
     public $errorMsg;
     
     protected $services;
+    protected $user;
     
     public function show()
     {
@@ -19,6 +20,16 @@ class Home implements ServicesAware
     
     public function menu()
     {
+        return Result::SUCCESS;
+    }
+    
+    public function userMenu()
+    {
+        $this->user = $this->getServices()
+                ->get('security')
+                ->getAuthenticationManager()
+                ->getIdentity();
+        
         return Result::SUCCESS;
     }
     
@@ -35,5 +46,10 @@ class Home implements ServicesAware
     public function setServices(Container $services)
     {
         $this->services = $services;
+    }
+    
+    public function getUser()
+    {
+        return $this->user;
     }
 }

@@ -4,6 +4,7 @@ resultTypeService = resultTypeService
 viewHelperService = viewHelper
 urlRewriterService = urlRewriter
 consoleService = consoleApp
+sessionService = session
 
 [services]
 db.hostname = localhost
@@ -24,3 +25,7 @@ git.clone.hostname = localhost
 git.date.format = d/m/Y
 
 php.executable = /usr/bin/php
+
+acls.table.roles = acls_roles
+acls.table.resources = acls_resources
+acls.table.permissions = acls_permissions
