@@ -19,7 +19,8 @@
         "fwk/db": "dev-master",
         "fwk/security": "dev-master",
         "symfony/console": "dev-master",
-        "symfony/process": "dev-master"
+        "symfony/process": "dev-master",
+        "fwk/form": "dev-master"
     },
     "require-dev": {
         "joseph-lenton/php-error": "dev-master"
