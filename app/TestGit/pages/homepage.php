@@ -34,7 +34,7 @@
           <tr ng-repeat="repo in repositories | filter:query">
             <td><i class="glyphicon glyphicon-list"></i></td>
             <td><a href="<?php echo $vh->url(); ?>/Repository.action?name={{ repo.fullname }}">{{ repo.name }}</a></td>
-            <td><a href="<?php echo $vh->url(); ?>/Profile.action?name={{ repo.ownerName }}">{{ repo.ownerName }}</a></td>
+            <td><a href="<?php echo $vh->url(); ?>/Profile.action?username={{ repo.ownerName }}">{{ repo.ownerName }}</a></td>
             <td>{{ repo.lastCommit.date }}</td>
             <td class="commit-txt">[<a href="#">{{ repo.lastCommit.author }}</a>] {{ repo.lastCommit.message }} (<a href="#">{{ repo.lastCommit.hash|shortHash }}</a>)</td>
             <td>{{ repo.size }}</td>

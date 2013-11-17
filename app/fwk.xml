@@ -258,5 +258,14 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="Profile" shortcut="TestGit\Controllers\Profile:show">
+            <result name="success" type="php">
+                <param name="file">profile.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Profile error</param>
+            </result>
+        </action>
     </actions>
 </fwk>

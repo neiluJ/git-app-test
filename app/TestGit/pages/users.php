@@ -34,7 +34,7 @@
         <tbody>
           <tr ng-repeat="user in users | filter:query">
             <td><i class="glyphicon glyphicon-user"></i></td>
-            <td><a href="<?php echo $vh->url(); ?>/Profile.action?name={{ user.username }}">{{ user.username }}</a></td>
+            <td><a href="<?php echo $vh->url(); ?>/Profile.action?username={{ user.username }}">{{ user.username }}</a></td>
             <td><span ng-repeat="email in user.emails">{{ email }}</span></td>
             <td>{{ user.fullname }}</td>
             <td>{{ user.added_date }}</td>

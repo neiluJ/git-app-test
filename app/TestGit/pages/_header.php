@@ -9,8 +9,8 @@
     <title>Test-Git</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="<?php echo str_replace('/index.php', '', $vh->url()); ?>/css/bootstrap.css" rel="stylesheet">
-
+    <link href="<?php echo str_replace('/index.php', '', $vh->url()); ?>/css/bootstrap.min.css" rel="stylesheet">
+    <link href="<?php echo str_replace('/index.php', '', $vh->url()); ?>/css/bootstrap-theme.min.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="<?php echo str_replace('/index.php', '', $vh->url()); ?>/css/site.css" rel="stylesheet">
     <link href="<?php echo str_replace('/index.php', '', $vh->url()); ?>/js/highlight.js/styles/github.css" rel="stylesheet">
