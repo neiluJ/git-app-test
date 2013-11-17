@@ -1,0 +1,15 @@
+<?php $vh = $this->_helper; ?>
+<?php $err = false; $elm = $this->addUserForm->element('username'); if ($elm->hasError()) { $err = true; $elm->hint($elm->getError()); } ?>
+<div class="form-group<?php if ($err): ?> has-error<?php endif; ?>">
+     <?php echo $vh->formElement('username', $this->addUserForm); ?>
+</div>
+<?php $err = false; $elm = $this->addUserForm->element('email'); if ($elm->hasError()) { $err = true; $elm->hint($elm->getError()); } ?>
+<div class="form-group<?php if ($err): ?> has-error<?php endif; ?>">
+<?php echo $vh->formElement('email', $this->addUserForm); ?>
+</div>
+<?php $err = false; $elm = $this->addUserForm->element('password'); if ($elm->hasError()) { $err = true; $elm->hint($elm->getError()); }  $elm = $this->addUserForm->element('confirm'); if ($elm->hasError()) { $err = true; $elm->hint($elm->getError()); } ?>
+<div class="form-group<?php if ($err): ?> has-error<?php endif; ?>">
+<label for="password">Password &amp; Confirmation</label>
+<?php echo $vh->formElement('password', $this->addUserForm); ?>
+<?php echo $vh->formElement('confirm', $this->addUserForm); ?>
+</div>

@@ -10,7 +10,7 @@ use Fwk\Form\Elements\Submit;
 use Fwk\Form\Sanitization\StringSanitizer;
 use Fwk\Form\Validation\NotEmptyFilter;
 
-class LoginForm extends Form
+class AddUserForm extends Form
 {
     public function __construct($action = null, $method = 'post', 
         array $options = array()
@@ -25,6 +25,14 @@ class LoginForm extends Form
                  ->filter(new UsernameFilter(), 'Invalid credentials.')
                  ->label("Username");
         
+        $email = new Text('email', 'email');
+        $email->sanitizer(new StringSanitizer())
+                ->setAttr('class', 'form-control')
+                ->setAttr('placeholder', 'me@example.com')
+                 ->filter(new NotEmptyFilter(), 'Email cannot be empty.')
+                 ->filter(new \Fwk\Form\Validation\EmailFilter(), 'Invalid email address.')
+                 ->label("Primary email");
+        
         $passwd = new Password('password', 'password');
         $passwd->sanitizer(new StringSanitizer())
                 ->setAttr('placeholder', 'Password')
@@ -32,10 +40,16 @@ class LoginForm extends Form
                 ->filter(new NotEmptyFilter(), 'You must enter a password.')
                 ->label("Password");
         
+        $passwd2 = new Password('confirm', 'confirm');
+        $passwd2->sanitizer(new StringSanitizer())
+                ->setAttr('placeholder', 'Password confirmation')
+                ->setAttr('class', 'form-control')
+                ->filter(new NotEmptyFilter(), 'You must confirm your password.');
+        
         $submit = new Submit();
         $submit->setAttr('class', 'btn btn-default')
-               ->setDefault('Login');
+               ->setDefault('Add');
         
-        $this->addAll(array($username, $passwd, $submit));
+        $this->addAll(array($username, $email, $passwd, $passwd2, $submit));
     }
 }

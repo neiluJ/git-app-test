@@ -54,7 +54,7 @@ class Login extends Controller implements Preparable
     
     public function logout()
     {
-        $security   = $this->getServices()->get(Services::SECURITY);
+        $security   = $this->getServices()->get('security');
         $request    = $this->getContext()->getRequest();
         
         if (false === $security->deauthenticate($request)) {

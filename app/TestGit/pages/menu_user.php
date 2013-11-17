@@ -1,13 +1,11 @@
 <?php if (null !== $this->user): ?>
 <ul class="nav navbar-nav navbar-right">
     <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php $fn = $this->user->getFullname(); echo $this->_helper->escape(empty($fn) ? $this->user->getUsername() : $fn); ?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="#">Action</a></li>
-        <li><a href="#">Another action</a></li>
-        <li><a href="#">Something else here</a></li>
+        <li><a href="#">Profile</a></li>
         <li class="divider"></li>
-        <li><a href="#">Separated link</a></li>
+        <li><a href="<?php echo $this->_helper->url('Logout'); ?>">Logout</a></li>
       </ul>
     </li>
 </ul>

@@ -1,7 +1,7 @@
 <form role="form" action="<?php echo htmlentities($form->getAction()); ?>" method="<?php echo $form->getMethod(); ?>"<?php if($form->isMultipart()): ?> enctype="multipart/form-data"<?php endif; ?>>
 <?php foreach($form->elements() as $element): ?>
-    <div class="form-group">
-<?php echo $this->renderElement($element, $form); ?>
+    <div class="form-group<?php if ($form->isSubmitted() && $element->hasError()): ?>  has-error<?php endif; ?>">
+<?php if ($form->isSubmitted() && $element->hasError()) { $element->hint($element->getError()); } echo $this->renderElement($element, $form); ?>
     </div>
 <?php endforeach; ?>
 </form>

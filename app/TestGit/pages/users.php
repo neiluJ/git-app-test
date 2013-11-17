@@ -50,26 +50,14 @@
 
 <div class="modal fade" id="addModal">
   <div class="modal-dialog">
-      <form role="form" method="post" action="<?php echo $this->_helper->url('AddUser'); ?>">
+      <form role="form" id="addUser" method="post" action="<?php echo $this->_helper->url('AddUser'); ?>">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h4 class="modal-title">Add user</h4>
       </div>
-      <div class="modal-body">
-    <div class="form-group">
-    <label for="username">Username</label>
-    <input type="text" class="form-control" id="username" placeholder="Enter username">
-  </div>
-  <div class="form-group">
-    <label for="email">Primary email address</label>
-    <input type="email" class="form-control" id="email" placeholder="Enter email">
-  </div>
-  <div class="form-group">
-    <label for="password">Password &amp; Confirmation</label>
-    <input type="password" class="form-control" id="password" placeholder="Password">
-    <input type="password2" class="form-control" id="password2" placeholder="Password Confirmation">
-  </div>
+      <div class="modal-body" id="addUserContents">
+<?php echo $this->_helper->embed('AddUser'); ?>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
@@ -79,5 +67,20 @@
   </div><!-- /.modal-dialog -->
   </form>
 </div><!-- /.modal -->
-
+<script type="text/javascript">
+    $(function() {
+       $('#addUser').on('submit', function(e) {
+          e.preventDefault();
+          var data = $(this).serializeArray(), url = $(this).attr('action');
+          $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            success: function(data) {
+                $('#addUserContents').html(data);
+            }
+         });
+       });
+    });
+</script>
 <?php include __DIR__ .'/_footer.php'; ?>

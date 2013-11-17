@@ -5,9 +5,9 @@
 
       <div class="container">
           <div class="starter-template">
-              <h1>Login</h1>  
+              <h1>Add User</h1>  
         
-<?php echo $vh->form($this->loginForm); ?>
+<?php echo $vh->form($this->addUserForm); ?>
           </div>
       </div>
       

@@ -33,6 +33,7 @@ $viewHelperClassDef->addMethodCall('add', array('embed', new ClassDefinition('Fw
 $viewHelperClassDef->addMethodCall('add', array('url', new ClassDefinition('Fwk\Core\Components\UrlRewriter\UrlViewHelper', array('requestMatcher', 'urlRewriter'))));
 $viewHelperClassDef->addMethodCall('add', array('escape', new ClassDefinition('Fwk\Core\Components\ViewHelper\EscapeViewHelper', array(ENT_QUOTES, "utf-8"))));
 $viewHelperClassDef->addMethodCall('add', array('form', new ClassDefinition('TestGit\Form\RendererViewHelper', array('formRenderer'))));
+$viewHelperClassDef->addMethodCall('add', array('formElement', new ClassDefinition('TestGit\Form\RendererElementViewHelper', array('formRenderer'))));
 
 $container->set('viewHelper', $viewHelperClassDef, true);
 

@@ -228,5 +228,35 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="Logout" shortcut="TestGit\Controllers\Login:logout">
+            <result name="success" type="redirect">
+                <param name="actionName">Home</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="AddUser" shortcut="TestGit\Controllers\Users:addUser">
+            <result name="form" type="php">
+                <param name="file">adduser.php</param>
+            </result>
+            <result name="ajax:form" type="php">
+                <param name="file">adduser_embed.php</param>
+            </result>
+            <result name="ajax:success" type="php">
+                <param name="file">adduser_success.php</param>
+            </result>
+            <result name="embed:form" type="php">
+                <param name="file">adduser_embed.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Users</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
     </actions>
 </fwk>

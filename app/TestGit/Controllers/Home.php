@@ -25,10 +25,12 @@ class Home implements ServicesAware
     
     public function userMenu()
     {
-        $this->user = $this->getServices()
+        try {
+            $this->user = $this->getServices()
                 ->get('security')
-                ->getAuthenticationManager()
-                ->getIdentity();
+                ->getUser();
+        } catch(\Exception $e) {
+        }
         
         return Result::SUCCESS;
     }

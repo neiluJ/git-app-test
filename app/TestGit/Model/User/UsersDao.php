@@ -5,6 +5,7 @@ use TestGit\Model\Dao;
 use Fwk\Security\User\Provider;
 use Fwk\Security\Exceptions\UserNotFound;
 use Fwk\Security\User;
+use TestGit\Model\User\User as BaseUser;
 use Fwk\Db\Connection;
 use TestGit\StringUtils;
 use Fwk\Db\Query;
@@ -187,9 +188,9 @@ class UsersDao extends Dao implements Provider
         return ($user instanceof User);
     }
     
-    public function create($username, $password, $email, \Traversable $roles = null)
+    public function create($username, $password, $email, array $roles = array())
     {
-        $user = new User();
+        $user = new BaseUser();
         $user->setUsername($username);
         $user->setSlug(StringUtils::slugize($username));
         $user->setActive(1);

@@ -6,6 +6,10 @@ use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
 use Fwk\Core\Context;
 use Fwk\Core\ContextAware;
+use TestGit\Form\AddUserForm;
+use Fwk\Form\Validation\EqualsFilter;
+use TestGit\Form\UsernameAlreadyExistsFilter;
+use TestGit\Form\EmailAlreadyExistsFilter;
 
 class Users extends Repository implements ContextAware
 {
@@ -16,6 +20,7 @@ class Users extends Repository implements ContextAware
     
     protected $context;
     protected $errorMsg;
+    protected $addUserForm;
     
     public $userId;
     
@@ -81,6 +86,29 @@ class Users extends Repository implements ContextAware
         $this->users    = $this->getUsersDao()->findNonAuthorized($repoId, true);
         
         return Result::SUCCESS;
+    }
+    
+    public function addUser()
+    {
+        $form = $this->getAddUserForm();
+        if ($this->isPOST()) {
+            $form->submit($_POST);
+            
+            
+            $form->element('confirm')->filter(new EqualsFilter($form->password), 'Password Confirmation mismatch');
+            
+            if(!$form->validate()) {
+                return Result::FORM;
+            }
+            
+            $dao = $this->getUsersDao();
+            $u = $dao->create($form->username, $form->password, $form->email);
+            $dao->save($u);
+            
+            return Result::SUCCESS;
+        }
+        
+        return Result::FORM;
     }
     
     public function addAccess()
@@ -234,5 +262,25 @@ class Users extends Repository implements ContextAware
         return $this->errorMsg;
     }
 
-
+    public function getAddUserForm() 
+    {
+        if (!isset($this->addUserForm)) {
+            $this->addUserForm = new AddUserForm();
+            $this->addUserForm->setAction($this->getServices()->get('viewHelper')->url('AddUser'));
+            $this->addUserForm->element('username')->filter(
+                new UsernameAlreadyExistsFilter($this->getUsersDao()),
+                "This username is already used. Please choose a different one"
+            );
+            $this->addUserForm->element('email')->filter(
+                new EmailAlreadyExistsFilter($this->getUsersDao()),
+                "This email is already used. Please choose a different one"
+            );
+        }
+        return $this->addUserForm;
+    }
+    
+    public function isPOST()
+    {
+        return "POST" === $_SERVER['REQUEST_METHOD'];
+    }
 }
