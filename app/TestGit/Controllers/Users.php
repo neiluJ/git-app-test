@@ -94,7 +94,6 @@ class Users extends Repository implements ContextAware
         if ($this->isPOST()) {
             $form->submit($_POST);
             
-            
             $form->element('confirm')->filter(new EqualsFilter($form->password), 'Password Confirmation mismatch');
             
             if(!$form->validate()) {

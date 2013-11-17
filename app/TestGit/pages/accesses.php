@@ -58,7 +58,7 @@
                 <?php foreach($this->accesses as $access): ?>
                   <tr>
                     <td style="text-align:center"><input type="hidden" name="access[<?php echo $access->getUser_id(); ?>][exists]" value="1" /></td>
-                    <td><a href="<?php echo $this->_helper->url('Profile', array('username' => $access->getUser()->getUsername()), true); ?>"><?php echo $access->getUser()->getFullname(); ?></a></td>
+                    <td><a href="<?php echo $this->_helper->url('Profile', array('username' => $access->getUser()->getUsername()), true); ?>"><?php $fn = $access->getUser()->getFullname(); echo $this->_helper->escape(empty($fn) ? $access->getUser()->getUsername() : $access->getUser()->getFullname()); ?></a></td>
                     <td style="text-align:center"><input type="checkbox" name="access[<?php echo $access->getUser_id(); ?>][read]" id="access_<?php echo $access->getUser_id(); ?>_read"<?php if((bool)$access->getReadAccess() == true): ?> checked="checked"<?php endif; ?> /></td>
                     <td style="text-align:center"><input type="checkbox" name="access[<?php echo $access->getUser_id(); ?>][write]" id="access_<?php echo $access->getUser_id(); ?>_write"<?php if((bool)$access->getWriteAccess() == true): ?> checked="checked"<?php endif; ?> /></td>
                     <td style="text-align:center"><input type="checkbox" name="access[<?php echo $access->getUser_id(); ?>][special]" id="access_<?php echo $access->getUser_id(); ?>_special"<?php if((bool)$access->getSpecialAccess() == true): ?> checked="checked"<?php endif; ?> /></td>
@@ -89,7 +89,7 @@
                 <label for="userid">User</label>
                 <select name="userid" class="form-control" id="userid">
                     <?php foreach ($this->users as $user): ?>
-                    <option value="<?php echo $user->getId(); ?>"><?php echo $user->getFullname(); ?></option>
+                    <option value="<?php echo $user->getId(); ?>"><?php $fn = $user->getFullname(); echo $this->_helper->escape(empty($fn) ? $user->getUsername() : $user->getFullname()); ?></option>
                     <?php endforeach; ?>
                 </select>
                 <span class="help-block">Can't find the people you're looking for ? <a href="<?php echo $this->_helper->url('Users'); ?>">Add them here</a></span>
