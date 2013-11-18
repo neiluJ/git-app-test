@@ -35,6 +35,11 @@ class UsernameFilter implements Filter
             return false;
         }
         
+        // prevent usage of 'daemon' as its used for git-smart-http
+        if ($value == 'daemon') {
+            return false;
+        }
+        
         return true;
     }
 }
