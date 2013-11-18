@@ -60,8 +60,8 @@
             </div> 
             <ul class="breadcrumb repo-path">
                 <li ng-repeat="p in pathParts">
-                    <a ng-if="!$last" ng-click="navigateToFile($event, p);" href="<?php echo $vh->url(); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.realpath }}">{{ p.path }}</a>
-                    <a ng-if="$last" ng-click="navigateToFile($event, p);" style="color: inherit" href="<?php echo $vh->url(); ?>/{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.realpath }}">{{ p.path }}</a>
+                    <a ng-if="!$last" ng-click="navigateToFile($event, p);" href="<?php echo rtrim($vh->url(), '/'); ?>/Repository.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.realpath }}">{{ p.path }}</a>
+                    <a ng-if="$last" ng-click="navigateToFile($event, p);" style="color: inherit" href="<?php echo rtrim($vh->url(), '/'); ?>/{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ branch }}&amp;path={{ p.realpath }}">{{ p.path }}</a>
                 </li>
             </ul>
             <div id="main">
