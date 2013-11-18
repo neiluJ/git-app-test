@@ -37,6 +37,8 @@ class Profile extends Controller implements Preparable
         $dao = $this->getGitDao();
         $this->repositories = $dao->findMany($this->profile->getId(), GitDao::FIND_OWNER);
         
+        $this->getServices()->get('users')->generateApachePassword('test');
+        
         return Result::SUCCESS;
     }
     

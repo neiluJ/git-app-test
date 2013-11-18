@@ -101,7 +101,7 @@ class Users extends Repository implements ContextAware
             }
             
             $dao = $this->getUsersDao();
-            $u = $dao->create($form->username, $form->password, $form->email);
+            $u = $dao->create($form->username, $form->password, $form->email, $this->getServices()->get('users'));
             $dao->save($u);
             
             return Result::SUCCESS;

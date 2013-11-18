@@ -10,6 +10,7 @@ use Fwk\Db\Connection;
 use TestGit\StringUtils;
 use Fwk\Db\Query;
 use TestGit\Model\Tables;
+use TestGit\UsersService;
 
 class UsersDao extends Dao implements Provider
 {
@@ -189,7 +190,7 @@ class UsersDao extends Dao implements Provider
         return ($user instanceof User);
     }
     
-    public function create($username, $password, $email, array $roles = array())
+    public function create($username, $password, $email, UsersService $uService = null, array $roles = array())
     {
         $user = new BaseUser();
         $user->setUsername($username);
@@ -199,18 +200,22 @@ class UsersDao extends Dao implements Provider
         $user->setEmail($email);
         
         // generate password
-        $this->updatePassword($user, $password);
+        $this->updatePassword($user, $password, $uService);
         $user->getRolesRelation()->addAll($roles);
         
         return $user;
     }
     
-    public function updatePassword(User $user, $newPassword)
+    public function updatePassword(User $user, $newPassword, UsersService $uService = null)
     {
         $generator  = UtilsFactory::newPasswordGenerator();
         $saltFunc   = UtilsFactory::newSaltClosure();
         $generator->setSalt($saltFunc($user));
         $user->setPassword($generator->create($newPassword));
+        
+        if ($uService !== null) {
+            $user->setHttp_password($uService->generateApachePassword($newPassword));
+        }
         
         return $user;
     }

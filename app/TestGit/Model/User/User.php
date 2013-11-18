@@ -15,6 +15,7 @@ class User implements UserInterface, PasswordAware,
     protected $id;
     protected $username;
     protected $password;
+    protected $http_password;
     protected $slug;
     protected $email;
     protected $date_registration;
@@ -201,5 +202,13 @@ class User implements UserInterface, PasswordAware,
         return $this->repositories;
     }
 
+    public function getHttp_password()
+    {
+        return $this->http_password;
+    }
 
+    public function setHttp_password($http_password)
+    {
+        $this->http_password = $http_password;
+    }
 }

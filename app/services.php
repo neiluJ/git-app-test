@@ -19,6 +19,13 @@ $container->set(
     true
 );
 
+// users service
+$container->set(
+   'users',
+   new ClassDefinition('TestGit\\UsersService', array('@apache.htpasswd.bin')),
+    true
+);
+
 // console App
 $container->set(
     'consoleApp',

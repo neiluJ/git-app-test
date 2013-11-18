@@ -29,3 +29,5 @@ php.executable = /usr/bin/php
 acls.table.roles = acls_roles
 acls.table.resources = acls_resources
 acls.table.permissions = acls_permissions
+
+apache.htpasswd.bin = htpasswd -nmb

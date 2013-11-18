@@ -154,6 +154,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `username` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   `slug` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   `password` blob NOT NULL,
+  `http_password` varchar(120) COLLATE utf8_unicode_ci DEFAULT NULL,
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `date_registration` datetime NOT NULL,
   `date_activation` datetime DEFAULT NULL,
@@ -165,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `slug` (`slug`),
   UNIQUE KEY `email` (`email`),
   KEY `active` (`active`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=46 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
 
 --
 -- Contenu de la table `users`

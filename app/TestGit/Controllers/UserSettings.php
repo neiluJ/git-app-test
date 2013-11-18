@@ -146,7 +146,7 @@ class UserSettings extends Profile
                 return Result::FORM;
             }
             
-            $user = $this->getUsersDao()->updatePassword($this->profile, $form->password);
+            $user = $this->getUsersDao()->updatePassword($this->profile, $form->password, $this->getServices()->get('users'));
             $this->getUsersDao()->save($this->profile);
             
             return Result::SUCCESS;
