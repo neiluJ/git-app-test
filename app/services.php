@@ -59,7 +59,8 @@ $container->set(
    array(
        '@db',
        array(
-           'usersTable' => '@users.table'
+           'usersTable' => '@users.table',
+           'sshKeysTable'   => '@users.ssh_keys.table'
        )
    )),
    true

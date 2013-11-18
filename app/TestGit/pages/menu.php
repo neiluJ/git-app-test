@@ -13,7 +13,6 @@ $active = $this->active;
       <ul class="nav navbar-nav">
         <li<?php if($active == "repositories"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Repositories', array(), true); ?>"><i class="glyphicon glyphicon-list"></i> Repositories</a></li>
         <li<?php if($active == "users"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Users', array(), true); ?>"><i class="glyphicon glyphicon-user"></i> Users</a></li>
-        <li<?php if($active == "admin"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Admin', array(), true); ?>">Admin</a></li>
       </ul>
         
      <?php echo $vh->embed('UserMenu'); ?>

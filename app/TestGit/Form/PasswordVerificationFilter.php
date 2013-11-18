@@ -1,9 +1,9 @@
 <?php
-namespace Forgery\Forms;
+namespace TestGit\Form;
 
 use Fwk\Form\Filter;
-use Forgery\User\User;
-use Forgery\User\UtilsFactory;
+use TestGit\Model\User\User;
+use TestGit\Model\User\UtilsFactory;
 
 class PasswordVerificationFilter implements Filter
 {

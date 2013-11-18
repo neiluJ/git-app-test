@@ -7,15 +7,15 @@ use TestGit\Model\User\User;
 
 /**
  */
-class EmailAlreadyExistsFilter implements Filter
+class SshKeyTitleExistsFilter implements Filter
 {
     protected $usersDao;
-    protected $except;
+    protected $user;
     
-    public function __construct(UsersDao $usersDao, User $except = null)
+    public function __construct(UsersDao $usersDao, User $user)
     {
         $this->usersDao = $usersDao;
-        $this->except = $except;
+        $this->user = $user;
     }
     
     /**
@@ -28,15 +28,11 @@ class EmailAlreadyExistsFilter implements Filter
     public function validate($value = null)
     {
         try {
-            $find = $this->usersDao->findOne($value, UsersDao::FIND_EMAIL, false);
-            
-            if (null !== $this->except && $find->getId() === $this->except->getId()) {
-                return true;
-            }
+            $find = $this->usersDao->findSshKeyByTitleUser($value, $this->user);
         } catch(\Exception $e) {
-            return true;
+            return false;
         }
         
-        return false;
+        return count($find) === 0;
     }
 }

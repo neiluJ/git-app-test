@@ -82,13 +82,11 @@ class GitDao extends DaoBase
                         ->select()
                         ->from($this->getOption('repositoriesTable'));
 
-        if ($search !== self::FIND_OWNER) {
+        if (!is_array($text)) {
             $params = array($text);
-        } elseif (is_array($text)) {
+        } else {
             $params = array($text[0], $text[1]);
-        } elseif ($text instanceof User) {
-            $params = array($text->getId());
-        }
+        } 
         
         switch($search)
         {
@@ -117,7 +115,6 @@ class GitDao extends DaoBase
         }
         
         $query->entity(self::ENTITY_REPO)
-              ->limit($limit)
               ->orderBy('last_commit_date', false);
         
         return $this->getDb()->execute($query, $params);

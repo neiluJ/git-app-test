@@ -5,8 +5,10 @@ use Fwk\Core\Action\Controller;
 use Fwk\Core\Action\Result;
 use TestGit\Model\User\User;
 use TestGit\Model\User\UsersDao;
+use TestGit\Model\Git\GitDao;
+use Fwk\Core\Preparable;
 
-class Profile extends Controller
+class Profile extends Controller implements Preparable
 {
     public $username;
     
@@ -17,7 +19,13 @@ class Profile extends Controller
     protected $profile;
     protected $avatarUrl;
     protected $repositories = array();
+    protected $dateFormat;
     
+    public function prepare()
+    {
+        $this->dateFormat = $this->getServices()->get('git.date.format');
+    }
+
     public function show()
     {
         try {
@@ -26,8 +34,8 @@ class Profile extends Controller
             return Result::ERROR;
         }
         
-       // $dao = $this->getReposDao();
-       // $this->repositories = $dao->findMany($this->profile, ReposDao::FIND_OWNER);
+        $dao = $this->getGitDao();
+        $this->repositories = $dao->findMany($this->profile->getId(), GitDao::FIND_OWNER);
         
         return Result::SUCCESS;
     }
@@ -39,6 +47,15 @@ class Profile extends Controller
     protected function getUsersDao()
     {
         return $this->getServices()->get('usersDao');
+    }
+    
+    /**
+     *
+     * @return GitDao
+     */
+    protected function getGitDao()
+    {
+        return $this->getServices()->get('gitDao');
     }
     
     protected function loadProfile()
@@ -69,5 +86,10 @@ class Profile extends Controller
     
     public function getRepositories() {
         return $this->repositories;
+    }
+    
+    public function getDateFormat() 
+    {
+        return $this->dateFormat;
     }
 }

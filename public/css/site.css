@@ -301,3 +301,94 @@ h3 i {
 ul.tags-list li a i {
     margin-top:2px;
 }
+div.avatar {
+    text-align: center;
+}
+div.avatar i {
+    font-size: 6em;
+}
+div.avatar h1 {
+    margin-bottom: 0;
+}
+
+form.filter {
+    margin-top: -6px;
+}
+
+ul.repositories {
+    margin:0;
+    padding:0;
+    list-style:none;
+    list-style-type:none;
+    list-style-position: inside;
+}
+
+ul.repositories li {
+    display: block;
+    border-bottom: solid 1px #eee;
+    padding: 0px 0 10px;
+    margin: 0 0 10px;
+}
+ul.repositories li:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0px;
+}
+ul.repositories li a.repo-name {
+    font-weight: bold;
+}
+ul.repositories li i {
+    color: #666;
+    margin-right: 7px;
+}
+
+ul.repositories li p.infos {
+    color: #999;
+    font-size: 12px;
+    padding-bottom: 0;
+    margin-bottom:0;
+    margin-left: 24px;
+}
+ul.repositories li p.infos span {
+    color: #666;
+}
+
+ul.repositories li span.fork {
+    color: #999;
+    font-style:italic;
+}
+ul.repositories li span.fork a {
+    color: #999;
+}
+
+ul.repositories li .btn-group {
+    margin-top: 4px;
+    display:none;
+}
+
+ul.repositories li:hover .btn-group {
+    display:block;
+}
+
+.user-settings .panel-body {
+    padding-bottom: 0;
+}
+
+ol.ssh-keys {
+    margin:0;
+    padding:0;
+    list-style-position: inside;
+}
+ol.ssh-keys li {
+    margin:0 0 5px 0;
+    padding:5px 0;
+    border-bottom: solid 1px #eee;
+}
+ol.ssh-keys li:last-child {
+    padding:5px 0 0;
+    border-bottom: none;
+}
+
+ol.ssh-keys li span {
+    color: #999;
+}

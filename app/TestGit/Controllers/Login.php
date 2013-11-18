@@ -63,6 +63,13 @@ class Login extends Controller implements Preparable
              */
         }
         
+        $ref = $request->headers->get('Referer');
+        if (!empty($ref)) {
+            $this->back = $ref;
+        } else {
+            $this->back = $this->getServices()->get('viewHelper')->url('Home');
+        }
+        
         /**
          * @todo Update last_seen
          */

@@ -230,7 +230,7 @@
         </action>
         <action name="Logout" shortcut="TestGit\Controllers\Login:logout">
             <result name="success" type="redirect">
-                <param name="actionName">Home</param>
+                <param name="uri">:back</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -260,7 +260,69 @@
         </action>
         <action name="Profile" shortcut="TestGit\Controllers\Profile:show">
             <result name="success" type="php">
-                <param name="file">profile.php</param>
+                <param name="file">user_profile.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Profile error</param>
+            </result>
+        </action>
+        <action name="UserSettings" shortcut="TestGit\Controllers\UserSettings:show">
+            <result name="success" type="php">
+                <param name="file">user_settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Profile error</param>
+            </result>
+        </action>
+        <action name="EditUserInfos" shortcut="TestGit\Controllers\UserSettings:editInfos">
+            <result name="success" type="redirect">
+                <param name="actionName">UserSettings</param>
+                <param name="username">:username</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">user_settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Profile error</param>
+            </result>
+        </action>
+        <action name="AddSshKey" shortcut="TestGit\Controllers\UserSettings:addSshKey">
+            <result name="success" type="redirect">
+                <param name="actionName">UserSettings</param>
+                <param name="username">:username</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">user_settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Profile error</param>
+            </result>
+        </action>
+        <action name="RevokeSshKey" shortcut="TestGit\Controllers\UserSettings:revokeSshKey">
+            <result name="success" type="redirect">
+                <param name="actionName">UserSettings</param>
+                <param name="username">:username</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Unable to revoke ssh key</param>
+            </result>
+        </action>
+        <action name="ChangePassword" shortcut="TestGit\Controllers\UserSettings:chpasswd">
+            <result name="success" type="redirect">
+                <param name="actionName">UserSettings</param>
+                <param name="username">:username</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">user_settings.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>

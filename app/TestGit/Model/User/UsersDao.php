@@ -38,7 +38,8 @@ class UsersDao extends Dao implements Provider
         $options = array())
     {
         $options = array_merge(array(
-            'usersTable'    => Tables::USERS
+            'usersTable'    => Tables::USERS,
+            'sshKeysTable'  => Tables::SSH_KEYS
         ), $options);
         
         parent::__construct($connection, $options);
@@ -198,13 +199,52 @@ class UsersDao extends Dao implements Provider
         $user->setEmail($email);
         
         // generate password
-        $generator  = UtilsFactory::newPasswordGenerator();
-        $saltFunc   = UtilsFactory::newSaltClosure();
-        $generator->setSalt($saltFunc($user));
-        $user->setPassword($generator->create($password));
-        
+        $this->updatePassword($user, $password);
         $user->getRolesRelation()->addAll($roles);
         
         return $user;
+    }
+    
+    public function updatePassword(User $user, $newPassword)
+    {
+        $generator  = UtilsFactory::newPasswordGenerator();
+        $saltFunc   = UtilsFactory::newSaltClosure();
+        $generator->setSalt($saltFunc($user));
+        $user->setPassword($generator->create($newPassword));
+        
+        return $user;
+    }
+    
+    public function findSshKeyByHash($hash)
+    {
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('sshKeysTable'))
+                ->where('hash = ?')
+                ->limit(1);
+        
+        return $this->getDb()->execute($query, array($hash));
+    }
+    
+    public function findSshKeyByTitleUser($title, User $user)
+    {
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('sshKeysTable'))
+                ->where('title = ? AND user_id = ?')
+                ->limit(1);
+        
+        return $this->getDb()->execute($query, array($title, $user->getId()));
+    }
+    
+    public function findSshKeyById($id)
+    {
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('sshKeysTable'))
+                ->where('id = ?')
+                ->limit(1);
+        
+        return $this->getDb()->execute($query, array($id));
     }
 }

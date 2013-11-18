@@ -9,6 +9,7 @@ use Fwk\Form\Elements\Submit;
 
 use Fwk\Form\Sanitization\StringSanitizer;
 use Fwk\Form\Validation\NotEmptyFilter;
+use Fwk\Form\Validation\LengthFilter;
 
 class AddUserForm extends Form
 {
@@ -38,6 +39,7 @@ class AddUserForm extends Form
                 ->setAttr('placeholder', 'Password')
                 ->setAttr('class', 'form-control')
                 ->filter(new NotEmptyFilter(), 'You must enter a password.')
+                ->filter(new LengthFilter(6), 'Your password is too short.')
                 ->label("Password");
         
         $passwd2 = new Password('confirm', 'confirm');
