@@ -25,6 +25,10 @@ repos.basePath = /home/git/repositories
 git.clone.hostname = localhost
 git.date.format = d/m/Y
 
+git.user.name       = forgery
+git.user.email      = forgery@nitronet.org
+git.user.fullname   = Forgery
+
 php.executable = /usr/bin/php
 
 acls.table.roles = acls_roles
@@ -32,3 +36,4 @@ acls.table.resources = acls_resources
 acls.table.permissions = acls_permissions
 
 apache.htpasswd.bin = htpasswd -nmb
+apache.htpasswd.file = /home/git/htpasswd.git

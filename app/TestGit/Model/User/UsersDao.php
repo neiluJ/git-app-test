@@ -11,6 +11,9 @@ use TestGit\StringUtils;
 use Fwk\Db\Query;
 use TestGit\Model\Tables;
 use TestGit\UsersService;
+use TestGit\Events\UserAddEvent;
+use TestGit\Events\UserEditEvent;
+use Fwk\Di\Container;
 
 class UsersDao extends Dao implements Provider
 {
@@ -180,9 +183,25 @@ class UsersDao extends Dao implements Provider
      * 
      * @return boolean 
      */
-    public function save(User $user)
-    {
-        return $this->getDb()->table($this->getOption('usersTable'))->save($user);
+    public function save(User $user, $triggerEvent = false, 
+        Container $services = null
+    ) {
+        if ($triggerEvent === true) {
+            // user id not set - it's a new user
+            if ($user->getId() === null) {
+                $event = new UserAddEvent($user, $services);
+            } else {
+                $event = new UserEditEvent($user, $services);
+            }
+        }
+        
+        $result = $this->getDb()->table($this->getOption('usersTable'))->save($user);
+        
+        if (isset($event)) {
+            $this->notify($event);
+        }
+        
+        return $result;
     }
     
     public function supports(User $user)

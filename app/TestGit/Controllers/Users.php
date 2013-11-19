@@ -10,6 +10,7 @@ use TestGit\Form\AddUserForm;
 use Fwk\Form\Validation\EqualsFilter;
 use TestGit\Form\UsernameAlreadyExistsFilter;
 use TestGit\Form\EmailAlreadyExistsFilter;
+use TestGit\Events\RepositoryEditEvent;
 
 class Users extends Repository implements ContextAware
 {
@@ -42,6 +43,7 @@ class Users extends Repository implements ContextAware
         
         $repoId = $this->getEntity()->getId(); 
         $request = $this->getContext()->getRequest();
+        $changes = 0;
         
         $this->accesses = $this->getGitDao()->getRepositoryAccesses($repoId);
         if ($request->getMethod() == "POST") {
@@ -67,20 +69,44 @@ class Users extends Repository implements ContextAware
                     
                     $this->getGitDao()
                         ->removeRepositoryAccess($repoId, $userId);
+                    $changes++;
                     continue;
                 }
                 
                 foreach ($this->accesses as $idx => $access) {
                     if ($access->getUser_id() == $userId) {
+                        $old = sprintf('%s%s%s%s', 
+                            ($access->getReadAccess() ? '+' : '-'),
+                            ($access->getWriteAccess() ? '+' : '-'),
+                            ($access->getSpecialAccess() ? '+' : '-'),
+                            ($access->getAdminAccess() ? '+' : '-')
+                        );
+                        $new = sprintf('%s%s%s%s', 
+                            ($read ? '+' : '-'),
+                            ($write ? '+' : '-'),
+                            ($special ? '+' : '-'),
+                            ($admin ? '+' : '-')
+                        );
+                        
+                        // no changes
+                        if ($old == $new) {
+                            continue;
+                        }
+                        
                         $access->setReadAccess($read);
                         $access->setWriteAccess($write);
                         $access->setSpecialAccess($special);
                         $access->setAdminAccess($admin);
                         
                         $this->getGitDao()->saveAccess($access);
+                        $changes++;
                     }
                 }
             }
+        }
+        
+        if ($changes > 0) {
+            $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()));
         }
         
         $this->users    = $this->getUsersDao()->findNonAuthorized($repoId, true);
@@ -102,7 +128,7 @@ class Users extends Repository implements ContextAware
             
             $dao = $this->getUsersDao();
             $u = $dao->create($form->username, $form->password, $form->email, $this->getServices()->get('users'));
-            $dao->save($u);
+            $dao->save($u, true, $this->getServices());
             
             return Result::SUCCESS;
         }
@@ -164,6 +190,9 @@ class Users extends Repository implements ContextAware
         try {
             $this->getGitDao()
                 ->addRepositoryAccess($repoId, $userId, $read, $write, $special, $admin);
+            
+            $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()));
+            
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
@@ -190,6 +219,7 @@ class Users extends Repository implements ContextAware
         try {
             $this->getGitDao()
                 ->removeRepositoryAccess($repoId, $userId);
+            $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()));
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
             return Result::ERROR;

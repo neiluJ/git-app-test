@@ -11,6 +11,9 @@ use TestGit\Form\PasswordVerificationFilter;
 use TestGit\StringUtils;
 use TestGit\Form\SshKeyExistsFilter;
 use TestGit\Form\SshKeyTitleExistsFilter;
+use TestGit\Events\UserSshKeyAddEvent;
+use TestGit\Events\UserSshKeyRemoveEvent;
+use TestGit\Events\UserChangePasswordEvent;
 
 class UserSettings extends Profile
 {
@@ -52,7 +55,7 @@ class UserSettings extends Profile
             $this->profile->setEmail($form->email);
             $this->profile->setFullname($form->fullname);
             
-            $this->getUsersDao()->save($this->profile);
+            $this->getUsersDao()->save($this->profile, false);
             
             return Result::SUCCESS;
         }
@@ -86,7 +89,8 @@ class UserSettings extends Profile
 
             $this->profile->getSshKeys()->add($sshkey);
             
-            $this->getUsersDao()->save($this->profile);
+            $this->getUsersDao()->save($this->profile, false);
+            $this->getUsersDao()->notify(new UserSshKeyAddEvent($this->profile, $sshkey, $this->getServices()));
             
             return Result::SUCCESS;
         }
@@ -119,8 +123,9 @@ class UserSettings extends Profile
             }
         }
         
-        $this->getUsersDao()->save($this->profile);
-        
+        $this->getUsersDao()->save($this->profile, false);
+        $this->getUsersDao()->notify(new UserSshKeyRemoveEvent($this->profile, $find, $this->getServices()));
+
         return Result::SUCCESS;
     }
     
@@ -146,8 +151,9 @@ class UserSettings extends Profile
                 return Result::FORM;
             }
             
-            $user = $this->getUsersDao()->updatePassword($this->profile, $form->password, $this->getServices()->get('users'));
+            $this->getUsersDao()->updatePassword($this->profile, $form->password, $this->getServices()->get('users'));
             $this->getUsersDao()->save($this->profile);
+            $this->getUsersDao()->notify(new UserChangePasswordEvent($this->profile, $this->getServices()));
             
             return Result::SUCCESS;
         }

@@ -5,14 +5,18 @@ use TestGit\Model\Git\Repository as RepositoryEntity;
 use Gitonomy\Git\Repository as GitRepository;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
+use TestGit\Model\User\User;
 
 class GitService
 {
     protected $repositoriesDir;
     protected $workDir;
     protected $dateFormat;
+    protected $gitUsername;
+    protected $gitEmail;
+    protected $gitFullname;
     
-    public function __construct($repositoriesDir, $workDir, $dateFormat = 'd/m/Y')
+    public function __construct($repositoriesDir, $workDir, $dateFormat, $gitUsername, $gitEmail, $gitFullname)
     {
         if (!is_dir($repositoriesDir)) {
             throw new \Exception('Invalid repositories directory: '. $repositoriesDir);
@@ -25,6 +29,9 @@ class GitService
         $this->repositoriesDir = $repositoriesDir;
         $this->workDir = $workDir;
         $this->dateFormat = $dateFormat;
+        $this->gitEmail = $gitEmail;
+        $this->gitUsername = $gitUsername;
+        $this->gitFullname = $gitFullname;
     }
     
     /**
@@ -86,5 +93,80 @@ class GitService
         $revision = $gitRepo->getLog(null, null, null, 1);
        
         return $revision->getSingleCommit();
+    }
+    
+    public function userConfig(RepositoryEntity $repository)
+    {
+        $proc = new Process(sprintf('git config user.name "%s" && git config user.email "%s"', $this->gitUsername, $this->gitEmail), $this->getWorkDirPath($repository));
+        $proc->run();
+        if (!$proc->isSuccessful()) {
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+    }
+    
+    public function add(RepositoryEntity $repository, array $files)
+    {
+        $final = array();
+        foreach ($files as $file) {
+            $final[] = $file;
+        }
+        
+        $proc = new Process('git add -f -- '. implode(' ', $final), $this->getWorkDirPath($repository));
+        $proc->run();
+        if (!$proc->isSuccessful()) {
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+    }
+    
+    public function rm(RepositoryEntity $repository, array $files)
+    {
+        $final = array();
+        foreach ($files as $file) {
+            $final[] = $file;
+        }
+        
+        $proc = new Process('git rm -f -- '. implode(' ', $final), $this->getWorkDirPath($repository));
+        $proc->run();
+        if (!$proc->isSuccessful()) {
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+    }
+    
+    public function commit(RepositoryEntity $repository, User $committer, $message)
+    {
+        $fn     = $committer->getFullname();
+        
+        // doing the impersonation commit stuff
+        $exec   = sprintf("export GIT_AUTHOR_NAME='%s' ".
+            "&& export GIT_AUTHOR_EMAIL='%s' ".
+            "&& export GIT_COMMITTER_NAME='%s' ".
+            "&& export GIT_COMMITTER_EMAIL='%s' ".
+            "&& git commit -m '%s' ".
+            "&& unset GIT_AUTHOR_NAME ".
+            "&& unset GIT_AUTHOR_EMAIL ".
+            "&& unset GIT_COMMITTER_NAME ".
+            "&& unset GIT_COMMITTER_EMAIL",
+            $this->gitUsername,
+            $this->gitEmail,
+            (empty($fn) ? $committer->getUsername() : $fn),
+            $committer->getEmail(),
+            addslashes($message)
+        );
+        
+        $proc = new Process($exec, $this->getWorkDirPath($repository));
+        $proc->run();
+        if (!$proc->isSuccessful()) {
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+    }
+    
+    public function push(RepositoryEntity $repository)
+    {
+        $this->userConfig($repository);
+        $proc = new Process('git push -f', $this->getWorkDirPath($repository));
+        $proc->run();
+        if (!$proc->isSuccessful()) {
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
     }
 }

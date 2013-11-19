@@ -15,7 +15,7 @@ $container->set('resultTypeService', new \Fwk\Core\Components\ResultType\ResultT
 // git service
 $container->set(
    'git',
-   new ClassDefinition('TestGit\\GitService', array('@repos.dir', '@repos.working.dir')),
+   new ClassDefinition('TestGit\\GitService', array('@repos.dir', '@repos.working.dir', '@git.date.format', '@git.user.name', '@git.user.email', '@git.user.fullname')),
     true
 );
 
@@ -60,16 +60,19 @@ $container->set(
    true
 );
 
+$usersDaoDef = new ClassDefinition('TestGit\Model\User\UsersDao', 
+array(
+    '@db',
+    array(
+        'usersTable' => '@users.table',
+        'sshKeysTable'   => '@users.ssh_keys.table'
+    )
+));
+$usersDaoDef->addMethodCall('addListener', array('@gitolite'));
+
 $container->set(
    'usersDao',
-   new ClassDefinition('TestGit\Model\User\UsersDao', 
-   array(
-       '@db',
-       array(
-           'usersTable' => '@users.table',
-           'sshKeysTable'   => '@users.ssh_keys.table'
-       )
-   )),
+   $usersDaoDef,
    true
 );
 
@@ -87,17 +90,20 @@ $container->set(
    true
 );
 
+$gitDaoDef = new ClassDefinition('TestGit\Model\Git\GitDao', 
+array(
+    '@db',
+    array(
+        'repositoriesTable' => '@repos.table',
+        'accessesTable'      => '@repos.accesses.table',
+        'repositoriesBasePath' => '@repos.basePath'
+    )
+));
+$gitDaoDef->addMethodCall('addListener', array('@gitolite'));
+
 $container->set(
    'gitDao',
-   new ClassDefinition('TestGit\Model\Git\GitDao', 
-   array(
-       '@db',
-       array(
-           'repositoriesTable' => '@repos.table',
-           'accessesTable'      => '@repos.accesses.table',
-           'repositoriesBasePath' => '@repos.basePath'
-       )
-   )),
+   $gitDaoDef,
    true
 );
 
@@ -150,7 +156,14 @@ $container->set(
     new ClassDefinition('Fwk\Form\Renderer',
     array(
         array('resourcesDir' => __DIR__ .'/TestGit/pages/form')
-    ))
+    )),
+    true
+);
+
+$container->set(
+    'gitolite',
+    new ClassDefinition('TestGit\GitoliteService', array()),
+    true
 );
 
 return $container;

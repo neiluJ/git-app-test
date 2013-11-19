@@ -2,8 +2,9 @@
 namespace TestGit\Model;
 
 use Fwk\Db\Connection;
+use Fwk\Events\Dispatcher;
 
-abstract class Dao 
+abstract class Dao extends Dispatcher
 {
     /**
      * Connexion à la base de donnée
