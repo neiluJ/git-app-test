@@ -45,7 +45,7 @@ class GitoliteService
             return;
         }
         
-        @file_put_contents($file, $contents, LOCK_EX);
+        file_put_contents($file, $contents, LOCK_EX);
         if (!is_file($file)) {
             throw new \RuntimeException('unable to write apache htpasswd file');
         }
@@ -77,8 +77,8 @@ class GitoliteService
             } 
         }
 
-        @file_put_contents($file, $key->contents, LOCK_EX);
-        if (!is_file($file) || @file_get_contents($file) === $key->contents) {
+        file_put_contents($file, $key->contents, LOCK_EX);
+        if (!is_file($file) || file_get_contents($file) === $key->contents) {
             throw new \RuntimeException('unable to write ssh-key to gitolite');
         }
         
