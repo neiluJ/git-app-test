@@ -301,7 +301,7 @@
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
-                <param name="errorMsg">Profile error</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="RevokeSshKey" shortcut="TestGit\Controllers\UserSettings:revokeSshKey">
@@ -312,7 +312,7 @@
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
-                <param name="errorMsg">Unable to revoke ssh key</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="ChangePassword" shortcut="TestGit\Controllers\UserSettings:chpasswd">
@@ -326,7 +326,7 @@
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
-                <param name="errorMsg">Profile error</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
     </actions>

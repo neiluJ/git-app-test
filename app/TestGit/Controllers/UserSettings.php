@@ -24,6 +24,7 @@ class UserSettings extends Profile
     protected $sshKeyForm;
     protected $changePasswordForm;
     protected $successMsg;
+    protected $errorMsg;
     
     public function show()
     {
@@ -89,9 +90,17 @@ class UserSettings extends Profile
 
             $this->profile->getSshKeys()->add($sshkey);
             
-            $this->getUsersDao()->save($this->profile, false);
-            $this->getUsersDao()->notify(new UserSshKeyAddEvent($this->profile, $sshkey, $this->getServices()));
-            
+            $this->getUsersDao()->getDb()->beginTransaction();
+        
+            try {
+                $this->getUsersDao()->save($this->profile, false);
+                $this->getUsersDao()->notify(new UserSshKeyAddEvent($this->profile, $sshkey, $this->getServices()));
+                $this->getUsersDao()->getDb()->commit();
+            } catch(\RuntimeException $exp) {
+                $this->errorMsg = $exp->getMessage();
+                $this->getUsersDao()->getDb()->rollBack();
+                return Result::ERROR;
+            }
             return Result::SUCCESS;
         }
         
@@ -123,9 +132,18 @@ class UserSettings extends Profile
             }
         }
         
-        $this->getUsersDao()->save($this->profile, false);
-        $this->getUsersDao()->notify(new UserSshKeyRemoveEvent($this->profile, $find[0], $this->getServices()));
-
+        $this->getUsersDao()->getDb()->beginTransaction();
+        
+        try {
+            $this->getUsersDao()->save($this->profile, false);
+            $this->getUsersDao()->notify(new UserSshKeyRemoveEvent($this->profile, $find[0], $this->getServices()));
+            $this->getUsersDao()->getDb()->commit();
+        } catch(\RuntimeException $exp) {
+            $this->errorMsg = $exp->getMessage();
+            $this->getUsersDao()->getDb()->rollBack();
+            return Result::ERROR;
+        }
+        
         return Result::SUCCESS;
     }
     
@@ -151,9 +169,18 @@ class UserSettings extends Profile
                 return Result::FORM;
             }
             
-            $this->getUsersDao()->updatePassword($this->profile, $form->password, $this->getServices()->get('users'));
-            $this->getUsersDao()->save($this->profile);
-            $this->getUsersDao()->notify(new UserChangePasswordEvent($this->profile, $this->getServices()));
+            $this->getUsersDao()->getDb()->beginTransaction();
+            
+            try {
+                $this->getUsersDao()->updatePassword($this->profile, $form->password, $this->getServices()->get('users'));
+                $this->getUsersDao()->save($this->profile);
+                $this->getUsersDao()->notify(new UserChangePasswordEvent($this->profile, $this->getServices()));
+                $this->getUsersDao()->getDb()->commit();
+            } catch(\RuntimeException $exp) {
+                $this->errorMsg = $exp->getMessage() . " (password NOT changed)";
+                $this->getUsersDao()->getDb()->rollBack();
+                return Result::ERROR;
+            }
             
             return Result::SUCCESS;
         }
@@ -214,5 +241,10 @@ class UserSettings extends Profile
     public function getSuccessMsg()
     {
         return $this->successMsg;
+    }
+    
+    public function getErrorMsg()
+    {
+        return $this->errorMsg;
     }
 }

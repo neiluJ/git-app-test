@@ -45,7 +45,10 @@ class GitoliteService
             return;
         }
         
-        file_put_contents($file, $contents, LOCK_EX);
+        @file_put_contents($file, $contents, LOCK_EX);
+        if (!is_file($file)) {
+            throw new \RuntimeException('unable to write apache htpasswd file');
+        }
     }
     
     public function onUserSshKeyAdd(UserSshKeyAddEvent $event)
@@ -74,7 +77,11 @@ class GitoliteService
             } 
         }
 
-        file_put_contents($file, $key->contents, LOCK_EX);
+        @file_put_contents($file, $key->contents, LOCK_EX);
+        if (!is_file($file) || @file_get_contents($file) === $key->contents) {
+            throw new \RuntimeException('unable to write ssh-key to gitolite');
+        }
+        
         $git->add($repo, array($file));
         $git->commit($repo, $event->getUser(), 'added new ssh-key');
         $git->push($repo);
@@ -99,7 +106,7 @@ class GitoliteService
                       DIRECTORY_SEPARATOR . $filename;
 
         if (!is_file($file)) {
-           return;
+           throw new \RuntimeException('ssh-key not found in gitolite');
         }
 
         $git->rm($repo, array($file));
