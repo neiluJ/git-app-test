@@ -124,7 +124,7 @@ class UserSettings extends Profile
         }
         
         $this->getUsersDao()->save($this->profile, false);
-        $this->getUsersDao()->notify(new UserSshKeyRemoveEvent($this->profile, $find, $this->getServices()));
+        $this->getUsersDao()->notify(new UserSshKeyRemoveEvent($this->profile, $find[0], $this->getServices()));
 
         return Result::SUCCESS;
     }
