@@ -99,11 +99,16 @@ class GitService
         $proc = new Process(sprintf('git --git-dir %s --work-tree . fetch -f -m --all', $repoPath), $workDirPath);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($output, $logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
             if ('err' !== $type) {
-                $logger->addDebug('[updateWorkdir/'. $repository->getFullname() .'] git fetch: '. $buffer);
-                $output->write($buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[updateWorkdir/'. $repository->getFullname() .'] git fetch: '. $line);
+                });
             } else {
-                $logger->addError('[updateWorkdir/'. $repository->getFullname() .'] git fetch: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[updateWorkdir/'. $repository->getFullname() .'] git fetch: '. $line);
+                });
             }
         });
         
@@ -123,13 +128,19 @@ class GitService
     
     public function userConfig(RepositoryEntity $repository)
     {
-        $proc = new Process(sprintf('git config user.name "%s" && git config user.email "%s"', $this->gitUsername, $this->gitEmail), $this->getWorkDirPath($repository));
+        $proc = new Process(sprintf('git config user.name "%s" && git config user.email "%s" && git config push.default simple', $this->gitUsername, $this->gitEmail), $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
             if ('err' !== $type) {
-                $logger->addDebug('[userConfig/'. $repository->getFullname() .'] git config: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[userConfig/'. $repository->getFullname() .'] git config: '. $line);
+                });
             } else {
-                $logger->addError('[userConfig/'. $repository->getFullname() .'] git config: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[userConfig/'. $repository->getFullname() .'] git config: '. $line);
+                });
             }
         });
         
@@ -151,10 +162,16 @@ class GitService
         $proc = new Process('git add -f -- '. implode(' ', $final), $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
             if ('err' !== $type) {
-                $logger->addDebug('[add/'. $repository->getFullname() .'] git add: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[add/'. $repository->getFullname() .'] git add: '. $line);
+                });
             } else {
-                $logger->addError('[add/'. $repository->getFullname() .'] git add: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[add/'. $repository->getFullname() .'] git add: '. $line);
+                });
             }
         });
         if (!$proc->isSuccessful()) {
@@ -175,10 +192,16 @@ class GitService
         $proc = new Process('git rm -f -- '. implode(' ', $final), $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
             if ('err' !== $type) {
-                $logger->addDebug('[rm/'. $repository->getFullname() .'] git rm: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[rm/'. $repository->getFullname() .'] git rm: '. $line);
+                });
             } else {
-                $logger->addError('[rm/'. $repository->getFullname() .'] git rm: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[rm/'. $repository->getFullname() .'] git rm: '. $line);
+                });
             }
         });
         if (!$proc->isSuccessful()) {
@@ -213,10 +236,16 @@ class GitService
         $proc = new Process($exec, $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
             if ('err' !== $type) {
-                $logger->addDebug('[commit/'. $repository->getFullname() .'] git commit: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[commit/'. $repository->getFullname() .'] git commit: '. $buffer);
+                });
             } else {
-                $logger->addError('[commit/'. $repository->getFullname() .'] git commit: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[commit/'. $repository->getFullname() .'] git commit: '. $buffer);
+                });
             }
         });
         if (!$proc->isSuccessful()) {
@@ -231,10 +260,16 @@ class GitService
         $proc = new Process('git push -f', $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
             if ('err' !== $type) {
-                $logger->addDebug('[push/'. $repository->getFullname() .'] git push: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[push/'. $repository->getFullname() .'] git push: '. $line);
+                });
             } else {
-                $logger->addError('[push/'. $repository->getFullname() .'] git push: '. $buffer);
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[push/'. $repository->getFullname() .'] git push: '. $line);
+                });
             }
         });
         if (!$proc->isSuccessful()) {
