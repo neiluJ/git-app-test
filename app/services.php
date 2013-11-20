@@ -18,6 +18,7 @@ $container->set(
     array(
         '@repos.dir', 
         '@repos.working.dir', 
+        '@git.executable',
         '@git.date.format', 
         '@forgery.user.name', 
         '@forgery.user.email', 
