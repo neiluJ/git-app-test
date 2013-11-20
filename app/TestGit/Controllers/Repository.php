@@ -11,6 +11,7 @@ use Fwk\Core\Context;
 use TestGit\Form\CreateRepositoryForm;
 use Fwk\Form\Validation\IsInArrayFilter;
 use TestGit\Events\RepositoryCreateEvent;
+use TestGit\EmptyRepositoryException;
 
 class Repository implements ContextAware, ServicesAware, Preparable
 {
@@ -47,7 +48,10 @@ class Repository implements ContextAware, ServicesAware, Preparable
     {
         try {
             $this->loadRepository();
+        } catch(EmptyRepositoryException $exp) {
+            return 'empty_repository';
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
         
@@ -207,9 +211,9 @@ class Repository implements ContextAware, ServicesAware, Preparable
         if (!$this->entity instanceof RepositoryEntity) {
             throw new \Exception('repository not found');
         }
-        
-        $this->repository = $this->getGitService()->transform($this->entity);
+
         $this->branch = (!isset($this->branch) ? $this->entity->getDefault_branch() : $this->branch);
+        $this->repository = $this->getGitService()->transform($this->entity);
     }
     
     /**

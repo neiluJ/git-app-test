@@ -3,6 +3,7 @@ namespace TestGit\Controllers;
 
 use Fwk\Core\Action\Result;
 use Symfony\Component\HttpFoundation\Response;
+use TestGit\EmptyRepositoryException;
 
 class Commits extends Repository 
 {
@@ -11,8 +12,8 @@ class Commits extends Repository
     public $hash;
     public $compare;
     
-    protected $commits;
-    protected $jsonCommits;
+    protected $commits      = array();
+    protected $jsonCommits  = array();
     protected $currentCommit;
     protected $jsonCurrentCommit;
     protected $diff;
@@ -29,7 +30,10 @@ class Commits extends Repository
     {
         try {
             $this->loadRepository();
+        } catch(EmptyRepositoryException $exp) {
+            return Result::SUCCESS;
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
         
@@ -76,6 +80,7 @@ class Commits extends Repository
         try {
             $this->loadRepository();
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
         
@@ -106,6 +111,7 @@ class Commits extends Repository
         try {
             $this->loadRepository();
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
         

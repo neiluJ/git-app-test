@@ -87,12 +87,15 @@
             <result name="success" type="php">
                 <param name="file">repository.php</param>
             </result>
+            <result name="empty_repository" type="php">
+                <param name="file">repository_empty.php</param>
+            </result>
             <result name="ajax:success" type="json">
                 <param name="properties">files,path</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
-                <param name="errorMsg">Repository not found.</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="Blob" shortcut="TestGit\Controllers\Blob:blobAction">
@@ -168,6 +171,9 @@
         <action name="Branches" shortcut="TestGit\Controllers\Branches:show">
             <result name="success" type="php">
                 <param name="file">branches.php</param>
+            </result>
+            <result name="empty_repository" type="php">
+                <param name="file">repository_empty.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>

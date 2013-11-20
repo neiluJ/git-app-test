@@ -56,9 +56,22 @@ class GitService
      */
     public function transform(RepositoryEntity $repository)
     {
-        return new GitRepository($this->getRepositoryPath($repository), array(
-            'working_dir' => $this->getWorkDirPath($repository)
-        ));
+        try {
+            $repo = new GitRepository($this->getRepositoryPath($repository), array(
+                'working_dir'   => $this->getWorkDirPath($repository),
+                'debug'         => true
+            ));
+            $repo->isHeadDetached();
+        } catch(\Exception $exp) {
+            $msg = $exp->getMessage();
+            if (strpos($msg, 'Unable to find HEAD file') !== false) {
+                throw new EmptyRepositoryException('repository is empty');
+            } else {
+                throw $exp;
+            }
+        }
+        
+        return $repo;
     }
     
     public function getRepositoryPath(RepositoryEntity $repository)

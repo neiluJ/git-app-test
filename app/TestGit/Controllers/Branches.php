@@ -2,6 +2,7 @@
 namespace TestGit\Controllers;
 
 use Fwk\Core\Action\Result;
+use TestGit\EmptyRepositoryException;
 
 class Branches extends Repository
 {
@@ -12,7 +13,10 @@ class Branches extends Repository
     {
         try {
             $this->loadRepository();
+        } catch(EmptyRepositoryException $exp) {
+            return 'empty_repository';
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
         

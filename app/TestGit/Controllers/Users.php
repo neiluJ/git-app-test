@@ -11,6 +11,7 @@ use Fwk\Form\Validation\EqualsFilter;
 use TestGit\Form\UsernameAlreadyExistsFilter;
 use TestGit\Form\EmailAlreadyExistsFilter;
 use TestGit\Events\RepositoryEditEvent;
+use TestGit\EmptyRepositoryException;
 
 class Users extends Repository implements ContextAware
 {
@@ -37,6 +38,8 @@ class Users extends Repository implements ContextAware
     {
         try {
             $this->loadRepository();
+        } catch(EmptyRepositoryException $exp) {
+            // we don't care if the git-repository is not ready yet
         } catch(\Exception $exp) {
             return Result::ERROR;
         }
