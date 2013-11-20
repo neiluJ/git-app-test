@@ -23,7 +23,6 @@ class Repository implements ResourceInterface
     protected $description;
     protected $path;
     protected $default_branch;
-    protected $http_access;
     protected $created_at;
     protected $last_commit_date;
     protected $last_commit_hash;
@@ -261,15 +260,5 @@ class Repository implements ResourceInterface
     public function setFullname($fullname)
     {
         $this->fullname = $fullname;
-    }
-    
-    public function getHttp_access()
-    {
-        return $this->http_access;
-    }
-
-    public function setHttp_access($http_access)
-    {
-        $this->http_access = $http_access;
     }
 }

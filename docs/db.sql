@@ -118,7 +118,6 @@ CREATE TABLE IF NOT EXISTS `repositories` (
   `description` varchar(512) COLLATE utf8_unicode_ci DEFAULT NULL,
   `path` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `default_branch` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'master',
-  `http_access` BOOLEAN NOT NULL DEFAULT TRUE,
   `created_at` datetime NOT NULL,
   `last_commit_date` datetime DEFAULT NULL,
   `last_commit_hash` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,

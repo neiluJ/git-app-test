@@ -14,7 +14,18 @@ $container->set('resultTypeService', new \Fwk\Core\Components\ResultType\ResultT
 // git service
 $container->set(
    'git',
-   new ClassDefinition('TestGit\\GitService', array('@repos.dir', '@repos.working.dir', '@git.date.format', '@git.user.name', '@git.user.email', '@git.user.fullname', '@logger')),
+   new ClassDefinition('TestGit\\GitService', 
+    array(
+        '@repos.dir', 
+        '@repos.working.dir', 
+        '@git.date.format', 
+        '@forgery.user.name', 
+        '@forgery.user.email', 
+        '@forgery.user.fullname', 
+        '@git.user.name', 
+        '@git.clone.hostname.ssh.local', 
+        '@logger'
+    )),
     true
 );
 

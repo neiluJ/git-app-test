@@ -22,12 +22,17 @@ repos.table = repositories
 repos.accesses.table = accesses
 repos.basePath = /home/git/repositories
 
-git.clone.hostname = localhost
+git.clone.hostname.ssh.remote = localhost
+git.clone.hostname.ssh.local = localhost
 git.date.format = d/m/Y
 
-git.user.name       = forgery
-git.user.email      = forgery@nitronet.org
-git.user.fullname   = Forgery
+git.user.name = git
+git.user.email    = git@localhost
+git.user.fullname = Git
+
+forgery.user.name = forgery
+forgery.user.email    = forgery@nitronet.org
+forgery.user.fullname = Forgery
 
 php.executable = /usr/bin/php
 

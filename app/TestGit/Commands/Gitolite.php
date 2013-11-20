@@ -37,9 +37,7 @@ class Gitolite extends Command implements ServicesAware
                     . $access->getUser()->getUsername() ."\n";
             }
             
-            if ((bool)$repository->getHttp_access()) {
-                $str .= "\tR\t=\tdaemon\n";
-            }
+            $str .= "\tR\t=\tdaemon\n";
             
             $str .= "\n";
         }

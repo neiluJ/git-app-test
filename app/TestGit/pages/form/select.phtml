@@ -13,7 +13,7 @@ elseif($attr == Element::ATTR_NAME && $element->isMultiple()) { $value .="[]"; }
 <?php endforeach; ?>
         </select>
 <?php if($element->hasHint()): ?>
-        <span class="hint"><?php echo htmlspecialchars($element->getHint()); ?></span>
+        <span class="help-block"><?php echo htmlspecialchars($element->getHint()); ?></span>
 <?php endif; ?>
 <?php if($element->hasLabel() &&
         $element->attribute(Element::ATTR_LABEL_POSITION) == Element::LABEL_POSITION_RIGHT): ?>

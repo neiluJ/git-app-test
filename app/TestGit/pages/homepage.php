@@ -10,13 +10,13 @@
       </div>
 
         <div class="">
-            <button type="button" class="btn btn-primary pull-right">Create Repository</button>
-        <form role="form" class="form-inline filter">
+            <a href="<?php echo $vh->url('Create'); ?>" class="btn btn-primary pull-right">Create Repository</a>
+        
+          <form role="form" class="form-inline filter">
             <div class="form-group">
               <input type="search" tabindex="1" ng-model="query" class="form-control" id="searchRepos" placeholder="Filter repositories">
             </div>
           </form>
-            
         </div>
 
     <table class="table table-striped" style="margin-top:20px;">

@@ -8,6 +8,9 @@ use Fwk\Core\Preparable;
 use TestGit\Model\Git\Repository as RepositoryEntity;
 use Fwk\Core\ContextAware;
 use Fwk\Core\Context;
+use TestGit\Form\CreateRepositoryForm;
+use Fwk\Form\Validation\IsInArrayFilter;
+use TestGit\Events\RepositoryCreateEvent;
 
 class Repository implements ContextAware, ServicesAware, Preparable
 {
@@ -27,13 +30,17 @@ class Repository implements ContextAware, ServicesAware, Preparable
     
     protected $cloneHost;
     
+    protected $errorMsg;
+    
+    protected $createForm;
+    
     public function prepare()
     {
         if (!empty($this->path)) {
             $this->path = rtrim($this->path, '/');
         }
         
-        $this->cloneHost = $this->getServices()->get('git.clone.hostname');
+        $this->cloneHost = $this->getServices()->get('git.clone.hostname.ssh.remote');
     }
     
     public function show()
@@ -106,6 +113,41 @@ class Repository implements ContextAware, ServicesAware, Preparable
         return Result::SUCCESS;
     }
     
+    public function create()
+    {
+        $form = $this->getCreateForm();
+        if ($this->isPOST()) {
+            $form->submit($_POST);
+            
+            if(!$form->validate()) {
+                return Result::FORM;
+            }
+            
+            $this->getGitDao()->getDb()->beginTransaction();
+            try {
+                $repo = $this->getGitDao()->create(
+                    $this->getUsersDao()->getById($form->owner_id), 
+                    $form->name, 
+                    $form->description, 
+                    $form->type
+                );
+
+                $this->getGitDao()->save($repo);
+                $this->getGitDao()->notify(new RepositoryCreateEvent($repo, $this->getServices()));
+                $this->getGitDao()->getDb()->commit();
+                $this->name = $repo->getFullname();
+            } catch(\Exception $exp) {
+                $this->errorMsg = $exp->getMessage();
+                $this->getGitDao()->getDb()->rollBack();
+                return Result::ERROR;
+            }
+        
+            return Result::SUCCESS;
+        }
+        
+        return Result::FORM;
+    }
+    
     public function getServices()
     {
         return $this->services;
@@ -139,6 +181,14 @@ class Repository implements ContextAware, ServicesAware, Preparable
     protected function getGitDao()
     {
         return $this->getServices()->get('gitDao');
+    }
+    
+    /**
+     * @return \TestGit\Model\User\UsersDao
+     */
+    protected function getUsersDao()
+    {
+        return $this->getServices()->get('usersDao');
     }
     
     public function getRepoAction()
@@ -183,5 +233,42 @@ class Repository implements ContextAware, ServicesAware, Preparable
     public function setContext(Context $context)
     {
         $this->context = $context;
+    }
+    
+    public function getErrorMsg()
+    {
+        return $this->errorMsg;
+    }
+    
+    public function getCreateForm()
+    {
+        if (!isset($this->createForm)) {
+            $this->createForm = new CreateRepositoryForm();
+            $this->createForm->setAction($this->getServices()->get('viewHelper')->url('Create'));
+            
+            // define possible owners
+            try {
+                $user = $this->getServices()->get('security')->getUser();
+                $fn = $user->getFullname();
+                $owners = array($user->getId() => (!empty($fn) ? $fn : $user->getUsername()));
+                
+                $this->createForm->element('owner_id')->setOptions($owners);
+                $this->createForm->element('owner_id')->filter(new IsInArrayFilter(array_keys($owners)));
+                $this->createForm->element('owner_id')->setDefault($user->getId());
+                
+                /**
+                 * @todo ROLE_ADMIN can create repositories to anyone
+                 * @todo Organizations
+                 */
+            } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
+            }
+        }
+        
+        return $this->createForm;
+    }
+    
+    public function isPOST()
+    {
+        return "POST" === $_SERVER['REQUEST_METHOD'];
     }
 }

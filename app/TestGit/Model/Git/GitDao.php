@@ -221,7 +221,7 @@ class GitDao extends DaoBase
      * @return Repository 
      */
     public function create(User $owner, $repoName, $description, $isPublic, 
-        $type = self::TYPE_REPOSITORY, Repository $parent = null
+        $type = self::TYPE_REPOSITORY, Repository $parent = null, $defaultBranch = 'master'
     ) {
         $repo = new Repository();
         $repo->setCreated_at(date('Y-m-d H:i:s'));
@@ -231,10 +231,21 @@ class GitDao extends DaoBase
         $repo->setPublic((bool)$isPublic);
         $repo->setType($type);
         $repo->setPath($this->getRepositoryPath($owner, $repoName));
+        $repo->setFullname(sprintf('%s/%s', $owner->getUsername(), $repoName));
+        $repo->setDefault_branch($defaultBranch);
         
         if ($parent instanceof Repository) {
             $repo->setParent_id($parent->getId());
         }
+        
+        $access = new Access();
+        $access->setAdminAccess(true);
+        $access->setReadAccess(true);
+        $access->setWriteAccess(true);
+        $access->setSpecialAccess(true);
+        $access->setUser_id($owner->getId());
+        
+        $repo->getAccesses()->add($access);
         
         return $repo;
     }
