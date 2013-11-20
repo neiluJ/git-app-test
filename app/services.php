@@ -3,7 +3,6 @@
 use Fwk\Di\Container;
 use Fwk\Di\ClassDefinition;
 use Fwk\Core\Components\RequestMatcher\RequestMatcher;
-use Fwk\Security\Service as SecurityService;
 
 $container = new Container();
 $container->iniProperties(__DIR__ .'/config.ini', 'services');
@@ -15,7 +14,7 @@ $container->set('resultTypeService', new \Fwk\Core\Components\ResultType\ResultT
 // git service
 $container->set(
    'git',
-   new ClassDefinition('TestGit\\GitService', array('@repos.dir', '@repos.working.dir', '@git.date.format', '@git.user.name', '@git.user.email', '@git.user.fullname')),
+   new ClassDefinition('TestGit\\GitService', array('@repos.dir', '@repos.working.dir', '@git.date.format', '@git.user.name', '@git.user.email', '@git.user.fullname', '@logger')),
     true
 );
 
@@ -163,6 +162,54 @@ $container->set(
 $container->set(
     'gitolite',
     new ClassDefinition('TestGit\GitoliteService', array()),
+    true
+);
+
+$level = $container->get('log.level');
+switch(strtolower($level))
+{
+    case 'debug':
+        $finalLevel = \Monolog\Logger::DEBUG;
+        break;
+    
+    case 'info':
+        $finalLevel = \Monolog\Logger::INFO;
+        break;
+    
+    case 'notice':
+        $finalLevel = \Monolog\Logger::NOTICE;
+        break;
+    
+    case 'warning':
+        $finalLevel = \Monolog\Logger::WARNING;
+        break;
+    
+    case 'error':
+        $finalLevel = \Monolog\Logger::ERROR;
+        break;
+    
+    case 'critical':
+        $finalLevel = \Monolog\Logger::CRITICAL;
+        break;
+    
+    case 'alert':
+        $finalLevel = \Monolog\Logger::ALERT;
+        break;
+    
+    case 'emergency':
+        $finalLevel = \Monolog\Logger::EMERGENCY;
+        break;
+    
+    default:
+        $finalLevel = \Monolog\Logger::DEBUG;
+        break;
+}
+$loggerHandlerDef = new ClassDefinition('Monolog\Handler\StreamHandler', array('@log.file', $finalLevel));
+$loggerDef = new ClassDefinition('Monolog\Logger', array('forgery'));
+$loggerDef->addMethodCall('pushHandler', array($loggerHandlerDef));
+$container->set(
+    'logger',
+    $loggerDef,
     true
 );
 

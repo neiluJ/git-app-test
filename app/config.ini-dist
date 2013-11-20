@@ -37,3 +37,6 @@ acls.table.permissions = acls_permissions
 
 apache.htpasswd.bin = htpasswd -nmb
 apache.htpasswd.file = /home/git/htpasswd.git
+
+log.file = /home/git/www/logs/forgery.log
+log.level = debug
