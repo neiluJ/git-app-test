@@ -149,7 +149,7 @@ class GitService
     
     public function userConfig(RepositoryEntity $repository)
     {
-        $proc = new Process(sprintf('%s config user.name "%s" && git config user.email "%s" && git config push.default current', $this->gitExecutable, $this->forgeryUsername, $this->forgeryEmail), $this->getWorkDirPath($repository));
+        $proc = new Process(sprintf('%s config user.name "%s" && %s config user.email "%s" && %s config push.default current', $this->gitExecutable, $this->forgeryUsername, $this->gitExecutable, $this->forgeryEmail, $this->gitExecutable), $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
