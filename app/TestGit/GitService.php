@@ -9,6 +9,8 @@ use TestGit\Model\User\User;
 
 class GitService
 {
+    const UPDATE_LOCK_FILE = 'forgery.update-lock';
+    
     protected $repositoriesDir;
     protected $workDir;
     protected $dateFormat;
@@ -69,6 +71,17 @@ class GitService
         $repoPath = $this->getRepositoryPath($repository);
         if (!is_dir($workDirPath)) {
             throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
+        }
+        
+        $lockFile = rtrim($workDirPath, DIRECTORY_SEPARATOR) 
+                . DIRECTORY_SEPARATOR 
+                . self::UPDATE_LOCK_FILE;
+        
+        // directory is locked for update. 
+        // remove the file and stop there
+        if (is_file($lockFile)) {
+            unlink($lockFile);
+            return;
         }
         
         $proc = new Process(sprintf('git --git-dir %s --work-tree . fetch -f -m --all', $repoPath), $workDirPath);
@@ -168,5 +181,23 @@ class GitService
         if (!$proc->isSuccessful()) {
             throw new \RuntimeException($proc->getErrorOutput());
         }
+    }
+    
+    public function lockWorkdir(RepositoryEntity $repository)
+    {
+        $workDirPath = $this->getWorkDirPath($repository);
+        if (!is_dir($workDirPath)) {
+            throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
+        }
+        
+        $lockFile = rtrim($workDirPath, DIRECTORY_SEPARATOR) 
+                . DIRECTORY_SEPARATOR 
+                . self::UPDATE_LOCK_FILE;
+        
+        if (is_file($lockFile)) {
+            return;
+        }
+        
+        file_put_contents($lockFile, 'workdir locked at '. date('Y-m-d H:i:s'));
     }
 }

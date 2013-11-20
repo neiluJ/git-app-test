@@ -82,6 +82,7 @@ class GitoliteService
             throw new \RuntimeException('unable to write ssh-key to gitolite');
         }
         
+        $git->lockWorkdir($repo);
         $git->add($repo, array($file));
         $git->commit($repo, $event->getUser(), 'added new ssh-key');
         $git->push($repo);
@@ -109,6 +110,7 @@ class GitoliteService
            throw new \RuntimeException('ssh-key not found in gitolite');
         }
 
+        $git->lockWorkdir($repo);
         $git->rm($repo, array($file));
         $git->commit($repo, $event->getUser(), 'removed ssh-key');
         $git->push($repo);
