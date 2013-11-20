@@ -257,7 +257,7 @@ class GitService
     public function push(RepositoryEntity $repository)
     {
         $this->userConfig($repository);
-        $proc = new Process('git push -f', $this->getWorkDirPath($repository));
+        $proc = new Process('git push -f --set-upstream origin master', $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
