@@ -35,6 +35,7 @@ forgery.user.email    = forgery@nitronet.org
 forgery.user.fullname = Forgery
 
 php.executable = /usr/bin/php
+git.executable = /usr/bin/git
 
 acls.table.roles = acls_roles
 acls.table.resources = acls_resources

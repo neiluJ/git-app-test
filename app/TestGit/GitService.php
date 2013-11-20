@@ -20,13 +20,14 @@ class GitService
     protected $forgeryFullname;
     protected $gitUsername;
     protected $gitCloneHostnameLocal;
+    protected $gitExecutable;
     
     /**
      * @var Logger
      */
     protected $logger;
     
-    public function __construct($repositoriesDir, $workDir, $dateFormat, 
+    public function __construct($repositoriesDir, $workDir, $gitExecutable, $dateFormat, 
         $forgeryUsername, $forgeryEmail, $forgeryFullname, $gitUsername, 
         $gitCloneHostnameLocal, Logger $logger
     ) {
@@ -40,6 +41,7 @@ class GitService
         
         $this->repositoriesDir          = $repositoriesDir;
         $this->workDir                  = $workDir;
+        $this->gitExecutable            = $gitExecutable;
         $this->dateFormat               = $dateFormat;
         $this->forgeryEmail             = $forgeryEmail;
         $this->forgeryUsername          = $forgeryUsername;
@@ -59,7 +61,8 @@ class GitService
         try {
             $repo = new GitRepository($this->getRepositoryPath($repository), array(
                 'working_dir'   => $this->getWorkDirPath($repository),
-                'debug'         => true
+                'debug'         => true,
+                'command'       => $this->gitExecutable
             ));
             $repo->isHeadDetached();
         } catch(\Exception $exp) {
@@ -114,7 +117,7 @@ class GitService
             return;
         }
         
-        $proc = new Process(sprintf('git --git-dir %s --work-tree . fetch -f -m --all', $repoPath), $workDirPath);
+        $proc = new Process(sprintf('%s --git-dir %s --work-tree . fetch -f -m --all', $this->gitExecutable, $repoPath), $workDirPath);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($output, $logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
@@ -146,7 +149,7 @@ class GitService
     
     public function userConfig(RepositoryEntity $repository)
     {
-        $proc = new Process(sprintf('git config user.name "%s" && git config user.email "%s" && git config push.default current', $this->forgeryUsername, $this->forgeryEmail), $this->getWorkDirPath($repository));
+        $proc = new Process(sprintf('%s config user.name "%s" && git config user.email "%s" && git config push.default current', $this->gitExecutable, $this->forgeryUsername, $this->forgeryEmail), $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
@@ -177,7 +180,7 @@ class GitService
             $final[] = $file;
         }
         
-        $proc = new Process('git add -f -- '. implode(' ', $final), $this->getWorkDirPath($repository));
+        $proc = new Process($this->gitExecutable .' add -f -- '. implode(' ', $final), $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
@@ -207,7 +210,7 @@ class GitService
             $final[] = $file;
         }
         
-        $proc = new Process('git rm -f -- '. implode(' ', $final), $this->getWorkDirPath($repository));
+        $proc = new Process($this->gitExecutable .' rm -f -- '. implode(' ', $final), $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
@@ -239,7 +242,7 @@ class GitService
             "&& export GIT_AUTHOR_EMAIL='%s' ".
             "&& export GIT_COMMITTER_NAME='%s' ".
             "&& export GIT_COMMITTER_EMAIL='%s' ".
-            "&& git commit -m '%s' ".
+            "&& %s commit -m '%s' ".
             "&& unset GIT_AUTHOR_NAME ".
             "&& unset GIT_AUTHOR_EMAIL ".
             "&& unset GIT_COMMITTER_NAME ".
@@ -248,6 +251,7 @@ class GitService
             $this->forgeryEmail,
             (empty($fn) ? $committer->getUsername() : $fn),
             $committer->getEmail(),
+            $this->gitExecutable,
             addslashes($message)
         );
         
@@ -277,7 +281,7 @@ class GitService
         $this->userConfig($repository);
         $this->logger->addDebug('[push:'. $repository->getFullname() .'] pushing changes to remote');
         
-        $proc = new Process('git push -f --set-upstream origin master', $this->getWorkDirPath($repository));
+        $proc = new Process($this->gitExecutable .' push -f --set-upstream origin master', $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
@@ -328,7 +332,7 @@ class GitService
             throw new \Exception(sprintf("Workdir '%s' already exists", $workDirPath));
         }
         
-        $proc = new Process(sprintf('git clone %s@%s:%s %s', $this->gitUsername, $this->gitCloneHostnameLocal, $repository->getPath(), $this->getWorkDirPath($repository)));
+        $proc = new Process(sprintf('%s clone %s@%s:%s %s', $this->gitExecutable, $this->gitUsername, $this->gitCloneHostnameLocal, $repository->getPath(), $this->getWorkDirPath($repository)));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
