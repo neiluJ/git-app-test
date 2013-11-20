@@ -240,11 +240,11 @@ class GitService
             
             if ('err' !== $type) {
                 array_walk($buffer, function($line) use ($logger, $repository) {
-                    $logger->addDebug('[commit/'. $repository->getFullname() .'] git commit: '. $buffer);
+                    $logger->addDebug('[commit/'. $repository->getFullname() .'] git commit: '. $line);
                 });
             } else {
                 array_walk($buffer, function($line) use ($logger, $repository) {
-                    $logger->addError('[commit/'. $repository->getFullname() .'] git commit: '. $buffer);
+                    $logger->addError('[commit/'. $repository->getFullname() .'] git commit: '. $line);
                 });
             }
         });
