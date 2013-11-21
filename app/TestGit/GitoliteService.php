@@ -264,12 +264,14 @@ class GitoliteService
            throw new \RuntimeException('config file not written (verification failed)');
         }
         
-        $git->fork($repo, $fork);
         $git->lockWorkdir($gitoliteRepo);
         $git->add($gitoliteRepo, array($file));
         $git->commit($gitoliteRepo, $owner, 'created fork of '. $repo->getFullname() .' to '. $fork->getFullname());
         $git->push($gitoliteRepo);
         $git->createWorkdir($fork);
+        $git->remote($repo, 'add', 'fork', $git->getRepositoryPath($fork));
+        $git->push($repo, 'fork');
+        $git->remote($repo, 'rm', 'fork');
         $git->installPostReceiveHook($fork, $event->getServices()->get('php.executable'));
     }
     

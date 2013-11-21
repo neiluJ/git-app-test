@@ -276,12 +276,16 @@ class GitService
         }
     }
     
-    public function push(RepositoryEntity $repository)
+    public function push(RepositoryEntity $repository, $remote = 'origin', $branch = null)
     {
         $this->userConfig($repository);
-        $this->logger->addDebug('[push:'. $repository->getFullname() .'] pushing changes to remote');
+        if (null === $branch) {
+            $branch = $repository->getDefault_branch();
+        }
         
-        $proc = new Process($this->gitExecutable .' push -f --set-upstream origin master', $this->getWorkDirPath($repository));
+        $this->logger->addDebug('[push:'. $repository->getFullname() .'] pushing changes to remote "'. $remote .'" (branch: '. $branch .')');
+        
+        $proc = new Process($this->gitExecutable .' push -f -u '. $remote .' '. $branch, $this->getWorkDirPath($repository));
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
@@ -302,35 +306,29 @@ class GitService
         }
     }
     
-    public function fork(RepositoryEntity $repository, RepositoryEntity $fork)
+    public function remote(RepositoryEntity $repository, $action, $name, $url = null)
     {
-        $repoPath = $this->getRepositoryPath($repository);
-        $forkPath = $this->getWorkDirPath($repository);
+        $repoPath = $this->getWorkDirPath($repository);
         
-        $this->logger->addDebug('[fork:'. $repository->getFullname() .'] forking to '. $fork->getFullname());
+        $this->logger->addDebug('[remote:'. $repository->getFullname() .'] remote '. $action .' '. $name .($url !== null ? ' ('. $url .')' : null));
         
-        if (!is_dir($repoPath)) {
-            $this->logger->addCritical('[fork:'. $repository->getFullname() .'] FAIL: Git repository not found: '. $repoPath);
-            throw new \Exception(sprintf("Git repository not found"));
-        }
-        
-        $proc = new Process(sprintf('/bin/cp -r %s %s', $repoPath, $forkPath), $this->workDir);
+        $proc = new Process(sprintf('%s remote %s %s %s', $this->gitExecutable, $action, $name, $url), $repoPath);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
             
             if ('err' !== $type) {
                 array_walk($buffer, function($line) use ($logger, $repository) {
-                    $logger->addDebug('[fork:'. $repository->getFullname() .'] cp: '. $line);
+                    $logger->addDebug('[remote:'. $repository->getFullname() .'] git remote '. $action .': '. $line);
                 });
             } else {
                 array_walk($buffer, function($line) use ($logger, $repository) {
-                    $logger->addError('[fork:'. $repository->getFullname() .'] cp: '. $line);
+                    $logger->addError('[remote:'. $repository->getFullname() .'] git remote '. $action .': ' . $line);
                 });
             }
         });
         if (!$proc->isSuccessful()) {
-            $logger->addCritical('[fork:'. $repository->getFullname() .'] cp FAIL: '. $proc->getErrorOutput());
+            $logger->addCritical('[remoteAdd:'. $repository->getFullname() .'] git remote FAIL: '. $proc->getErrorOutput());
             throw new \RuntimeException($proc->getErrorOutput());
         }
     }
