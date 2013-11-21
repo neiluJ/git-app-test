@@ -356,11 +356,11 @@ ul.repositories li p.infos span {
     color: #666;
 }
 
-ul.repositories li span.fork {
+span.fork {
     color: #999;
     font-style:italic;
 }
-ul.repositories li span.fork a {
+span.fork a {
     color: #999;
 }
 
@@ -394,4 +394,12 @@ ol.ssh-keys li:last-child {
 
 ol.ssh-keys li span {
     color: #999;
+}
+
+h1 span.fork {
+    font-size: 18px;
+}
+
+h1 span.fork a {
+    font-weight: bold;
 }
