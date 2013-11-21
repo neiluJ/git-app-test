@@ -6,6 +6,7 @@ use TestGit\Events\UserSshKeyAddEvent;
 use TestGit\Events\UserSshKeyRemoveEvent;
 use TestGit\Events\UserChangePasswordEvent;
 use TestGit\Events\RepositoryCreateEvent;
+use TestGit\Events\RepositoryForkEvent;
 
 class GitoliteService
 {
@@ -184,6 +185,55 @@ class GitoliteService
         $git->push($gitoliteRepo);
         $git->createWorkdir($repo);
         $git->installPostReceiveHook($repo, $event->getServices()->get('php.executable'));
+    }
+    
+    public function onRepositoryFork(RepositoryForkEvent $event)
+    {
+        $logger     = $event->getServices()->get('logger');
+        $repo       = $event->getRepository();
+        $fork       = $event->getFork();
+        $gitDao     = $event->getServices()->get('gitDao');
+        /** @todo Fix Fwk/Db */
+        $owner      = $event->getServices()->get('usersDao')->findOne($fork->getOwner_id(), Model\User\UsersDao::FIND_ID);
+        
+        $logger->addInfo(sprintf('[RepositoryForkEvent:%s] Repository "%s" forked by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $fork->getFullname(), $owner->getFullname()));
+        
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->get('forgery.user.name'));
+        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
+        
+        if (!$gitoliteRepo instanceof Model\Git\Repository) {
+            $logger->addCritical(sprintf('[RepositoryForkEvent:%s] gitolite-admin repository not found (?)', $repo->getFullname()));
+            throw new \RuntimeException('gitolite-admin repository not found (?)');
+        }
+        
+        $git        = $event->getServices()->get('git');
+        $workDir    = $git->getWorkDirPath($gitoliteRepo);
+        $file       = rtrim($workDir, DIRECTORY_SEPARATOR) . 
+                      DIRECTORY_SEPARATOR . self::GITOLITE_CONFIG_FILE;
+        
+        if (!is_file($file)) {
+           $logger->addCritical(sprintf('[RepositoryForkEvent:%s] "%s" not found in gitolite-admin repository (?)', $repo->getFullname(), self::GITOLITE_CONFIG_FILE));
+           throw new \RuntimeException('config file not found in gitolite-admin repository');
+        } elseif (is_file($file) && !is_writable($file)) {
+           $logger->addCritical(sprintf('[RepositoryForkEvent:%s] "%s" is not writable', $repo->getFullname(), $file));
+           throw new \RuntimeException('config file not writable');
+        }
+
+        file_put_contents($file, $gitoliteConfig, LOCK_EX);
+        
+        if (!is_file($file) || file_get_contents($file) !== $gitoliteConfig) {
+            $logger->addCritical(sprintf('[RepositoryForkEvent:%s] Unable to write config to "%s" (verification failed)', $repo->getFullname(), $file));
+           throw new \RuntimeException('config file not written (verification failed)');
+        }
+        
+        // copy repository
+        
+        $git->lockWorkdir($gitoliteRepo);
+        $git->add($gitoliteRepo, array($file));
+        $git->commit($gitoliteRepo, $owner, 'created repository '. $repo->getFullname());
+        $git->push($gitoliteRepo);
+        $git->createWorkdir($fork);
+        $git->installPostReceiveHook($fork, $event->getServices()->get('php.executable'));
     }
     
     protected function getGitoliteConfigAsString(Model\Git\GitDao $gitDao, $forgeryUser)

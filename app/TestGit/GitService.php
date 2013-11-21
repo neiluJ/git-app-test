@@ -302,6 +302,19 @@ class GitService
         }
     }
     
+    public function fork(RepositoryEntity $repository, RepositoryEntity $fork)
+    {
+        $repoPath = $this->getRepositoryPath($repository);
+        $this->logger->addDebug('[fork:'. $repository->getFullname() .'] forking to '. $fork->getFullname());
+        
+        if (!is_dir($repoPath)) {
+            $this->logger->addCritical('[fork:'. $repository->getFullname() .'] FAIL: Git repository not found: '. $repoPath);
+            throw new \Exception(sprintf("Git repository not found"));
+        }
+        
+        
+    }
+    
     public function lockWorkdir(RepositoryEntity $repository)
     {
         $workDirPath = $this->getWorkDirPath($repository);

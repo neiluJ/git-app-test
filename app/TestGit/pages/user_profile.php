@@ -30,7 +30,7 @@
                           <?php foreach ($this->repositories as $repo): ?>
                           <li>
                               <div class="btn-group pull-right">
-                                <a href="#" class="btn btn-sm btn-default">Fork</a>
+                                <a href="<?php echo $this->_helper->url('Fork', array('name' => $repo->getFullname())); ?>" class="btn btn-sm btn-default">Fork</a>
                                 <a href="#" class="btn btn-sm btn-danger">Delete</a>
                               </div>
                               <?php if($repo->getParent_id() == null): ?><i class="glyphicon glyphicon-list"></i><?php else: ?><i class="glyphicon glyphicon-random"></i><?php endif; ?> <a class="repo-name" href="<?php echo $this->_helper->url('Repository', array('name' => $repo->getFullname())); ?>"><?php echo $this->_helper->escape($repo->getName()); ?></a> <?php if($repo->getParent_id() != null): ?><span class="fork">forked from <a class="repo-name" href="<?php echo $this->_helper->url('Repository', array('name' => $repo->getParent()->getFullname())); ?>"><?php echo $this->_helper->escape($repo->getParent()->getFullname()); ?></a></span><?php endif; ?>

@@ -12,6 +12,7 @@ use TestGit\Form\CreateRepositoryForm;
 use Fwk\Form\Validation\IsInArrayFilter;
 use TestGit\Events\RepositoryCreateEvent;
 use TestGit\EmptyRepositoryException;
+use TestGit\Form\CreateForkForm;
 
 class Repository implements ContextAware, ServicesAware, Preparable
 {
@@ -34,6 +35,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     protected $errorMsg;
     
     protected $createForm;
+    protected $forkForm;
     
     public function prepare()
     {
@@ -138,6 +140,48 @@ class Repository implements ContextAware, ServicesAware, Preparable
 
                 $this->getGitDao()->save($repo);
                 $this->getGitDao()->notify(new RepositoryCreateEvent($repo, $this->getServices()));
+                $this->getGitDao()->getDb()->commit();
+                $this->name = $repo->getFullname();
+            } catch(\Exception $exp) {
+                $this->errorMsg = $exp->getMessage();
+                $this->getGitDao()->getDb()->rollBack();
+                return Result::ERROR;
+            }
+        
+            return Result::SUCCESS;
+        }
+        
+        return Result::FORM;
+    }
+    
+    public function fork()
+    {
+        try {
+            $this->loadRepository();
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::ERROR;
+        }
+        
+        $form = $this->getForkForm();
+        if ($this->isPOST()) {
+            $form->submit($_POST);
+            
+            if(!$form->validate()) {
+                return Result::FORM;
+            }
+            
+            $this->getGitDao()->getDb()->beginTransaction();
+            try {
+                $repo = $this->getGitDao()->create(
+                    $this->getUsersDao()->getById($form->owner_id), 
+                    $form->name, 
+                    $form->description, 
+                    $form->type
+                );
+
+                $this->getGitDao()->save($repo);
+                $this->getGitDao()->notify(new RepositoryForkEvent($repo, $this->getServices()));
                 $this->getGitDao()->getDb()->commit();
                 $this->name = $repo->getFullname();
             } catch(\Exception $exp) {
@@ -274,6 +318,32 @@ class Repository implements ContextAware, ServicesAware, Preparable
         }
         
         return $this->createForm;
+    }
+    
+    public function getForkForm()
+    {
+        if (!isset($this->forkForm)) {
+            $this->forkForm = new CreateForkForm();
+            $this->forkForm->setAction($this->getServices()->get('viewHelper')->url('Fork', array('name' => $this->name)));
+            
+            // define possible owners
+            try {
+                $user = $this->getServices()->get('security')->getUser();
+                $fn = $user->getFullname();
+                $owners = array($user->getId() => (!empty($fn) ? $fn : $user->getUsername()));
+                $this->forkForm->element('owner_id')->setOptions($owners);
+                $this->forkForm->element('owner_id')->filter(new IsInArrayFilter(array_keys($owners)));
+                $this->forkForm->element('owner_id')->setDefault($user->getId());
+                
+                /**
+                 * @todo ROLE_ADMIN can create forks to anyone
+                 * @todo Organizations
+                 */
+            } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
+            }
+        }
+        
+        return $this->forkForm;
     }
     
     public function isPOST()
