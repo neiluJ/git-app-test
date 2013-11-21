@@ -314,7 +314,7 @@ class GitService
             throw new \Exception(sprintf("Git repository not found"));
         }
         
-        $proc = new Process(sprintf('/usr/bin/cp %s %s', $repoPath, $forkPath), $this->workDir);
+        $proc = new Process(sprintf('/bin/cp %s %s', $repoPath, $forkPath), $this->workDir);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
