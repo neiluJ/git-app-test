@@ -14,6 +14,7 @@ use TestGit\Events\RepositoryCreateEvent;
 use TestGit\EmptyRepositoryException;
 use TestGit\Form\CreateForkForm;
 use TestGit\Model\Git\GitDao;
+use TestGit\Events\RepositoryForkEvent;
 
 class Repository implements ContextAware, ServicesAware, Preparable
 {
