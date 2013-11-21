@@ -269,9 +269,9 @@ class GitoliteService
         $git->commit($gitoliteRepo, $owner, 'created fork of '. $repo->getFullname() .' to '. $fork->getFullname());
         $git->push($gitoliteRepo);
         $git->createWorkdir($fork);
-        $git->remote($repo, 'add', 'fork', $git->getRepositoryPath($fork));
-        $git->push($repo, 'fork');
-        $git->remote($repo, 'rm', 'fork');
+        $git->remote($fork, 'add', 'fork', $git->getRepositoryPath($repo));
+        $git->pull($repo, 'fork');
+        $git->remote($fork, 'rm', 'fork');
         $git->installPostReceiveHook($fork, $event->getServices()->get('php.executable'));
     }
     

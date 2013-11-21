@@ -306,6 +306,36 @@ class GitService
         }
     }
     
+    public function pull(RepositoryEntity $repository, $remote = 'origin', $branch = null)
+    {
+        $this->userConfig($repository);
+        if (null === $branch) {
+            $branch = $repository->getDefault_branch();
+        }
+        
+        $this->logger->addDebug('[pull:'. $repository->getFullname() .'] pulling changes from remote "'. $remote .'" (branch: '. $branch .')');
+        
+        $proc = new Process($this->gitExecutable .' pull -u '. $remote .' '. $branch, $this->getWorkDirPath($repository));
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[pull:'. $repository->getFullname() .'] git pull: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[pull:'. $repository->getFullname() .'] git pull: '. $line);
+                });
+            }
+        });
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[pull:'. $repository->getFullname() .'] git pull FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+    }
+    
     public function remote(RepositoryEntity $repository, $action, $name, $url = null)
     {
         $repoPath = $this->getWorkDirPath($repository);
