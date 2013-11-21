@@ -177,8 +177,8 @@ class Repository implements ContextAware, ServicesAware, Preparable
             try {
                 $fork = $this->getGitDao()->create(
                     $this->getUsersDao()->getById($form->owner_id), 
-                    $form->name, 
-                    $form->description, 
+                    $this->entity->getName(), 
+                    $this->entity->getDescription(), 
                     ($form->type == 'public' ? true : false),
                     GitDao::TYPE_FORK,
                     $this->entity,
