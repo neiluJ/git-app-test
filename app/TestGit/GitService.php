@@ -305,6 +305,8 @@ class GitService
     public function fork(RepositoryEntity $repository, RepositoryEntity $fork)
     {
         $repoPath = $this->getRepositoryPath($repository);
+        $forkPath = $this->getWorkDirPath($repository);
+        
         $this->logger->addDebug('[fork:'. $repository->getFullname() .'] forking to '. $fork->getFullname());
         
         if (!is_dir($repoPath)) {
@@ -312,7 +314,25 @@ class GitService
             throw new \Exception(sprintf("Git repository not found"));
         }
         
-        
+        $proc = new Process(sprintf('/usr/bin/cp %s %s', $repoPath, $forkPath), $this->workDir);
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[fork:'. $repository->getFullname() .'] cp: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[fork:'. $repository->getFullname() .'] cp: '. $line);
+                });
+            }
+        });
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[fork:'. $repository->getFullname() .'] cp FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
     }
     
     public function lockWorkdir(RepositoryEntity $repository)
