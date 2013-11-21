@@ -213,6 +213,11 @@ class Repository implements ContextAware, ServicesAware, Preparable
         }
 
         $this->branch = (!isset($this->branch) ? $this->entity->getDefault_branch() : $this->branch);
+        
+        if ($this->getGitService()->isEmpty($this->entity)) {
+            throw new EmptyRepositoryException('empty repository');
+        }
+        
         $this->repository = $this->getGitService()->transform($this->entity);
     }
     

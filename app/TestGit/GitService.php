@@ -412,4 +412,16 @@ $phpExecutable $self repository:update $fullname
 EOF;
         return $str;
     }
+    
+    public function isEmpty(RepositoryEntity $repository)
+    {
+        $proc = new Process(sprintf('/usr/bin/find objects -type f | /usr/bin/wc -l'), $this->getRepositoryPath($repository));
+        $proc->run();
+        if (!$proc->isSuccessful()) {
+            $this->logger->addCritical('[isEmpty:'. $repository->getFullname() .'] find FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+        
+        return (int)$proc->getOutput() === 0;
+    }
 }
