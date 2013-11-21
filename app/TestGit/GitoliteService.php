@@ -150,7 +150,7 @@ class GitoliteService
         
         $logger->addInfo(sprintf('[onRepositoryCreate:%s] Repository created by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $owner->getFullname()));
         
-        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->get('git.user.name'));
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->get('forgery.user.name'));
         $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
         
         if (!$gitoliteRepo instanceof Model\Git\Repository) {
