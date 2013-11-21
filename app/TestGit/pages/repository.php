@@ -5,7 +5,7 @@
 
     <div class="container"  ng-controller="RepositoryMainCtrl">
         <?php $repoMenuActive = 'code'; include __DIR__ .'/_repository_header.php'; ?>
-          
+        
     <input type="hidden" id="repoName" name="repoName" ng-bind="repoName" value="<?php echo $this->_helper->escape($this->entity->getFullname()); ?>" />    
     <input type="hidden" id="repoAction" name="repoAction" ng-bind="repoAction" value="<?php echo $this->_helper->escape($this->repoAction); ?>" />  
     <input type="hidden" id="repoPath" name="repoPath" ng-bind="path" value="<?php echo $this->_helper->escape($this->path); ?>" />

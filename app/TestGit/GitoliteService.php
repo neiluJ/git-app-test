@@ -138,7 +138,45 @@ class GitoliteService
     
     public function onRepositoryEdit(RepositoryEditEvent $event)
     {
-        // update gitolite-admin/conf/gitolite.conf
+        $logger     = $event->getServices()->get('logger');
+        $repo       = $event->getRepository();
+        $gitDao     = $event->getServices()->get('gitDao');
+        $committer  = $event->getCommitter();
+        
+        $logger->addInfo(sprintf('[RepositoryEditEvent:%s] Repository edited by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $committer->getFullname()));
+        
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->get('forgery.user.name'));
+        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
+        
+        if (!$gitoliteRepo instanceof Model\Git\Repository) {
+            $logger->addCritical(sprintf('[RepositoryEditEvent:%s] gitolite-admin repository not found (?)', $repo->getFullname()));
+            throw new \RuntimeException('gitolite-admin repository not found (?)');
+        }
+        
+        $git        = $event->getServices()->get('git');
+        $workDir    = $git->getWorkDirPath($gitoliteRepo);
+        $file       = rtrim($workDir, DIRECTORY_SEPARATOR) . 
+                      DIRECTORY_SEPARATOR . self::GITOLITE_CONFIG_FILE;
+        
+        if (!is_file($file)) {
+           $logger->addCritical(sprintf('[RepositoryEditEvent:%s] "%s" not found in gitolite-admin repository (?)', $repo->getFullname(), self::GITOLITE_CONFIG_FILE));
+           throw new \RuntimeException('config file not found in gitolite-admin repository');
+        } elseif (is_file($file) && !is_writable($file)) {
+           $logger->addCritical(sprintf('[RepositoryEditEvent:%s] "%s" is not writable', $repo->getFullname(), $file));
+           throw new \RuntimeException('config file not writable');
+        }
+
+        file_put_contents($file, $gitoliteConfig, LOCK_EX);
+        
+        if (!is_file($file) || file_get_contents($file) !== $gitoliteConfig) {
+            $logger->addCritical(sprintf('[RepositoryEditEvent:%s] Unable to write config to "%s" (verification failed)', $repo->getFullname(), $file));
+           throw new \RuntimeException('config file not written (verification failed)');
+        }
+        
+        $git->lockWorkdir($gitoliteRepo);
+        $git->add($gitoliteRepo, array($file));
+        $git->commit($gitoliteRepo, $committer, $event->getReason());
+        $git->push($gitoliteRepo);
     }
     
     public function onRepositoryCreate(RepositoryCreateEvent $event)

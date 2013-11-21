@@ -98,6 +98,11 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="CloneUrl" shortcut="TestGit\Controllers\Repository:cloneUrlAction">
+            <result name="success" type="php">
+                <param name="file">clone_url.php</param>
+            </result>
+        </action>
         <action name="Blob" shortcut="TestGit\Controllers\Blob:blobAction">
             <result name="success" type="php">
                 <param name="file">repository.php</param>

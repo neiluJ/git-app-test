@@ -180,10 +180,13 @@ div.repo-title {
     margin:0;
     padding:0;
 }
-.repo-title p.help-clone {
+div.cloneUrl {
     float:right;
     color: #999;
     font-family: Incosolata, "Courier New",Courier,monospace;
+}
+.repo-title div.cloneUrl label {
+    font-weight:bold;
 }
 .main-view {
     display:none;

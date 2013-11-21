@@ -41,7 +41,7 @@ class Blob extends Commits implements ContextAware
         'objectivec' => array('m', 'h'),
         'cs'    => array('cs'),
         'sql'   => array('sql'),
-        'ini'   => array('ini'),
+        'ini'   => array('ini', 'ini-dist'),
         'apache'    => array('htaccess'),
         'diff'  => array('patch', 'diff'),
         'bash'  => array('sh', 'bash')

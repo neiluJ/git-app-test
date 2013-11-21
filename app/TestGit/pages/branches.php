@@ -4,8 +4,8 @@
     <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
     <div class="container">
-        <?php $repoMenuActive = 'fork'; include __DIR__ .'/_repository_header.php'; ?>
-          
+<?php $repoMenuActive = 'branches'; include __DIR__ .'/_repository_header.php'; ?>
+        
     <div class="row">
         <div class="col-xs-6 col-sm-6 col-md-6">
             <h3>Branches <i class="glyphicon glyphicon-random"></i></h3>

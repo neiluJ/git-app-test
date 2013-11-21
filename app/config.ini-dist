@@ -22,8 +22,13 @@ repos.table = repositories
 repos.accesses.table = accesses
 repos.basePath = /home/git/repositories
 
-git.clone.hostname.ssh.remote = localhost
+git.clone.hostname.ssh.remote = gitmachine
 git.clone.hostname.ssh.local = localhost
+git.clone.hostname.http.remote = gitmachine
+git.clone.http.prefix = git
+git.clone.http = 1
+git.clone.https = 0
+
 git.date.format = d/m/Y
 
 git.user.name = git

@@ -41,6 +41,7 @@ class Users extends Repository implements ContextAware
         } catch(EmptyRepositoryException $exp) {
             // we don't care if the git-repository is not ready yet
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
         
@@ -49,67 +50,78 @@ class Users extends Repository implements ContextAware
         $changes = 0;
         
         $this->accesses = $this->getGitDao()->getRepositoryAccesses($repoId);
-        if ($request->getMethod() == "POST") {
         
-            $post = $request->request;
-            foreach ($post->get('access', array()) as $userId => $list) {
-                $read       = (bool)(isset($list['read']) ? $list['read'] : false);
-                $write      = (bool)(isset($list['write']) ? $list['write'] : false);
-                $special    = (bool)(isset($list['special']) ? $list['special'] : false);
-                $admin      = (bool)(isset($list['admin']) ? $list['admin'] : false);
+        if ($request->getMethod() == "POST") {
+            
+            $this->getGitDao()->getDb()->beginTransaction();
+            
+            try {
+                $post = $request->request;
+                foreach ($post->get('access', array()) as $userId => $list) {
+                    $read       = (bool)(isset($list['read']) ? $list['read'] : false);
+                    $write      = (bool)(isset($list['write']) ? $list['write'] : false);
+                    $special    = (bool)(isset($list['special']) ? $list['special'] : false);
+                    $admin      = (bool)(isset($list['admin']) ? $list['admin'] : false);
 
-                if ($read === false 
-                    && $write === false 
-                    && $special === false 
-                    && $admin === false
-                ) {
+                    if ($read === false 
+                        && $write === false 
+                        && $special === false 
+                        && $admin === false
+                    ) {
+                        foreach ($this->accesses as $idx => $access) {
+                            if ($access->getUser_id() == $userId) {
+                                unset($this->accesses[$idx]);
+                                break;
+                            }
+                        }
+
+                        $this->getGitDao()
+                            ->removeRepositoryAccess($repoId, $userId);
+                        $changes++;
+                        continue;
+                    }
+
                     foreach ($this->accesses as $idx => $access) {
                         if ($access->getUser_id() == $userId) {
-                            unset($this->accesses[$idx]);
-                            break;
+                            $old = sprintf('%s%s%s%s', 
+                                ($access->getReadAccess() ? '+' : '-'),
+                                ($access->getWriteAccess() ? '+' : '-'),
+                                ($access->getSpecialAccess() ? '+' : '-'),
+                                ($access->getAdminAccess() ? '+' : '-')
+                            );
+                            $new = sprintf('%s%s%s%s', 
+                                ($read ? '+' : '-'),
+                                ($write ? '+' : '-'),
+                                ($special ? '+' : '-'),
+                                ($admin ? '+' : '-')
+                            );
+
+                            // no changes
+                            if ($old == $new) {
+                                continue;
+                            }
+
+                            $access->setReadAccess($read);
+                            $access->setWriteAccess($write);
+                            $access->setSpecialAccess($special);
+                            $access->setAdminAccess($admin);
+
+                            $this->getGitDao()->saveAccess($access);
+                            $changes++;
                         }
                     }
-                    
-                    $this->getGitDao()
-                        ->removeRepositoryAccess($repoId, $userId);
-                    $changes++;
-                    continue;
                 }
                 
-                foreach ($this->accesses as $idx => $access) {
-                    if ($access->getUser_id() == $userId) {
-                        $old = sprintf('%s%s%s%s', 
-                            ($access->getReadAccess() ? '+' : '-'),
-                            ($access->getWriteAccess() ? '+' : '-'),
-                            ($access->getSpecialAccess() ? '+' : '-'),
-                            ($access->getAdminAccess() ? '+' : '-')
-                        );
-                        $new = sprintf('%s%s%s%s', 
-                            ($read ? '+' : '-'),
-                            ($write ? '+' : '-'),
-                            ($special ? '+' : '-'),
-                            ($admin ? '+' : '-')
-                        );
-                        
-                        // no changes
-                        if ($old == $new) {
-                            continue;
-                        }
-                        
-                        $access->setReadAccess($read);
-                        $access->setWriteAccess($write);
-                        $access->setSpecialAccess($special);
-                        $access->setAdminAccess($admin);
-                        
-                        $this->getGitDao()->saveAccess($access);
-                        $changes++;
-                    }
-                }
+                if ($changes > 0) {
+                    $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()->get('security')->getUser(), "edited priviledges", $this->getServices()));
+                } 
+                
+                $this->getGitDao()->getDb()->commit();
+            } catch(\Exception $exp) {
+                $this->getGitDao()->getDb()->rollBack();
+                $this->errorMsg = $exp->getMessage();
+                return Result::ERROR;
             }
-        }
-        
-        if ($changes > 0) {
-            $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()));
         }
         
         $this->users    = $this->getUsersDao()->findNonAuthorized($repoId, true);
@@ -150,7 +162,10 @@ class Users extends Repository implements ContextAware
         
         try {
             $this->loadRepository();
+        } catch(EmptyRepositoryException $exp) {
+            // we don't care if the git-repository is not ready yet
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
         
@@ -190,14 +205,16 @@ class Users extends Repository implements ContextAware
             return Result::ERROR;
         }
         
+        $this->getGitDao()->getDb()->beginTransaction();
         try {
             $this->getGitDao()
                 ->addRepositoryAccess($repoId, $userId, $read, $write, $special, $admin);
             
-            $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()));
-            
+            $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()->get('security')->getUser(), "added access", $this->getServices()));
+            $this->getGitDao()->getDb()->commit();
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
+            $this->getGitDao()->getDb()->rollBack();
             return Result::ERROR;
         }
         
@@ -208,7 +225,10 @@ class Users extends Repository implements ContextAware
     {
         try {
             $this->loadRepository();
+        } catch(EmptyRepositoryException $exp) {
+            // we don't care if the git-repository is not ready yet
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
         
@@ -219,12 +239,20 @@ class Users extends Repository implements ContextAware
             $error = "Invalid user specified.";
         } 
         
+        if (isset($error)) {
+            $this->errorMsg = $error;
+            return Result::ERROR;
+        }
+        
+        $this->getGitDao()->getDb()->beginTransaction();
         try {
             $this->getGitDao()
                 ->removeRepositoryAccess($repoId, $userId);
-            $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()));
+            $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()->get('security')->getUser(), "removed access", $this->getServices()));
+            $this->getGitDao()->getDb()->commit();
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
+            $this->getGitDao()->getDb()->rollBack();
             return Result::ERROR;
         }
         
