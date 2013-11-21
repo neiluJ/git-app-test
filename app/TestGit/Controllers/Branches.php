@@ -14,6 +14,7 @@ class Branches extends Repository
         try {
             $this->loadRepository();
         } catch(EmptyRepositoryException $exp) {
+            $this->cloneUrlAction();
             return 'empty_repository';
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();

@@ -29,7 +29,8 @@ class Repository implements ContextAware, ServicesAware, Preparable
     
     protected $repoAction = 'Repository';
     
-    protected $cloneHost;
+    protected $cloneSshUrl;
+    protected $cloneHttpUrl;
     
     protected $errorMsg;
     
@@ -40,8 +41,6 @@ class Repository implements ContextAware, ServicesAware, Preparable
         if (!empty($this->path)) {
             $this->path = rtrim($this->path, '/');
         }
-        
-        $this->cloneHost = $this->getServices()->get('git.clone.hostname.ssh.remote');
     }
     
     public function show()
@@ -49,6 +48,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
         try {
             $this->loadRepository();
         } catch(EmptyRepositoryException $exp) {
+            $this->cloneUrlAction();
             return 'empty_repository';
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
@@ -152,6 +152,39 @@ class Repository implements ContextAware, ServicesAware, Preparable
         return Result::FORM;
     }
     
+    public function cloneUrlAction()
+    {
+        try {
+            $this->loadRepository();
+        } catch(EmptyRepositoryException $exp) {
+        } catch(\Exception $exp) {
+            return Result::ERROR;
+        }
+        
+        $sc = $this->getServices();
+        
+        $this->cloneSshUrl = sprintf(
+            '%s@%s:%s', 
+            $sc->get('git.user.name'),
+            $sc->get('git.clone.hostname.ssh.remote'),
+            $this->entity->getPath()
+        );
+        
+        if ((int)$sc->get('git.clone.http') <= 0) {
+            return Result::SUCCESS;
+        }
+        
+        $this->cloneHttpUrl = sprintf(
+            'http%s://%s/%s/%s',
+             ((int)$sc->get('git.clone.https') > 0 ? 's' : ''),
+             $sc->get('git.clone.hostname.http.remote'),
+             $sc->get('git.clone.http.prefix'),
+             $this->entity->getPath()   
+        );
+        
+        return Result::SUCCESS;
+    }
+    
     public function getServices()
     {
         return $this->services;
@@ -205,6 +238,10 @@ class Repository implements ContextAware, ServicesAware, Preparable
      */
     protected function loadRepository()
     {
+        if (isset($this->entity)) {
+            return;
+        }
+        
         $this->entity = $this->getGitDao()
                 ->findOne($this->name, \TestGit\Model\Git\GitDao::FIND_FULLNAME);
     
@@ -230,10 +267,17 @@ class Repository implements ContextAware, ServicesAware, Preparable
         return $this->entity;
     }
     
-    public function getCloneHost() {
-        return $this->cloneHost;
+    public function getCloneSshUrl()
+    {
+        return $this->cloneSshUrl;
     }
-    
+
+    public function getCloneHttpUrl()
+    {
+        return $this->cloneHttpUrl;
+    }
+
+        
     public function getContext()
     {
         return $this->context;
