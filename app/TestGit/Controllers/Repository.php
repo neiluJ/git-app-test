@@ -395,8 +395,9 @@ class Repository implements ContextAware, ServicesAware, Preparable
                  * @todo ROLE_ADMIN can create forks to anyone
                  * @todo Organizations
                  */
-                
-                 $this->forkForm->element('type')->setDefault(($this->entity->isPrivate() ? 'private' : 'public'));
+                 if (isset($this->entity)) {
+                    $this->forkForm->element('type')->setDefault(($this->entity->isPrivate() ? 'private' : 'public'));
+                 }
             } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
             }
         }
