@@ -11,8 +11,8 @@
               <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i></a>
                   <ul class="dropdown-menu">
-                    <li><a href="<?php echo $this->_helper->url('Fork', array('name' => $this->entity->getName())); ?>"><i class="glyphicon glyphicon-random"></i> Fork</a></li>
-                    <li><a href="<?php echo $this->_helper->url('Settings', array('name' => $this->entity->getName())); ?>"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
+                    <li><a href="<?php echo $this->_helper->url('Fork', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-random"></i> Fork</a></li>
+                    <li><a href="<?php echo $this->_helper->url('Settings', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
                   </ul>
               </li>
           </ul>
