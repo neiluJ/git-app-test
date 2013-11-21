@@ -186,6 +186,12 @@ class Repository implements ContextAware, ServicesAware, Preparable
                     $this->entity->getDefault_branch()
                 );
 
+                $fork->setLast_commit_hash($this->entity->getLast_commit_hash());
+                $fork->setLast_commit_author($this->entity->getLast_commit_author());
+                $fork->setLast_commit_date($this->entity->getLast_commit_date());
+                $fork->setLast_commit_msg($this->entity->getLast_commit_msg());
+                $fork->setLanguages($this->entity->getLanguages());
+                
                 $this->getGitDao()->save($fork);
                 $this->getGitDao()->notify(new RepositoryForkEvent($this->entity, $fork, $this->getServices()));
                 $this->getGitDao()->getDb()->commit();

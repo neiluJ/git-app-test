@@ -273,6 +273,7 @@ class GitoliteService
         $git->pull($fork, 'fork');
         $git->remote($fork, 'rm', 'fork');
         $git->installPostReceiveHook($fork, $event->getServices()->get('php.executable'));
+        $git->push($fork);
     }
     
     protected function getGitoliteConfigAsString(Model\Git\GitDao $gitDao, $forgeryUser)
