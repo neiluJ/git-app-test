@@ -161,7 +161,6 @@ class Repository implements ContextAware, ServicesAware, Preparable
     {
         try {
             $this->loadRepository();
-        } catch(EmptyRepositoryException $exp) {
         } catch(\Exception $exp) {
             return Result::ERROR;
         }
