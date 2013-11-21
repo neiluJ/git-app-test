@@ -1,7 +1,7 @@
 <?php $vh = $this->_helper; ?>
 <?php include __DIR__ .'/_header.php'; ?>
-  <body ng-controller="RepositoryCtrl">
-    <?php $vh->embed('Menu', array('active' => 'repositories')); ?>
+  <body>
+    <?php echo $vh->embed('Menu', array('active' => '')); ?>
 
     <div class="container">
        <div class="starter-template">
