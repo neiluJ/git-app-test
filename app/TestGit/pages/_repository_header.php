@@ -13,6 +13,8 @@
                   <ul class="dropdown-menu">
                     <li><a href="<?php echo $this->_helper->url('Fork', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-random"></i> Fork</a></li>
                     <li><a href="<?php echo $this->_helper->url('Settings', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
+                    <li class="divider"></li>
+                    <li><a href="<?php echo $this->_helper->url('Delete', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-remove"></i> Delete</a></li>
                   </ul>
               </li>
           </ul>
@@ -20,6 +22,6 @@
         <h1><?php $own = $this->entity->getOwner_id(); if(!empty($own)): ?><a id="repoOwner" href="<?php echo $vh->url('Profile', array('username' => $this->entity->getOwner()->getUsername()), true); ?>"><?php echo $this->entity->getOwner()->getUsername(); ?></a><?php else: ?>special<?php endif; ?>/<a href="<?php echo $vh->url('Repository', array('name' => $this->name), true); ?>"><?php echo $this->_helper->escape($this->entity->getName()); ?></a> <?php if($this->entity->getParent_id() != null): ?><span class="fork">forked from <a class="repo-name" href="<?php echo $this->_helper->url('Repository', array('name' => $this->entity->getParent()->getFullname())); ?>"><?php echo $this->_helper->escape($this->entity->getParent()->getFullname()); ?></a></span><?php endif; ?></h1>
         <div class="clearfix"></div>
         <div class="cloneUrl"><?php echo $this->_helper->embed('CloneUrl', array('name' => $this->name)); ?></div> 
-        <p><?php echo $this->_helper->escape($this->entity->getDescription()); ?></p>
+        <p><?php echo $this->_helper->escape($this->entity->getDescription()); ?> <?php $ws = $this->entity->getWebsite(); if(!empty($ws)): ?>- <a href="<?php echo $this->_helper->escape($ws); ?>"><?php echo $this->_helper->escape($ws); ?></a><?php endif; ?></p>
     </div>
 </div><!-- /starter-template -->
