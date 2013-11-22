@@ -485,4 +485,32 @@ EOF;
         
         return (int)$proc->getOutput() === 0;
     }
+    
+    public function delete(RepositoryEntity $repository)
+    {
+        $workDirPath = $this->getWorkDirPath($repository);
+        $repoDirPath = $this->getRepositoryPath($repository);
+        
+        $this->logger->addDebug('[delete:'. $repository->getFullname() .'] deleting repository (and workdir)');
+        
+        $proc = new Process(sprintf('/bin/rm -Rf %s %s', $workDirPath, $repoDirPath));
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[delete:'. $repository->getFullname() .'] rm: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[delete:'. $repository->getFullname() .'] rm: '. $line);
+                });
+            }
+        });
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[delete:'. $repository->getFullname() .'] rm FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+    }
 }

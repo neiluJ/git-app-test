@@ -210,6 +210,20 @@ class GitDao extends DaoBase
                     ->save($repo);
     }
     
+    
+    /**
+     * 
+     * @param Repository $repo 
+     * 
+     * @return boolean 
+     */
+    public function delete(Repository $repo)
+    {
+        return $this->getDb()
+                    ->table($this->getOption('repositoriesTable'))
+                    ->delete($repo);
+    }
+    
     /**
      *
      * @param User   $owner       Repository owner

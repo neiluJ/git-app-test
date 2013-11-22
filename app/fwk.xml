@@ -366,5 +366,17 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="Delete" shortcut="TestGit\Controllers\Repository:delete">
+            <result name="success" type="redirect">
+                <param name="actionName">Repositories</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">delete.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
     </actions>
 </fwk>
