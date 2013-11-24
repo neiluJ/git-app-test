@@ -15,6 +15,7 @@ use TestGit\EmptyRepositoryException;
 use TestGit\Form\CreateForkForm;
 use TestGit\Model\Git\GitDao;
 use TestGit\Events\RepositoryForkEvent;
+use TestGit\Events\RepositoryDeleteEvent;
 
 class Repository implements ContextAware, ServicesAware, Preparable
 {
@@ -196,6 +197,34 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 $this->getGitDao()->notify(new RepositoryForkEvent($this->entity, $fork, $this->getServices()));
                 $this->getGitDao()->getDb()->commit();
                 $this->name = $fork->getFullname();
+            } catch(\Exception $exp) {
+                $this->errorMsg = $exp->getMessage();
+                $this->getGitDao()->getDb()->rollBack();
+                return Result::ERROR;
+            }
+        
+            return Result::SUCCESS;
+        }
+        
+        return Result::FORM;
+    }
+    
+    public function delete()
+    {
+        try {
+            $this->loadRepository();
+        } catch(EmptyRepositoryException $exp) {
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::ERROR;
+        }
+        
+        if ($this->isPOST()) {
+            $this->getGitDao()->getDb()->beginTransaction();
+            try {
+                $this->getGitDao()->delete($this->entity);
+                $this->getGitDao()->notify(new RepositoryDeleteEvent($this->entity, $this->getServices()));
+                $this->getGitDao()->getDb()->commit();
             } catch(\Exception $exp) {
                 $this->errorMsg = $exp->getMessage();
                 $this->getGitDao()->getDb()->rollBack();

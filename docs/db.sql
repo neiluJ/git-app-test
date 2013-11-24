@@ -116,6 +116,7 @@ CREATE TABLE IF NOT EXISTS `repositories` (
   `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `fullname` varchar( 255 ) COLLATE utf8_unicode_ci NOT NULL,
   `description` varchar(512) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `website` varchar( 200 ) COLLATE utf8_unicode_ci DEFAULT NULL,
   `path` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `default_branch` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'master',
   `created_at` datetime NOT NULL,

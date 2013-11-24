@@ -1,5 +1,6 @@
 <?php if (null !== $this->user): ?>
 <ul class="nav navbar-nav navbar-right">
+    <li<?php if($this->active == 'create'): ?> class="active"<?php endif; ?>><a href="<?php echo $this->_helper->url('Create'); ?>"><i class="glyphicon glyphicon-plus"></i></a></li>
     <li class="dropdown">
       <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?php $fn = $this->user->getFullname(); echo $this->_helper->escape(empty($fn) ? $this->user->getUsername() : $fn); ?> <b class="caret"></b></a>
       <ul class="dropdown-menu">

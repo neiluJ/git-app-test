@@ -21,6 +21,7 @@ class Repository implements ResourceInterface
     protected $name;
     protected $fullname;
     protected $description;
+    protected $website;
     protected $path;
     protected $default_branch;
     protected $created_at;
@@ -120,6 +121,16 @@ class Repository implements ResourceInterface
 
     public function setDescription($description) {
         $this->description = $description;
+    }
+
+    public function getWebsite()
+    {
+        return $this->website;
+    }
+    
+    public function setWebsite($website)
+    {
+        $this->website = $website;
     }
 
     public function getPath() {
