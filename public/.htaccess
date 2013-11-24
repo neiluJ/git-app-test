@@ -4,4 +4,4 @@ RewriteCond %{REQUEST_FILENAME} -l [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^.*$ - [NC,L]
 #RewriteRule \.(js|ico|txt|gif|jpg|png|css)$ - [NC,L]
-RewriteRule ^[^/git(mob)?/].*$ index.php [NC,L]
+RewriteRule ^(?!git/|gitmob/).*$ index.php [NC,L]
