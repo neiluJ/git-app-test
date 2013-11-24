@@ -8,6 +8,11 @@ git clone <span id="gitUrl"><?php echo $this->cloneSshUrl; ?></span>
     <input type="radio" name="clonetype" id="http_btn" value="http"> HTTP<?php if (strpos($this->cloneHttpUrl, 'https', 0) !== false): ?>S<?php endif; ?> 
   </label>
   <?php endif; ?>  
+  <?php if ($this->cloneHttpUrl != null && !$this->entity->isPrivate()): ?>  
+  <label class="btn btn-default btn-xs">
+    <input type="radio" name="clonetype" id="http_btn" value="public"> Read-Only<?php if (strpos($this->cloneHttpUrl, 'https', 0) !== false): ?>S<?php endif; ?> 
+  </label>
+  <?php endif; ?> 
     <input type="hidden" name="githost.ssh" id="gitSshUrl" value="<?php echo $this->cloneSshUrl; ?>">
     <?php if ($this->cloneHttpUrl != null): ?>
     <input type="hidden" name="githost.http" id="gitHttpUrl" value="<?php echo $this->cloneHttpUrl; ?>">
