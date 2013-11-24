@@ -35,6 +35,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     
     protected $cloneSshUrl;
     protected $cloneHttpUrl;
+    protected $clonePublicUrl;
     
     protected $errorMsg;
     
@@ -267,6 +268,20 @@ class Repository implements ContextAware, ServicesAware, Preparable
              $this->entity->getPath()   
         );
         
+        $prefix = $sc->get('git.clone.http.prefix.public');
+        if (empty($prefix) || $this->entity->isPrivate()) {
+            return Result::SUCCESS;
+        }
+        
+        $this->clonePublicUrl = sprintf(
+             'http%s://%s/%s/%s',
+             ((int)$sc->get('git.clone.https') > 0 ? 's' : ''),
+             $sc->get('git.clone.hostname.http.remote'),
+             $prefix,
+             $this->entity->getPath()   
+        );
+                
+        
         return Result::SUCCESS;
     }
     
@@ -362,7 +377,12 @@ class Repository implements ContextAware, ServicesAware, Preparable
         return $this->cloneHttpUrl;
     }
 
-        
+    public function getClonePublicUrl()
+    {
+        return $this->clonePublicUrl;
+    }
+
+    
     public function getContext()
     {
         return $this->context;
