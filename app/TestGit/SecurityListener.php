@@ -46,20 +46,17 @@ class SecurityListener
     
     public function onBeforeAction(BeforeActionEvent $event)
     {
-        $actionName = $event->getContext()->getActionName();
-        $rules      = $this->calculateAclsForAction($actionName);
-        
-        if (!count($rules)) {
-            return;
-        }
-        
         $service = $event->getApplication()->getServices()->get($this->serviceName);
         if (!$service instanceof SecurityService) {
-            return;
+            throw new \RuntimeException('Service '. $this->serviceName .' is not a SecurityService instance');
         }
         
-        $resource = 'action:'. $actionName;
-        $acl = $service->getAclManager();
+        $actionName = $event->getContext()->getActionName();
+        $rules      = $this->calculateAclsForAction($actionName);
+        $acl        = $service->getAclManager();
+        $proxy      = $event->getActionProxy();
+        $resource   = 'action:'. $actionName;
+        
         if (!$acl->hasResource($resource)) {
             $acl->addResource(new GenericResource($resource));
         }
@@ -67,7 +64,7 @@ class SecurityListener
         $role = (
            $service->getAuthenticationManager()->hasIdentity() ?
            $service->getUser($event->getContext()->getRequest()) :
-           new GenericRole($this->guestRole)
+           $this->guestRole
         );
         
         if (!empty($role) && !$acl->hasRole($role)) {

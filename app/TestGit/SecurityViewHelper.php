@@ -37,9 +37,6 @@ class SecurityViewHelper extends AbstractViewHelper implements ViewHelper
             $acl->addRole($role);
         }
         
-        $element = (isset($arguments[0]) ? $arguments[0] : null);
-        $form = (isset($arguments[1]) ? $arguments[1] : null);
-        
         return $acl->isAllowed($role, $resource, $privilege);
     }
 }

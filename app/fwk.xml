@@ -58,11 +58,13 @@
     
     <actions>
         <action name="Home" shortcut="TestGit\Controllers\Home:show">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">homepage.php</param>
             </result>
         </action>
         <action name="Menu" shortcut="TestGit\Controllers\Home:menu">
+            <acl type="allow" role="" />
             <result name="embed:success" type="php">
                 <param name="file">menu.php</param>
             </result>
@@ -71,6 +73,7 @@
             </result>
         </action>
         <action name="UserMenu" shortcut="TestGit\Controllers\Home:userMenu">
+            <acl type="allow" role="" />
             <result name="embed:success" type="php">
                 <param name="file">menu_user.php</param>
             </result>
@@ -79,11 +82,13 @@
             </result>
         </action>
         <action name="Error" shortcut="TestGit\Controllers\Home:error">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">error.php</param>
             </result>
         </action>
         <action name="Repositories" shortcut="TestGit\Controllers\Repositories:show">
+            <acl type="allow" role="" />
             <result name="success" type="chain">
                 <param name="actionName">Home</param>
             </result>
@@ -92,6 +97,7 @@
             </result>
         </action>
         <action name="Repository" shortcut="TestGit\Controllers\Repository:show">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">repository.php</param>
             </result>
@@ -107,11 +113,13 @@
             </result>
         </action>
         <action name="CloneUrl" shortcut="TestGit\Controllers\Repository:cloneUrlAction">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">clone_url.php</param>
             </result>
         </action>
         <action name="Blob" shortcut="TestGit\Controllers\Blob:blobAction">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">repository.php</param>
             </result>
@@ -125,6 +133,7 @@
         </action>
         
         <action name="BlobDisplay" shortcut="TestGit\Controllers\Blob:show">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">blob.php</param>
             </result>
@@ -145,9 +154,11 @@
                 <param name="errorMsg">File not found.</param>
             </result>
         </action>
-        <action name="BlobRaw" shortcut="TestGit\Controllers\Blob:raw" />
-        
+        <action name="BlobRaw" shortcut="TestGit\Controllers\Blob:raw">
+            <acl type="allow" role="" />    
+        </action>
         <action name="Commits" shortcut="TestGit\Controllers\Commits:listAction">
+            <acl type="allow" role="" />
             <result name="success" type="json">
                 <param name="properties">path, jsonCommits, jsonCurrentCommit, offset, limit</param>
             </result>
@@ -157,6 +168,7 @@
             </result>
         </action>
         <action name="Commit" shortcut="TestGit\Controllers\Commits:commitAction">
+            <acl type="allow" role="" />
             <result name="ajax:success" type="php">
                 <param name="file">commit.php</param>
             </result>
@@ -169,6 +181,7 @@
             </result>
         </action>
         <action name="Compare" shortcut="TestGit\Controllers\Commits:compareAction">
+            <acl type="allow" role="" />
             <result name="ajax:success" type="php">
                 <param name="file">compare.php</param>
             </result>
@@ -180,8 +193,11 @@
                 <param name="errorMsg">Problem occured while loading the comparision</param>
             </result>
         </action>
-        <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction" />
+        <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction">
+            <acl type="allow" role="" />
+        </action>
         <action name="Branches" shortcut="TestGit\Controllers\Branches:show">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">branches.php</param>
             </result>
@@ -194,6 +210,7 @@
             </result>
         </action>
         <action name="Users" shortcut="TestGit\Controllers\Users:show">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">users.php</param>
             </result>
@@ -206,8 +223,7 @@
             </result>
         </action>
         <action name="Accesses" shortcut="TestGit\Controllers\Users:repositoryUsers">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="php">
                 <param name="file">accesses.php</param>
             </result>
@@ -217,8 +233,7 @@
             </result>
         </action>
         <action name="AddAccess" shortcut="TestGit\Controllers\Users:addAccess">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="actionName">Accesses</param>
                 <param name="name">:name</param>
@@ -229,8 +244,7 @@
             </result>
         </action>
         <action name="RemoveAccess" shortcut="TestGit\Controllers\Users:removeAccess">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="actionName">Accesses</param>
                 <param name="name">:name</param>
@@ -242,6 +256,7 @@
         </action>
         
         <action name="Login" shortcut="TestGit\Controllers\Login:show">
+            <acl type="allow" role="" />
             <result name="form" type="php">
                 <param name="file">login.php</param>
             </result>
@@ -254,8 +269,7 @@
             </result>
         </action>
         <action name="Logout" shortcut="TestGit\Controllers\Login:logout">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="uri">:back</param>
             </result>
@@ -266,7 +280,6 @@
         </action>
         <action name="AddUser" shortcut="TestGit\Controllers\Users:addUser">
             <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
             <result name="form" type="php">
                 <param name="file">adduser.php</param>
             </result>
@@ -288,6 +301,7 @@
             </result>
         </action>
         <action name="Profile" shortcut="TestGit\Controllers\Profile:show">
+            <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">user_profile.php</param>
             </result>
@@ -297,8 +311,7 @@
             </result>
         </action>
         <action name="UserSettings" shortcut="TestGit\Controllers\UserSettings:show">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="php">
                 <param name="file">user_settings.php</param>
             </result>
@@ -308,8 +321,7 @@
             </result>
         </action>
         <action name="EditUserInfos" shortcut="TestGit\Controllers\UserSettings:editInfos">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="actionName">UserSettings</param>
                 <param name="username">:username</param>
@@ -324,8 +336,7 @@
             </result>
         </action>
         <action name="AddSshKey" shortcut="TestGit\Controllers\UserSettings:addSshKey">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="actionName">UserSettings</param>
                 <param name="username">:username</param>
@@ -340,8 +351,7 @@
             </result>
         </action>
         <action name="RevokeSshKey" shortcut="TestGit\Controllers\UserSettings:revokeSshKey">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="actionName">UserSettings</param>
                 <param name="username">:username</param>
@@ -353,8 +363,7 @@
             </result>
         </action>
         <action name="ChangePassword" shortcut="TestGit\Controllers\UserSettings:chpasswd">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="actionName">UserSettings</param>
                 <param name="username">:username</param>
@@ -369,7 +378,6 @@
             </result>
         </action>
         <action name="Create" shortcut="TestGit\Controllers\Repository:create">
-            <acl type="deny" role="guest" />
             <acl type="allow" role="repo_create" />
             <result name="success" type="redirect">
                 <param name="actionName">Repository</param>
@@ -384,7 +392,6 @@
             </result>
         </action>
         <action name="Fork" shortcut="TestGit\Controllers\Repository:fork">
-            <acl type="deny" role="guest" />
             <acl type="allow" role="repo_create" />
             <result name="success" type="redirect">
                 <param name="actionName">Repository</param>
@@ -399,7 +406,6 @@
             </result>
         </action>
         <action name="Delete" shortcut="TestGit\Controllers\Repository:delete">
-            <acl type="deny" role="guest" />
             <acl type="allow" role="repo_create" />
             <result name="success" type="redirect">
                 <param name="actionName">Repositories</param>
@@ -413,8 +419,7 @@
             </result>
         </action>
         <action name="Settings" shortcut="TestGit\Controllers\Settings:show">
-            <acl type="allow" role="" />
-            <acl type="deny" role="guest" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="actionName">Settings</param>
                 <param name="name">:name</param>
