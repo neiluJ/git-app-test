@@ -52,6 +52,7 @@ $viewHelperClassDef->addMethodCall('add', array('url', new ClassDefinition('Fwk\
 $viewHelperClassDef->addMethodCall('add', array('escape', new ClassDefinition('Fwk\Core\Components\ViewHelper\EscapeViewHelper', array(ENT_QUOTES, "utf-8"))));
 $viewHelperClassDef->addMethodCall('add', array('form', new ClassDefinition('TestGit\Form\RendererViewHelper', array('formRenderer'))));
 $viewHelperClassDef->addMethodCall('add', array('formElement', new ClassDefinition('TestGit\Form\RendererElementViewHelper', array('formRenderer'))));
+$viewHelperClassDef->addMethodCall('add', array('isAllowed', new ClassDefinition('TestGit\SecurityViewHelper', array('security', 'guest'))));
 
 $container->set('viewHelper', $viewHelperClassDef, true);
 
@@ -142,14 +143,20 @@ $container->set(
     ) 
 ));
 
-$container->set(
-   'security',
-   new ClassDefinition('Fwk\Security\Service', 
+$securityDef = new ClassDefinition('Fwk\Security\Service', 
    array(
        '@authManager',
        '@usersDao',
        '@aclsManager'
-   )),
+   )
+);
+$securityDef->addMethodCall('addListener', array(
+    new ClassDefinition('Fwk\Security\Acl\LoadUserAclListener') 
+));
+
+$container->set(
+   'security',
+   $securityDef,
    true
 );
 

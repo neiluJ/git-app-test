@@ -260,7 +260,7 @@ class Repository implements ResourceInterface
     
     public function isPrivate()
     {
-        return $this->type === Repository::TYPE_PRIVATE;
+        return !(bool)$this->public;
     }
     
     public function getFullname()

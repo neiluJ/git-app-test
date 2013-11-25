@@ -8,6 +8,7 @@
  
     <div class="row">
         <div class="col-sm-6" style="float:none; margin: 0 auto;">
+            <?php if($this->_helper->isAllowed($this->entity, 'write')): ?>
             <div class="alert alert-info">This (empty) repository is ready for you!</div>
             
             <h3>Create a new repository</h3>
@@ -28,7 +29,9 @@ git remote add origin <span class="git-clone-url"><?php echo $this->cloneSshUrl;
 git push -u origin master
 </pre>
 
-
+<?php else: ?>
+    <div class="alert alert-warning">Nothing to see here...</div>
+<?php endif; ?>
         </div>
     </div><!-- /row -->
     

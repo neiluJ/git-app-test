@@ -98,7 +98,7 @@ class Login extends Controller implements Preparable
                 $this->getServices()->get('authFilter'),
                 "Invalid credentials."
             );
-            $this->loginForm->setAction($this->getServices()->get('viewHelper')->url('Login'));
+            $this->loginForm->setAction($this->getServices()->get('viewHelper')->url('Login', array('back' => $this->back)));
         }
         
         return $this->loginForm;

@@ -10,8 +10,9 @@
       </div>
 
         <div class="">
+<?php if ($this->_helper->isAllowed('repository', 'create')): ?>
             <a href="<?php echo $vh->url('Create'); ?>" class="btn btn-primary pull-right">Create Repository</a>
-        
+<?php endif; ?>
           <form role="form" class="form-inline filter">
             <div class="form-group">
               <input type="search" tabindex="1" ng-model="query" class="form-control" id="searchRepos" placeholder="Filter repositories">

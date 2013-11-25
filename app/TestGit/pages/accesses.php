@@ -8,7 +8,7 @@
         
     <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12">
-            <?php if(count($this->users)): ?>
+            <?php if($this->_helper->isAllowed($this->entity, 'admin')): ?>
             <button type="button" data-toggle="modal" data-target="#addModal" class="btn btn-primary pull-right">Add</button>
             <?php endif; ?>
             <h3>Access List <i class="glyphicon glyphicon-lock"></i></h3>
@@ -47,7 +47,7 @@
     </div><!-- /row -->
     
     </div><!-- /.container -->
-<?php if(count($this->users)): ?>    
+<?php if($this->_helper->isAllowed($this->entity, 'admin')): ?>  
 <div class="modal fade" id="addModal">
   <div class="modal-dialog">
       <form role="form" method="post" action="<?php echo $this->_helper->url('AddAccess', array('name' => $this->name)); ?>">

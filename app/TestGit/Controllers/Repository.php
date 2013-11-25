@@ -349,6 +349,47 @@ class Repository implements ContextAware, ServicesAware, Preparable
             throw new \Exception('repository not found');
         }
 
+        // load repo acls
+        $security = $this->getServices()->get('security');
+        $acl = $security->getAclManager();
+        if (!$acl->hasResource($this->entity)) {
+            $acl->addResource($this->entity);
+        }
+        
+        if ((int)$this->getServices()->get('git.clone.http') <= 0) {
+            $allowHttp = false;
+        } else {
+            $allowHttp = true;
+        }
+         
+        $publicPrefix = $this->getServices()->get('git.clone.http.prefix.public');
+        if ($this->entity->isPrivate()) {
+            $acl->deny(null, $this->entity);
+        } elseif ($allowHttp && !empty($publicPrefix)) {
+            $acl->allow(null, $this->entity, 'read');
+        }
+        
+        try {
+            $user = $security->getUser($this->getContext()->getRequest());
+            foreach ($this->entity->getAccesses() as $access) {
+                if ($access->getUser_id() === $user->getId()) {
+                    if ($access->getReadAccess()) {
+                        $acl->allow($user, $this->entity, 'read');
+                    }
+                    if ($access->getWriteAccess()) {
+                        $acl->allow($user, $this->entity, 'write');
+                    }
+                    if ($access->getSpecialAccess()) {
+                        $acl->allow($user, $this->entity, 'special');
+                    }
+                    if ($access->getAdminAccess()) {
+                        $acl->allow($user, $this->entity, 'admin');
+                    }
+                }
+            }
+        } catch(\Exception $exp) {
+        }
+        
         $this->branch = (!isset($this->branch) ? $this->entity->getDefault_branch() : $this->branch);
         
         if ($this->getGitService()->isEmpty($this->entity)) {

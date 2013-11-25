@@ -18,6 +18,14 @@
     <listener class="Fwk\Core\Components\SessionListener">
         <param>:sessionService</param>
     </listener>
+    <listener class="TestGit\SecurityListener">
+        <param name="securityService">security</param>
+        <param name="requestMatcher">:requestMatcherService</param>
+        <param name="urlRewriter">:urlRewriterService</param>
+        <param name="guestRole">guest</param>
+        <param name="loginAction">Login</param>
+        <param name="redirectParam">back</param>
+    </listener>
     
     <result-types>
         <result-type
@@ -198,6 +206,8 @@
             </result>
         </action>
         <action name="Accesses" shortcut="TestGit\Controllers\Users:repositoryUsers">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="php">
                 <param name="file">accesses.php</param>
             </result>
@@ -207,6 +217,8 @@
             </result>
         </action>
         <action name="AddAccess" shortcut="TestGit\Controllers\Users:addAccess">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="redirect">
                 <param name="actionName">Accesses</param>
                 <param name="name">:name</param>
@@ -217,6 +229,8 @@
             </result>
         </action>
         <action name="RemoveAccess" shortcut="TestGit\Controllers\Users:removeAccess">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="redirect">
                 <param name="actionName">Accesses</param>
                 <param name="name">:name</param>
@@ -240,6 +254,8 @@
             </result>
         </action>
         <action name="Logout" shortcut="TestGit\Controllers\Login:logout">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="redirect">
                 <param name="uri">:back</param>
             </result>
@@ -249,6 +265,8 @@
             </result>
         </action>
         <action name="AddUser" shortcut="TestGit\Controllers\Users:addUser">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="form" type="php">
                 <param name="file">adduser.php</param>
             </result>
@@ -279,6 +297,8 @@
             </result>
         </action>
         <action name="UserSettings" shortcut="TestGit\Controllers\UserSettings:show">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="php">
                 <param name="file">user_settings.php</param>
             </result>
@@ -288,6 +308,8 @@
             </result>
         </action>
         <action name="EditUserInfos" shortcut="TestGit\Controllers\UserSettings:editInfos">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="redirect">
                 <param name="actionName">UserSettings</param>
                 <param name="username">:username</param>
@@ -302,6 +324,8 @@
             </result>
         </action>
         <action name="AddSshKey" shortcut="TestGit\Controllers\UserSettings:addSshKey">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="redirect">
                 <param name="actionName">UserSettings</param>
                 <param name="username">:username</param>
@@ -316,6 +340,8 @@
             </result>
         </action>
         <action name="RevokeSshKey" shortcut="TestGit\Controllers\UserSettings:revokeSshKey">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="redirect">
                 <param name="actionName">UserSettings</param>
                 <param name="username">:username</param>
@@ -327,6 +353,8 @@
             </result>
         </action>
         <action name="ChangePassword" shortcut="TestGit\Controllers\UserSettings:chpasswd">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="redirect">
                 <param name="actionName">UserSettings</param>
                 <param name="username">:username</param>
@@ -341,6 +369,8 @@
             </result>
         </action>
         <action name="Create" shortcut="TestGit\Controllers\Repository:create">
+            <acl type="deny" role="guest" />
+            <acl type="allow" role="repo_create" />
             <result name="success" type="redirect">
                 <param name="actionName">Repository</param>
                 <param name="name">:name</param>
@@ -354,6 +384,8 @@
             </result>
         </action>
         <action name="Fork" shortcut="TestGit\Controllers\Repository:fork">
+            <acl type="deny" role="guest" />
+            <acl type="allow" role="repo_create" />
             <result name="success" type="redirect">
                 <param name="actionName">Repository</param>
                 <param name="name">:name</param>
@@ -367,6 +399,8 @@
             </result>
         </action>
         <action name="Delete" shortcut="TestGit\Controllers\Repository:delete">
+            <acl type="deny" role="guest" />
+            <acl type="allow" role="repo_create" />
             <result name="success" type="redirect">
                 <param name="actionName">Repositories</param>
             </result>
@@ -379,6 +413,8 @@
             </result>
         </action>
         <action name="Settings" shortcut="TestGit\Controllers\Settings:show">
+            <acl type="allow" role="" />
+            <acl type="deny" role="guest" />
             <result name="success" type="redirect">
                 <param name="actionName">Settings</param>
                 <param name="name">:name</param>

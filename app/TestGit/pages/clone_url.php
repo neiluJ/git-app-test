@@ -1,5 +1,7 @@
+<?php if ($this->_helper->isAllowed($this->entity, 'read') || $this->_helper->isAllowed($this->entity, 'write')): ?>
 git clone <span id="gitUrl"><?php echo $this->cloneSshUrl; ?></span>
 <div class="btn-group btns-clone" data-toggle="buttons">
+    <?php if ($this->_helper->isAllowed($this->entity, 'read') || $this->_helper->isAllowed($this->entity, 'write')): ?>
   <label class="btn btn-default btn-xs active">
     <input type="radio" name="clonetype" id="ssh_btn" value="ssh" data-toggle="button"> SSH
   </label>
@@ -7,17 +9,20 @@ git clone <span id="gitUrl"><?php echo $this->cloneSshUrl; ?></span>
   <label class="btn btn-default btn-xs">
     <input type="radio" name="clonetype" id="http_btn" value="http"> HTTP<?php if (strpos($this->cloneHttpUrl, 'https', 0) !== false): ?>S<?php endif; ?> 
   </label>
-  <?php endif; ?>  
-  <?php if ($this->clonePublicUrl != null): ?>  
+  <?php endif; ?> 
+  <?php endif; ?>
+    <?php if ($this->_helper->isAllowed($this->entity, 'read') && $this->clonePublicUrl != null): ?>
   <label class="btn btn-default btn-xs">
     <input type="radio" name="clonetype" id="public_btn" value="public"> Read-Only 
   </label>
-  <?php endif; ?> 
+    <?php endif; ?>
+    <?php if ($this->_helper->isAllowed($this->entity, 'read') || $this->_helper->isAllowed($this->entity, 'write')): ?>
     <input type="hidden" name="githost.ssh" id="gitSshUrl" value="<?php echo $this->cloneSshUrl; ?>">
     <?php if ($this->cloneHttpUrl != null): ?>
     <input type="hidden" name="githost.http" id="gitHttpUrl" value="<?php echo $this->cloneHttpUrl; ?>">
     <?php endif; ?>
-    <?php if ($this->clonePublicUrl != null): ?>
+    <?php endif; ?>
+    <?php if ($this->_helper->isAllowed($this->entity, 'read') && $this->clonePublicUrl != null): ?>
     <input type="hidden" name="githost.public" id="gitPublicUrl" value="<?php echo $this->clonePublicUrl; ?>">
     <?php endif; ?>
 </div>
@@ -38,6 +43,8 @@ $(document).ready(function() {
     $('body').on('click', '.btns-clone .btn', function() {
         updateUrl($(this)[0].textContent.trim().toLowerCase());
     });
-    
 });
 </script>
+<?php else: ?>
+you're not allowed to clone this repository
+<?php endif; ?>
