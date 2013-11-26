@@ -109,7 +109,7 @@ class AclDao extends Dao implements Provider
         return $final;
     }
     
-    public function getDefaultRoles()
+    public function getDefaultRoles($extras = array())
     {
         $query = Query::factory()
                 ->select()
@@ -118,6 +118,12 @@ class AclDao extends Dao implements Provider
                 ->entity(self::ENTITY_ROLE)
                 ->where('`default` = ?');
         
-        return $this->getDb()->execute($query, array(1));
+        $params = array(1);
+        foreach ($extras as $roleName) {
+            $query->orWhere('role = ?');
+            array_push($params, $roleName);
+        }
+        
+        return $this->getDb()->execute($query, $params);
     }
 }

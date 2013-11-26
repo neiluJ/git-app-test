@@ -10,7 +10,9 @@
       </div>
 
         <div class="">
+            <?php if ($this->_helper->isAllowed('users', 'create')): ?>
             <button type="button" data-toggle="modal" data-target="#addModal" class="btn btn-primary pull-right">Add User</button>
+            <?php endif; ?>
             <form role="form" class="form-inline filter">
             <div class="form-group">
               <input type="search" tabindex="1" ng-model="query" class="form-control" id="searchRepos" placeholder="Filter users">
@@ -47,7 +49,7 @@
     </div><!-- /.container -->
     
     
-
+<?php if ($this->_helper->isAllowed('users', 'create')): ?>
 <div class="modal fade" id="addModal">
   <div class="modal-dialog">
       <form role="form" id="addUser" method="post" action="<?php echo $this->_helper->url('AddUser'); ?>">
@@ -83,4 +85,5 @@
        });
     });
 </script>
+<?php endif; ?>
 <?php include __DIR__ .'/_footer.php'; ?>

@@ -13,3 +13,19 @@
 <?php echo $vh->formElement('password', $this->addUserForm); ?>
 <?php echo $vh->formElement('confirm', $this->addUserForm); ?>
 </div>
+<label for="">Roles &amp; Permissions</label>
+<?php if ($this->addUserForm->has('role_repos')): ?>
+<div class="checkbox">
+    <?php echo $vh->formElement('role_repos', $this->addUserForm); ?>
+</div>
+<?php endif; ?>
+<?php if ($this->addUserForm->has('role_staff')): ?>
+<div class="checkbox">
+    <?php echo $vh->formElement('role_staff', $this->addUserForm); ?>
+</div>
+<?php endif; ?>
+<?php if ($this->addUserForm->has('role_admin')): ?>
+<div class="checkbox">
+    <?php echo $vh->formElement('role_admin', $this->addUserForm); ?>
+</div>
+<?php endif; ?>

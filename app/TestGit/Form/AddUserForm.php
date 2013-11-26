@@ -6,6 +6,8 @@ use Fwk\Form\Form;
 use Fwk\Form\Elements\Text;
 use Fwk\Form\Elements\Password;
 use Fwk\Form\Elements\Submit;
+use Fwk\Form\Elements\Checkbox;
+use Fwk\Form\Elements\Group;
 
 use Fwk\Form\Sanitization\StringSanitizer;
 use Fwk\Form\Validation\NotEmptyFilter;
@@ -48,10 +50,25 @@ class AddUserForm extends Form
                 ->setAttr('class', 'form-control')
                 ->filter(new NotEmptyFilter(), 'You must confirm your password.');
         
+        $roleRepos = new Checkbox('role_repos', 'role_repos');
+        $roleRepos->label('Create and Remove Repositories and Forks')
+                  ->setAttr(\Fwk\Form\Element::ATTR_LABEL_POSITION, \Fwk\Form\Element::LABEL_POSITION_RIGHT);
+        $roleRepos->setDefault(true);
+        
+        $roleStaff = new Checkbox('role_staff', 'role_staff');
+        $roleStaff->label('Create, edit and Remove Users')
+                  ->setAttr(\Fwk\Form\Element::ATTR_LABEL_POSITION, \Fwk\Form\Element::LABEL_POSITION_RIGHT);
+        $roleStaff->setDefault(false);
+        
+        $roleAdm = new Checkbox('role_admin', 'role_admin');
+        $roleAdm->label('Global administrator (root)')
+                  ->setAttr(\Fwk\Form\Element::ATTR_LABEL_POSITION, \Fwk\Form\Element::LABEL_POSITION_RIGHT);
+        $roleAdm->setDefault(false);
+        
         $submit = new Submit();
         $submit->setAttr('class', 'btn btn-default')
                ->setDefault('Add');
         
-        $this->addAll(array($username, $email, $passwd, $passwd2, $submit));
+        $this->addAll(array($username, $email, $passwd, $passwd2, $roleRepos, $roleStaff, $roleAdm, $submit));
     }
 }

@@ -5,7 +5,7 @@
 <?php endif; ?>
 <?php foreach($element->elements() as $element): ?><?php include $this->getElementResource($element); ?><?php endforeach; ?>
 <?php if($element->hasHint()): ?>
-        <span class="hint"><?php echo htmlspecialchars($element->getHint()); ?></span>
+        <span class="help-block"><?php echo htmlspecialchars($element->getHint()); ?></span>
 <?php endif; ?>
 <?php if($element->hasLabel() &&
         $element->attribute(Element::ATTR_LABEL_POSITION) == Element::LABEL_POSITION_RIGHT): ?>

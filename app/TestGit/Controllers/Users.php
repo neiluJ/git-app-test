@@ -142,7 +142,35 @@ class Users extends Repository implements ContextAware
             }
             
             $dao = $this->getUsersDao();
-            $u = $dao->create($form->username, $form->password, $form->email, $this->getServices()->get('users'));
+            $aclsDao = $this->getAclsDao();
+            $user = $this->getServices()->get('security')->getUser();
+            if (!$user instanceof \TestGit\Model\User\User) {
+                return Result::ERROR;
+            }
+            $userRoles = $user->getRolesRelation()->toArray();
+            $findRole = function($roleName) use ($userRoles) {
+                foreach ($userRoles as $role) {
+                    if ($role->getRole() == $roleName) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            };
+            
+            $extrasRoles = array();
+            if ($form->has('role_repos') && $form->role_repos && $findRole('repo_create')) {
+                $extrasRoles[] = 'repo_create';
+            }
+            if ($form->has('role_staff') && $form->role_staff && $findRole('staff')) {
+                $extrasRoles[] = 'staff';
+            }
+            if ($form->has('role_admin') && $form->role_admin && $findRole('admin')) {
+                $extrasRoles[] = 'root';
+            }
+            
+            $roles = $aclsDao->getDefaultRoles($extrasRoles)->toArray();
+            $u = $dao->create($form->username, $form->password, $form->email, $this->getServices()->get('users'), $roles);
             $dao->save($u, true, $this->getServices());
             
             return Result::SUCCESS;
@@ -296,6 +324,15 @@ class Users extends Repository implements ContextAware
     
     /**
      * 
+     * @return \TestGit\Model\User\AclDao
+     */
+    protected function getAclsDao()
+    {
+        return $this->getServices()->get('aclsDao');
+    }
+    
+    /**
+     * 
      * @return \TestGit\Model\Git\GitDao
      */
     protected function getGitDao()
@@ -318,7 +355,8 @@ class Users extends Repository implements ContextAware
         $this->context = $context;
     }
     
-    public function getErrorMsg() {
+    public function getErrorMsg()
+    {
         return $this->errorMsg;
     }
 
@@ -335,6 +373,30 @@ class Users extends Repository implements ContextAware
                 new EmailAlreadyExistsFilter($this->getUsersDao()),
                 "This email is already used. Please choose a different one"
             );
+            $user = $this->getServices()->get('security')->getUser();
+            if (!$user instanceof \TestGit\Model\User\User) {
+                return Result::ERROR;
+            }
+            $userRoles = $user->getRolesRelation()->toArray();
+            $findRole = function($roleName) use ($userRoles) {
+                foreach ($userRoles as $role) {
+                    if ($role->getRole() == $roleName) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            };
+            
+            if (!$findRole('repo_create')) {
+                $this->addUserForm->remove('role_repos');
+            }
+            if (!$findRole('staff')) {
+                $this->addUserForm->remove('role_staff');
+            }
+            if (!$findRole('admin')) {
+                $this->addUserForm->remove('role_admin');
+            }
         }
         return $this->addUserForm;
     }
