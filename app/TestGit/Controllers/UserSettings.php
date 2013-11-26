@@ -24,13 +24,13 @@ class UserSettings extends Profile
     protected $sshKeyForm;
     protected $changePasswordForm;
     protected $successMsg;
-    protected $errorMsg;
     
     public function show()
     {
         try {
-            $this->loadProfile();
+            $this->loadProfile('edit');
         } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
             return Result::ERROR;
         }
         
@@ -40,8 +40,9 @@ class UserSettings extends Profile
     public function editInfos()
     {
         try {
-            $this->loadProfile();
+            $this->loadProfile('edit');
         } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
             return Result::ERROR;
         }
         
@@ -67,8 +68,9 @@ class UserSettings extends Profile
     public function addSshKey()
     {
         try {
-            $this->loadProfile();
+            $this->loadProfile('edit');
         } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
             return Result::ERROR;
         }
         
@@ -111,8 +113,9 @@ class UserSettings extends Profile
     public function revokeSshKey()
     {
         try {
-            $this->loadProfile();
+            $this->loadProfile('edit');
         } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
             return Result::ERROR;
         }
         
@@ -150,8 +153,9 @@ class UserSettings extends Profile
     public function chpasswd()
     {
         try {
-            $this->loadProfile();
+            $this->loadProfile('edit');
         } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
             return Result::ERROR;
         }
         

@@ -11,7 +11,9 @@
                 <p><?php echo $vh->escape($this->profile->getFullname()); ?></p>
                 
                 <div class="btn-group">
+                    <?php if ($this->_helper->isAllowed($this->profile, 'edit')): ?>
                     <a href="<?php echo $this->_helper->url('UserSettings', array('username' => $this->profile->getUsername())); ?>" class="btn btn-sm btn-default">Settings</a>
+                    <?php endif; ?>
                 </div>
             </div>
             <div class="col-md-8">
@@ -32,7 +34,9 @@
                               <?php if ($this->_helper->isAllowed('repository', 'create')): ?>
                               <div class="btn-group pull-right">
                                 <a href="<?php echo $this->_helper->url('Fork', array('name' => $repo->getFullname())); ?>" class="btn btn-sm btn-default">Fork</a>
-                                <a href="<?php echo $this->_helper->url('Delete', array('name' => $repo->getFullname())); ?>" class="btn btn-sm btn-danger">Delete</a>
+                                 <?php if ($this->_helper->isAllowed($repo, 'owner')): ?>
+                                 <a href="<?php echo $this->_helper->url('Delete', array('name' => $repo->getFullname())); ?>" class="btn btn-sm btn-danger">Delete</a>
+                                <?php endif; ?>
                               </div>
                               <?php endif; ?>
                               <?php if($repo->getParent_id() == null): ?><i class="glyphicon glyphicon-list"></i><?php else: ?><i class="glyphicon glyphicon-random"></i><?php endif; ?> <a class="repo-name" href="<?php echo $this->_helper->url('Repository', array('name' => $repo->getFullname())); ?>"><?php echo $this->_helper->escape($repo->getName()); ?></a> <?php if($repo->getParent_id() != null): ?><span class="fork">forked from <a class="repo-name" href="<?php echo $this->_helper->url('Repository', array('name' => $repo->getParent()->getFullname())); ?>"><?php echo $this->_helper->escape($repo->getParent()->getFullname()); ?></a></span><?php endif; ?>

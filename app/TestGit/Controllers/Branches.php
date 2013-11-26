@@ -12,7 +12,7 @@ class Branches extends Repository
     public function show()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('read');
         } catch(EmptyRepositoryException $exp) {
             $this->cloneUrlAction();
             return 'empty_repository';

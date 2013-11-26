@@ -29,7 +29,7 @@ class Commits extends Repository
     public function listAction()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('read');
         } catch(EmptyRepositoryException $exp) {
             return Result::SUCCESS;
         } catch(\Exception $exp) {
@@ -78,7 +78,7 @@ class Commits extends Repository
     public function commitAction()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('read');
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
@@ -109,7 +109,7 @@ class Commits extends Repository
     public function compareAction()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('read');
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
             return Result::ERROR;

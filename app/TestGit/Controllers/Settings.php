@@ -13,7 +13,7 @@ class Settings extends Repository
     public function show()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('admin');
             $this->cloneUrlAction();
         } catch(EmptyRepositoryException $exp) {
         } catch(\Exception $exp) {

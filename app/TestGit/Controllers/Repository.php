@@ -52,7 +52,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     public function show()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('read');
         } catch(EmptyRepositoryException $exp) {
             $this->cloneUrlAction();
             return 'empty_repository';
@@ -162,7 +162,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     public function fork()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('read');
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
@@ -213,7 +213,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     public function delete()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('owner');
         } catch(EmptyRepositoryException $exp) {
         } catch(\Exception $exp) {
             $this->errorMsg = $exp->getMessage();
@@ -336,7 +336,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     /**
      *
      */
-    protected function loadRepository()
+    protected function loadRepository($permission = null)
     {
         if (isset($this->entity)) {
             return;
@@ -353,7 +353,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
         $security = $this->getServices()->get('security');
         $acl = $security->getAclManager();
         if (!$acl->hasResource($this->entity)) {
-            $acl->addResource($this->entity);
+            $acl->addResource($this->entity, 'repository');
         }
         
         if ((int)$this->getServices()->get('git.clone.http') <= 0) {
@@ -387,7 +387,15 @@ class Repository implements ContextAware, ServicesAware, Preparable
                     }
                 }
             }
-        } catch(\Exception $exp) {
+            if ($user->getId() == $this->entity->getOwner_id()) {
+                $acl->allow($user, $this->entity, 'owner');
+            }
+        } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
+            $user = new \Zend\Permissions\Acl\Role\GenericRole('guest');
+        }
+        
+        if (null !== $permission && !$acl->isAllowed($user, $this->entity, $permission)) {
+            throw new \RuntimeException('You\'re not allowed to view this page');
         }
         
         $this->branch = (!isset($this->branch) ? $this->entity->getDefault_branch() : $this->branch);

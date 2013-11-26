@@ -37,7 +37,7 @@ class Users extends Repository implements ContextAware
     public function repositoryUsers()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('admin');
         } catch(EmptyRepositoryException $exp) {
             // we don't care if the git-repository is not ready yet
         } catch(\Exception $exp) {
@@ -161,7 +161,7 @@ class Users extends Repository implements ContextAware
         $post = $request->request;
         
         try {
-            $this->loadRepository();
+            $this->loadRepository('admin');
         } catch(EmptyRepositoryException $exp) {
             // we don't care if the git-repository is not ready yet
         } catch(\Exception $exp) {
@@ -224,7 +224,7 @@ class Users extends Repository implements ContextAware
     public function removeAccess()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('admin');
         } catch(EmptyRepositoryException $exp) {
             // we don't care if the git-repository is not ready yet
         } catch(\Exception $exp) {

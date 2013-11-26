@@ -219,7 +219,7 @@ class Repository implements ResourceInterface
 
     public function getResourceId()
     {
-        return 'repo:'. $this->name;
+        return 'repo:'. $this->getFullname();
     }
     
     /**

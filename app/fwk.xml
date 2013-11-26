@@ -307,7 +307,7 @@
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
-                <param name="errorMsg">Profile error</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="UserSettings" shortcut="TestGit\Controllers\UserSettings:show">
@@ -317,7 +317,7 @@
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
-                <param name="errorMsg">Profile error</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="EditUserInfos" shortcut="TestGit\Controllers\UserSettings:editInfos">
@@ -332,7 +332,7 @@
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
-                <param name="errorMsg">Profile error</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="AddSshKey" shortcut="TestGit\Controllers\UserSettings:addSshKey">

@@ -5,6 +5,7 @@ use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
 use TestGit\Model\Git\Repository;
+use TestGit\Model\User\User;
 
 class Repositories implements ServicesAware
 {
@@ -16,7 +17,8 @@ class Repositories implements ServicesAware
     public function show()
     {
         try {
-            $this->repositories = $this->getGitDao()->findAll();
+            $this->repositories = $this->loadRepositoriesAcls($this->getGitDao()->findAll());
+            
             $this->buildJsonRepositories();
         } catch(\Exception $e) {
             Result::ERROR;
@@ -76,5 +78,74 @@ class Repositories implements ServicesAware
         }
         
         $this->jsonRepositories = $result;
+    }
+    
+    protected function loadRepositoriesAcls($repositories)
+    {
+        $security   = $this->getServices()->get('security');
+        $acl        = $security->getAclManager();
+        $final      = array();
+        
+        foreach ($repositories as $repo) {
+            if (!$acl->hasResource($repo)) {
+                $acl->addResource($repo, 'repository');
+            }
+            
+            $acl->deny(null, $repo);
+            
+            if (!$repo->isPrivate()) {
+                $acl->allow(null, $repo, 'read');
+            }
+        }
+        
+        try {
+            $user = $security->getUser();
+            if (!$user instanceof User) {
+                return;
+            }
+            
+            foreach ($user->getAccesses() as $access) {
+                $repository = null;
+                foreach ($repositories as $repo) {
+                    if ($repo->getId() == $access->getRepository_id()) {
+                        $repository = $repo;
+                        break;
+                    }
+                }
+                if (null === $repository) {
+                    continue;
+                }
+                
+                if ($repository->getOwner_id() == $user->getId()) {
+                    $acl->allow($user, $repository, 'owner');
+                }
+                
+                if ($access->getUser_id() === $user->getId()) {
+                    if ($access->getReadAccess()) {
+                        $acl->allow($user, $repository, 'read');
+                    }
+                    if ($access->getWriteAccess()) {
+                        $acl->allow($user, $repository, 'write');
+                    }
+                    if ($access->getSpecialAccess()) {
+                        $acl->allow($user, $repository, 'special');
+                    }
+                    if ($access->getAdminAccess()) {
+                        $acl->allow($user, $repository, 'admin');
+                    }
+                }
+            }
+            
+        } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
+            $user = new \Zend\Permissions\Acl\Role\GenericRole('guest');
+        }
+        
+        foreach ($repositories as $repo) {
+            if ($acl->isAllowed($user, $repo, 'read')) {
+                $final[] = $repo;
+            }
+        }
+        
+        return $final;
     }
 }

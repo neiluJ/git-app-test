@@ -8,9 +8,10 @@ use Fwk\Db\Relations\Many2Many;
 use TestGit\Model\Tables;
 use Fwk\Db\Relation;
 use Fwk\Db\Relations\One2Many;
+use Zend\Permissions\Acl\Resource\ResourceInterface;
 
 class User implements UserInterface, PasswordAware, 
-    AclAware
+    AclAware, ResourceInterface 
 {
     protected $id;
     protected $username;
@@ -48,7 +49,7 @@ class User implements UserInterface, PasswordAware,
         $this->sshKeys = new One2Many('id', 'user_id', Tables::SSH_KEYS);
         $this->sshKeys->setFetchMode(Relation::FETCH_LAZY);
         
-        $this->accesses = new One2Many('id', 'user_id', Tables::ACCESSES);
+        $this->accesses = new One2Many('id', 'user_id', Tables::ACCESSES, 'TestGit\\Model\\Git\\Access');
         $this->accesses->setFetchMode(Relation::FETCH_LAZY);
         
         /*
@@ -162,6 +163,11 @@ class User implements UserInterface, PasswordAware,
         return 'user:'. $this->username;
     }
     
+    public function getResourceId()
+    {
+        return 'user:'. $this->username;
+    }
+
     public function getRoles()
     {
         $this->rolesRelation->fetch();
@@ -210,5 +216,10 @@ class User implements UserInterface, PasswordAware,
     public function setHttp_password($http_password)
     {
         $this->http_password = $http_password;
+    }
+    
+    public function getAccesses()
+    {
+        return $this->accesses;
     }
 }

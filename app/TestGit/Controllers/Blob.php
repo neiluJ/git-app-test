@@ -50,7 +50,7 @@ class Blob extends Commits implements ContextAware
     public function blobAction()
     {
         try {
-            $this->loadRepository();
+            $this->loadRepository('read');
         } catch(\Exception $exp) {
             return Result::ERROR;
         }

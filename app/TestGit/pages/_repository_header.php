@@ -20,7 +20,7 @@
                     <?php if ($this->_helper->isAllowed($this->entity, 'admin')): ?>
                     <li><a href="<?php echo $this->_helper->url('Settings', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
                     <?php endif; ?>
-                    <?php if ($this->_helper->isAllowed('repository', 'create') && $this->_helper->isAllowed($this->entity, 'admin')): ?>
+                    <?php if ($this->_helper->isAllowed('repository', 'create') && $this->_helper->isAllowed($this->entity, 'owner')): ?>
                     <li class="divider"></li>
                     <li><a href="<?php echo $this->_helper->url('Delete', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-remove"></i> Delete</a></li>
                     <?php endif; ?>

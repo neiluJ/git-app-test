@@ -7,8 +7,10 @@ use TestGit\Model\User\User;
 use TestGit\Model\User\UsersDao;
 use TestGit\Model\Git\GitDao;
 use Fwk\Core\Preparable;
+use Fwk\Core\ContextAware;
+use Fwk\Core\Context;
 
-class Profile extends Controller implements Preparable
+class Profile extends Repositories implements Preparable, ContextAware
 {
     public $username;
     
@@ -20,6 +22,8 @@ class Profile extends Controller implements Preparable
     protected $avatarUrl;
     protected $repositories = array();
     protected $dateFormat;
+    protected $context;
+    protected $errorMsg;
     
     public function prepare()
     {
@@ -31,11 +35,12 @@ class Profile extends Controller implements Preparable
         try {
             $this->loadProfile();
         } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
             return Result::ERROR;
         }
         
         $dao = $this->getGitDao();
-        $this->repositories = $dao->findMany($this->profile->getId(), GitDao::FIND_OWNER);
+        $this->repositories = $this->loadRepositoriesAcls($dao->findMany($this->profile->getId(), GitDao::FIND_OWNER));
         
         return Result::SUCCESS;
     }
@@ -58,7 +63,7 @@ class Profile extends Controller implements Preparable
         return $this->getServices()->get('gitDao');
     }
     
-    protected function loadProfile()
+    protected function loadProfile($permission = null)
     {
         if (empty($this->username)) {
             throw new \Exception('user not found');
@@ -72,6 +77,31 @@ class Profile extends Controller implements Preparable
             $this->getContext()->getRequest()->isSecure() ? "secure" : "www",
             md5($this->profile->getEmail())
         );
+        
+        // load acls
+        $security   = $this->getServices()->get('security');
+        $acl        = $security->getAclManager();
+        
+        if (!$acl->hasResource($this->profile)) {
+            $acl->addResource($this->profile, 'user');
+        }
+        
+        if (!$acl->hasRole($this->profile)) {
+            $acl->addRole($this->profile, 'user');
+        }
+        
+        $acl->deny(null, $this->profile);
+        $acl->allow($this->profile, $this->profile, 'edit');
+        
+        try {
+            $user = $security->getUser();
+        } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
+            $user = new \Zend\Permissions\Acl\Role\GenericRole('guest');
+         }
+         
+        if (null !== $permission && !$acl->isAllowed($user, $this->profile, $permission)) {
+            throw new \RuntimeException('You\'re not allowed to view this page');
+        }
     }
 
     public function getProfile()
@@ -92,4 +122,21 @@ class Profile extends Controller implements Preparable
     {
         return $this->dateFormat;
     }
+    
+    public function getErrorMsg()
+    {
+        return $this->errorMsg;
+    }
+    
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    public function setContext(Context $context)
+    {
+        $this->context = $context;
+    }
+
+
 }
