@@ -8,6 +8,7 @@ use TestGit\Model\Tables;
 use TestGit\Model\User\User;
 use \Exception as RepositoryNotFound;
 use TestGit\Model\Git\Repository;
+use TestGit\Model\Git\Commit;
 
 class GitDao extends DaoBase
 {
@@ -23,7 +24,10 @@ class GitDao extends DaoBase
     
     const ENTITY_REPO   = 'TestGit\\Model\\Git\\Repository';
     const ENTITY_ACCESS = 'TestGit\\Model\\Git\\Access';
-     
+    const ENTITY_PUSH   = 'TestGit\\Model\\Git\\Push';
+    const ENTITY_COMMIT = 'TestGit\\Model\\Git\\Commit';
+    const ENTITY_REFERENCE = 'TestGit\\Model\\Git\\Reference';
+    
     const TYPE_REPOSITORY   = 'repository';
     const TYPE_FORK         = 'fork';
     
@@ -41,6 +45,7 @@ class GitDao extends DaoBase
         $options = array_merge(array(
             'repositoriesTable'     => Tables::REPOSITORIES,
             'accessesTable'         => Tables::ACCESSES,
+            'commitsTable'         => Tables::COMMITS,
             'repositoriesBasePath'  => '/home/git/repositories'
         ), $options);
         
@@ -329,5 +334,26 @@ class GitDao extends DaoBase
         return $this->getDb()
                     ->table($this->getOption('accessesTable'))
                     ->save($access);
+    }
+    
+    /**
+     *
+     * @param Repository $repository 
+     * 
+     * @return Commit
+     */
+    public function getLastIndexedCommit(Repository $repository)
+    {
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('commitsTable'))
+                ->entity(self::ENTITY_COMMIT)
+                ->where('repositoryId = ?')
+                ->orderBy('indexDate', 'desc')
+                ->limit(1);
+        
+        $res = $this->getDb()->execute($query, array($repository->getId()));
+        
+        return (count($res) ? $res[0] : null);
     }
 }

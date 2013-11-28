@@ -14,6 +14,11 @@ final class Tables
     const REPOSITORIES  = 'repositories';
     const ACCESSES      = 'accesses';
     
+    const PUSHES        = 'pushes';
+    const REFERENCES    = 'references';
+    const COMMITS       = 'commits';
+    const COMMITS_REFS  = 'commits_refs';
+    
     private function __construct()
     {
     }

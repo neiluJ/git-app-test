@@ -8,7 +8,8 @@ use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Symfony\Component\Console\Input\InputArgument;
 use TestGit\Model\Git\GitDao;
- 
+use TestGit\Events\RepositoryUpdateEvent;
+
 class RepoUpdate extends Command implements ServicesAware
 {
     protected $services;
@@ -44,6 +45,10 @@ class RepoUpdate extends Command implements ServicesAware
         $repository->setLast_commit_msg($commit->getShortMessage());
         
         $this->getGitDao()->save($repository);
+        
+        $this->getGitDao()->notify(
+            new RepositoryUpdateEvent($repository, $this->getServices())
+        );
     }
     
     /**

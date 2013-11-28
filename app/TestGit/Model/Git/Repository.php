@@ -36,6 +36,8 @@ class Repository implements ResourceInterface
     protected $owner;
     protected $parent;
     protected $accesses;
+    protected $commits;
+    protected $references;
     
     public function __construct()
     {
@@ -65,6 +67,23 @@ class Repository implements ResourceInterface
         );
         
         $this->accesses->setFetchMode(Relation::FETCH_LAZY);
+        
+        $this->commits = new One2Many(
+            'id',
+            'repositoryId',
+            Tables::COMMITS,
+            GitDao::ENTITY_COMMIT
+        );
+        $this->commits->setFetchMode(Relation::FETCH_LAZY);
+        
+        
+        $this->references = new One2Many(
+            'id',
+            'repositoryId',
+            Tables::REFERENCES,
+            GitDao::ENTITY_REFERENCE
+        );
+        $this->references->setFetchMode(Relation::FETCH_LAZY);
     }
     
     public function getId() {
@@ -271,5 +290,21 @@ class Repository implements ResourceInterface
     public function setFullname($fullname)
     {
         $this->fullname = $fullname;
+    }
+    
+    /**
+     * 
+     * @return One2Many
+     */
+    public function getCommits() {
+        return $this->commits;
+    }
+
+    /**
+     * 
+     * @return One2Many
+     */
+    public function getReferences() {
+        return $this->references;
     }
 }

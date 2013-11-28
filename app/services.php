@@ -112,6 +112,7 @@ array(
     )
 ));
 $gitDaoDef->addMethodCall('addListener', array('@gitolite'));
+$gitDaoDef->addMethodCall('addListener', array(new ClassDefinition('TestGit\Listeners\CommitsListener')));
 
 $container->set(
    'gitDao',
