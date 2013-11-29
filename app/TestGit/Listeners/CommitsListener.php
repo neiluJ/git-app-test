@@ -8,9 +8,15 @@ use TestGit\Model\Git\Reference;
 use TestGit\Model\Git\Repository;
 use TestGit\GitService;
 use TestGit\Model\Git\GitDao;
+use TestGit\Model\User\UsersDao;
+use Gitonomy\Git\Reference\Branch;
+use Gitonomy\Git\Reference\Stash;
 
 class CommitsListener
 {
+    protected $references = array();
+    protected $push;
+    
     public function onRepositoryUpdate(RepositoryUpdateEvent $event)
     {
         $usersDao   = $event->getServices()->get('usersDao');
@@ -30,16 +36,37 @@ class CommitsListener
                 $user = null;
             }
         }
+
+        $this->push       = $push;
+        $commits          = $this->indexCommits($event->getRepository(), $git, $gitDao, $usersDao);
         
-        $commits = $this->indexCommits($event->getRepository(), $push, $git, $gitDao);
+        if (!count($commits)) {
+            return;
+        }
+        
+        $gitDao->getDb()->beginTransaction();
+        
+        $gitDao->savePush($push);
+        
+        foreach ($commits as $commit) {
+            $commit->setPushId($push->getId());
+            foreach ($commit->getReferences() as $ref) {
+                $ref->setPushId($push->getId());
+            }
+            
+            $gitDao->saveCommit($commit);
+        }
+        
+        $gitDao->getDb()->commit();
     }
     
-    protected function indexCommits(Repository $repository, Push $push, 
-        GitService $git, GitDao $dao
+    protected function indexCommits(Repository $repository, GitService $git, 
+        GitDao $dao, UsersDao $usersDao
     ) {
         $repo           = $git->transform($repository);
         $new            = $repository->getLast_commit_hash();
         $lastIndexed    = $dao->getLastIndexedCommit($repository);
+        $allReferences  = $dao->getAllReferences($repository);
         $refs           = null;
         
         if (null !== $lastIndexed && $new !== null) {
@@ -52,25 +79,101 @@ class CommitsListener
         }
         
         $final = array();
-        foreach ($log->getCommits() as $repoCommit) {
+        $commits = array_reverse($log->getCommits());
+        foreach ($commits as $repoCommit) {
+            $authorName = trim($repoCommit->getAuthorName());
+            $authorEmail = trim($repoCommit->getAuthorEmail());
+            $committerName = trim($repoCommit->getCommitterName());
+            $committerEmail = trim($repoCommit->getCommitterEmail());
             $commit = new Commit();
             $commit->setHash($repoCommit->getHash());
             $commit->setAuthorDate($repoCommit->getAuthorDate()->format('Y-m-d H:i:s'));
-            $commit->setAuthorEmail($repoCommit->getAuthorEmail());
-            $commit->setAuthorName($repoCommit->getAuthorName());
+            $commit->setAuthorEmail($authorEmail);
+            $commit->setAuthorName($authorName);
             $commit->setCommitterDate($repoCommit->getCommitterDate()->format('Y-m-d H:i:s'));
-            $commit->setCommitterEmail($repoCommit->getCommitterEmail());
-            $commit->setCommitterName($repoCommit->getCommitterName());
+            $commit->setCommitterEmail($committerEmail);
+            $commit->setCommitterName($committerName);
             $commit->setIndexDate(date('Y-m-d H:i:s'));
             $commit->setMessage($repoCommit->getMessage());
-            $commit->setPushId($push->getId());
             $commit->setRepositoryId($repository->getId());
+    //            $commit->getPush()->add($this->push);
             
-            $includes = $repoCommit->getIncludingBranches(true, false);
+            $user = $this->findUser($authorEmail, $authorName, $usersDao);
+            if ($user instanceof User) {
+                $commit->setAuthorId($user->getId());
+            }
+
+            $user = $this->findUser($committerEmail, $committerName, $usersDao);
+            if ($user instanceof User) {
+                $commit->setCommitterId($user->getId());
+            }
+            
+            $refs = $this->indexReferences($repository, $repoCommit, $allReferences);
+            foreach ($refs as $ref) {
+                $allReferences[] = $ref;
+                // // <-- to be fixed in Fwk/Db
+                $commit->getReferences()->add($ref); 
+            }
             
             $final[] = $commit;
         }
         
         return $final;
+    }
+    
+    protected function indexReferences(Repository $repository, $repoCommit, 
+        $allReferences
+    ) {
+        $references     = $repoCommit->getIncludingBranches(true, false);
+        $final          = array();
+        
+        foreach ($references as $ref) {
+            if ($ref instanceof Stash) {
+                continue;
+            }
+            
+            if ($this->refExists($ref->getFullname(), $allReferences)) {
+                continue;
+            }
+            $reference = new Reference();
+            $reference->setCreatedOn(date('Y-m-d H:i:s'));
+            $reference->setCommitHash($repoCommit->getHash());
+            $reference->setName($ref->getName());
+            $reference->setRepositoryId($repository->getId());
+            $reference->setFullname($ref->getFullname());
+            $reference->setType(($ref instanceof Branch ? 'branch' : 'tag'));
+            
+           // $this->push->getReferences()->add($reference);
+            
+            $final[$ref->getName()] = $reference;
+        }
+        
+        return $final;
+    }
+    
+    protected function refExists($refName, $allReferences)
+    {
+        foreach ($allReferences as $ref) {
+            if ($ref->getFullname() == $refName) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    protected function findUser($email, $username, UsersDao $usersDao)
+    {
+        $user = null;
+        try {
+            $user = $usersDao->findOne($email, UsersDao::FIND_EMAIL);
+        } catch(\Exception $exp) {
+            try {
+                $user = $usersDao->findOne($username, UsersDao::FIND_USERNAME);
+            } catch(\Exception $exp) {
+            }
+        }
+        
+        return $user;
     }
 }

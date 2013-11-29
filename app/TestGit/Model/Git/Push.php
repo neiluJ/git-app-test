@@ -17,6 +17,7 @@ class Push
     protected $repository;
     protected $author;
     protected $commits;
+    protected $references;
     
     public function __construct()
     {
@@ -39,6 +40,13 @@ class Push
             'pushId', 
             Tables::COMMITS, 
             GitDao::ENTITY_COMMIT
+        );
+        
+        $this->references = new One2Many(
+            'id', 
+            'pushId', 
+            Tables::REFERENCES, 
+            GitDao::ENTITY_REFERENCE
         );
     }
     
@@ -107,5 +115,10 @@ class Push
     public function getCommits() 
     {
         return $this->commits;
+    }
+    
+    public function getReferences()
+    {
+        return $this->references;
     }
 }

@@ -15,7 +15,7 @@ final class Tables
     const ACCESSES      = 'accesses';
     
     const PUSHES        = 'pushes';
-    const REFERENCES    = 'references';
+    const REFERENCES    = 'refs';
     const COMMITS       = 'commits';
     const COMMITS_REFS  = 'commits_refs';
     

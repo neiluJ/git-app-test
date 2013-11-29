@@ -9,6 +9,7 @@ use TestGit\Model\User\User;
 use \Exception as RepositoryNotFound;
 use TestGit\Model\Git\Repository;
 use TestGit\Model\Git\Commit;
+use TestGit\Model\Git\Push;
 
 class GitDao extends DaoBase
 {
@@ -45,7 +46,9 @@ class GitDao extends DaoBase
         $options = array_merge(array(
             'repositoriesTable'     => Tables::REPOSITORIES,
             'accessesTable'         => Tables::ACCESSES,
-            'commitsTable'         => Tables::COMMITS,
+            'commitsTable'          => Tables::COMMITS,
+            'referencesTable'       => Tables::REFERENCES,
+            'pushesTable'           => Tables::PUSHES,
             'repositoriesBasePath'  => '/home/git/repositories'
         ), $options);
         
@@ -349,11 +352,32 @@ class GitDao extends DaoBase
                 ->from($this->getOption('commitsTable'))
                 ->entity(self::ENTITY_COMMIT)
                 ->where('repositoryId = ?')
-                ->orderBy('indexDate', 'desc')
+                ->orderBy('authorDate', 'desc')
                 ->limit(1);
         
         $res = $this->getDb()->execute($query, array($repository->getId()));
         
         return (count($res) ? $res[0] : null);
+    }
+    
+    public function getAllReferences(Repository $repository)
+    {
+        $query = Query::factory()
+                ->select()
+                ->from('`'. $this->getOption('referencesTable') .'`')
+                ->entity(self::ENTITY_REFERENCE)
+                ->where('repositoryId = ?');
+        
+        return $this->getDb()->execute($query, array($repository->getId()));
+    }
+    
+    public function savePush(Push $push)
+    {
+        return $this->getDb()->table($this->getOption('pushesTable'))->save($push);
+    }
+    
+    public function saveCommit(Commit $commit)
+    {
+        return $this->getDb()->table($this->getOption('commitsTable'))->save($commit);
     }
 }
