@@ -7,19 +7,19 @@ gitApp.factory('httpLoader',['$q',function($q){
     return {
         'request': function(config) {
             // do something on success
-            $('#loader').show();
+            $('#progress').animate({height: '10px'}, 200);
             return config || $q.when(config);
         },
         'requestError': function(rejection) {
-            $('#loader').hide();
+            $('#progress').animate({height: '0px'}, 200);
             return $q.reject(rejection);
         },
         'response': function(response) {
-            $('#loader').hide();
+            $('#progress').animate({height: '0px'}, 200);
             return response || $q.when(response);
         },
         'responseError': function(rejection) {
-            $('#loader').hide();
+            $('#progress').animate({height: '0px'}, 200);
             return $q.reject(rejection);
         }
     }

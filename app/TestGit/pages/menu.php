@@ -6,10 +6,9 @@ $active = $this->active;
   <div class="container">
     <div class="navbar-header">
         <a class="navbar-brand" href="<?php echo $vh->url(); ?>" style="padding-right: 30px;">
-            <i id="loader" class="glyphicon glyphicon-time" title="loading..."></i> TestGit
+            TestGit
         </a>
     </div>
-      <div style="clearfix"></div>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav navbar-left">
         <li<?php if($active == "repositories"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Repositories', array(), true); ?>"><i class="glyphicon glyphicon-list"></i> Repositories</a></li>
@@ -80,3 +79,8 @@ $(document).ready(function() {
     $('input.git-search').focus();
 });  
 </script>
+<div class="progress progress-striped active" id="progress">
+  <div class="progress-bar"  role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%">
+    <span class="sr-only">Please wait</span>
+  </div>
+</div>
