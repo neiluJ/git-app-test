@@ -17,6 +17,7 @@ class Users extends Repository implements ContextAware
 {
     protected $users = array();
     protected $jsonUsers = array();
+    protected $searchResults = array();
     
     protected $accesses = array();
     
@@ -30,6 +31,18 @@ class Users extends Repository implements ContextAware
     {
         $this->users = $this->getUsersDao()->findAll(false);
         $this->buildJsonUsers();
+        
+        return Result::SUCCESS;
+    }
+    
+    public function search()
+    {
+        $res = $this->show();
+        if ($res == Result::ERROR) {
+            return Result::ERROR;
+        }
+        
+        $this->buildSearchResults();
         
         return Result::SUCCESS;
     }
@@ -404,5 +417,33 @@ class Users extends Repository implements ContextAware
     public function isPOST()
     {
         return "POST" === $_SERVER['REQUEST_METHOD'];
+    }
+    
+    public function getSearchResults()
+    {
+        return $this->searchResults;
+    }
+    
+    protected function buildSearchResults()
+    {
+        $result = array();
+        foreach ($this->users as $user) {
+            $fullname = $user->getFullname();
+            $tokens = array($user->getUsername(), $fullname);
+            if (strpos($fullname, ' ') !== false) {
+                $tokens = array_merge($tokens,explode(' ', $fullname));
+            }
+            $infos = array(
+                'name'  => $user->getUsername(),
+                'description' => $user->getFullname(),
+                'value'  => $user->getUsername(),
+                'tokens'  => $tokens,
+                'url'   => $this->getServices()->get('viewHelper')->url('Profile', array('username' => $user->getUsername()))
+            );
+
+            array_push($result, $infos);
+        }
+        
+        $this->searchResults = $result;
     }
 }

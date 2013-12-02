@@ -44,6 +44,7 @@ class Commit
             Tables::REPOSITORIES, 
             GitDao::ENTITY_REPO
         );
+        $this->repository->setFetchMode(One2One::FETCH_EAGER);
         
         $this->author = new One2One(
             'authorId', 
@@ -232,5 +233,24 @@ class Commit
     public function getReferences()
     {
         return $this->references;
+    }
+    
+    public function getCommitterDateObj()
+    {
+        return new \DateTime($this->committerDate);
+    }
+    
+    public function getAuthorDateObj()
+    {
+        return new \DateTime($this->authorDate);
+    }
+    
+    public function getComputedCommitterName()
+    {
+        if (empty($this->committerId)) {
+            return (empty($this->committerName) ? $this->committerEmail : $this->committerName);
+        }
+        
+        return $this->getCommitter()->get()->getFullname();
     }
 }

@@ -11,6 +11,7 @@ use TestGit\Model\Git\GitDao;
 use TestGit\Model\User\UsersDao;
 use Gitonomy\Git\Reference\Branch;
 use Gitonomy\Git\Reference\Stash;
+use TestGit\Model\User\User;
 
 class CommitsListener
 {
@@ -111,9 +112,9 @@ class CommitsListener
             $refs = $this->indexReferences($repository, $repoCommit, $allReferences);
             foreach ($refs as $ref) {
                 $allReferences[] = $ref;
-                // // <-- to be fixed in Fwk/Db
-                $commit->getReferences()->add($ref); 
             }
+            
+            $commit->getReferences()->addAll($refs); 
             
             $final[] = $commit;
         }
@@ -132,9 +133,12 @@ class CommitsListener
                 continue;
             }
             
-            if ($this->refExists($ref->getFullname(), $allReferences)) {
+            $exists = $this->refExists($ref->getFullname(), $allReferences);
+            if ($exists !== false) {
+                $final[$exists->getName()] = $exists;
                 continue;
             }
+            
             $reference = new Reference();
             $reference->setCreatedOn(date('Y-m-d H:i:s'));
             $reference->setCommitHash($repoCommit->getHash());
@@ -155,7 +159,7 @@ class CommitsListener
     {
         foreach ($allReferences as $ref) {
             if ($ref->getFullname() == $refName) {
-                return true;
+                return $ref;
             }
         }
         

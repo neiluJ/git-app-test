@@ -11,6 +11,7 @@ class Repositories implements ServicesAware
 {
     protected $repositories = array();
     protected $jsonRepositories = array();
+    protected $searchResults = array();
     
     protected $services;
     
@@ -27,6 +28,17 @@ class Repositories implements ServicesAware
         return Result::SUCCESS;
     }
     
+    public function search()
+    {
+        $res = $this->show();
+        if ($res == Result::ERROR) {
+            return Result::ERROR;
+        }
+        
+        $this->buildSearchResults();
+        
+        return Result::SUCCESS;
+    }
     
     public function getServices()
     {
@@ -54,6 +66,24 @@ class Repositories implements ServicesAware
     protected function getGitDao()
     {
         return $this->getServices()->get('gitDao');
+    }
+    
+    protected function buildSearchResults()
+    {
+        $result = array();
+        foreach ($this->repositories as $repo) {
+            $infos = array(
+                'name'  => $repo->getName(),
+                'description' => $repo->getDescription(),
+                'value'  => $repo->getFullname(),
+                'tokens'  => array($repo->getOwner()->getUsername(), $repo->getName()),
+                'url'   => $this->getServices()->get('viewHelper')->url('Repository', array('name' => $repo->getFullname()))
+            );
+
+            array_push($result, $infos);
+        }
+        
+        $this->searchResults = $result;
     }
     
     protected function buildJsonRepositories()
@@ -147,5 +177,10 @@ class Repositories implements ServicesAware
         }
         
         return $final;
+    }
+    
+    public function getSearchResults()
+    {
+        return $this->searchResults;
     }
 }

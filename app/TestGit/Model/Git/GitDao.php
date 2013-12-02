@@ -23,6 +23,10 @@ class GitDao extends DaoBase
     const FIND_OWNER    = 'owner';
     const FIND_FULLNAME = 'fullname';
     
+    const FIND_COMMIT_HASH  = 'hash';
+    const FIND_COMMIT_MSG   = 'message';
+    const FIND_COMMIT_BOTH  = 'hash+msg';
+    
     const ENTITY_REPO   = 'TestGit\\Model\\Git\\Repository';
     const ENTITY_ACCESS = 'TestGit\\Model\\Git\\Access';
     const ENTITY_PUSH   = 'TestGit\\Model\\Git\\Push';
@@ -379,5 +383,39 @@ class GitDao extends DaoBase
     public function saveCommit(Commit $commit)
     {
         return $this->getDb()->table($this->getOption('commitsTable'))->save($commit);
+    }
+    
+    public function findCommits($text, $type = self::FIND_COMMIT_BOTH, 
+        User $user = null
+    ) {
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('commitsTable'))
+                ->entity(self::ENTITY_COMMIT)
+                ->orderBy('committerDate', 'desc')
+                ->limit(15)
+                ;
+        
+        $params = array();
+        switch($type)
+        {
+            case self::FIND_COMMIT_BOTH:
+                $query->where('hash LIKE ? OR message LIKE ?');
+                $params[]   = $text . '%';
+                $params[]   = '%'. str_replace(' ', '%', $text) .'%';
+                break;
+            
+            case self::FIND_COMMIT_HASH:
+                $query->where('hash LIKE ?'); 
+                $params[]   = $text . '%';
+                break;
+            
+            case self::FIND_COMMIT_MSG:
+                $query->where('message LIKE ?'); 
+                $params[]   = '%'. str_replace(' ', '%', $text) .'%';
+                break;
+        }
+        
+        return $this->getDb()->execute($query, $params);
     }
 }

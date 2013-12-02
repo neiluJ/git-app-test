@@ -4,6 +4,7 @@ namespace TestGit\Controllers;
 use Fwk\Core\Action\Result;
 use Symfony\Component\HttpFoundation\Response;
 use TestGit\EmptyRepositoryException;
+use TestGit\Model\Git\GitDao;
 
 class Commits extends Repository 
 {
@@ -11,19 +12,22 @@ class Commits extends Repository
     public $limit = 25;
     public $hash;
     public $compare;
+    public $q;
     
     protected $commits      = array();
     protected $jsonCommits  = array();
     protected $currentCommit;
     protected $jsonCurrentCommit;
     protected $diff;
+    protected $searchResults = array();
     
     public function prepare()
     {
         parent::prepare();
         
-        $this->limit = (int)$this->limit;
-        $this->offset = (int)$this->offset;
+        $this->limit    = (int)$this->limit;
+        $this->offset   = (int)$this->offset;
+        $this->q        = trim((string)$this->q);
     }
     
     public function listAction()
@@ -134,6 +138,40 @@ class Commits extends Repository
         return $response;
     }
     
+    public function search()
+    {
+        if (empty($this->q) || strlen($this->q) < 3) {
+            return Result::SUCCESS;
+        }
+        
+        $gitDao     = $this->getGitDao();
+        $security   = $this->getServices()->get('security');
+        try {
+            $user   = $security->getUser();
+        } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
+            $user   = null;
+        }
+        
+        $results    = $gitDao->findCommits($this->q, GitDao::FIND_COMMIT_BOTH, $user);
+        $final      = array();
+        foreach ($results as $res) {
+            $final[] = array(
+                'name'      => $res->getHash(),
+                'value'     => substr($res->getHash(), 0, 10),
+                'committer' => $res->getComputedCommitterName(),
+                'date'      => $res->getCommitterDateObj()->format('d/m/Y H:i:s'),
+                'repoName'  => $res->getRepository()->getFullname(),
+                'shortHash' => substr($res->getHash(), 0, 10),
+                'message'   => substr($res->getMessage(), 0, 60) . (strlen($res->getMessage()) > 60 ? '...' : ''),
+                'url'       => $this->getServices()->get('viewHelper')->url('Commit', array('name' => $res->getRepository()->getFullname(), 'hash' => $res->getHash()))
+            );
+        }
+        
+        $this->searchResults = $final;
+        
+        return Result::SUCCESS;
+    }
+    
     public function getCommits()
     {
         return $this->commits;
@@ -155,5 +193,10 @@ class Commits extends Repository
     public function getDiff()
     {
         return $this->diff;
+    }
+    
+    public function getSearchResults()
+    {
+        return $this->searchResults;
     }
 }

@@ -89,11 +89,20 @@
         </action>
         <action name="Repositories" shortcut="TestGit\Controllers\Repositories:show">
             <acl type="allow" role="" />
-            <result name="success" type="chain">
+            <result name="success" type="redirect">
                 <param name="actionName">Home</param>
             </result>
             <result name="ajax:success" type="json">
                 <param name="properties">jsonRepositories</param>
+            </result>
+        </action>
+        <action name="SearchRepositories" shortcut="TestGit\Controllers\Repositories:search">
+            <acl type="allow" role="" />
+            <result name="success" type="redirect">
+                <param name="actionName">Home</param>
+            </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">searchResults</param>
             </result>
         </action>
         <action name="Repository" shortcut="TestGit\Controllers\Repository:show">
@@ -167,6 +176,12 @@
                 <param name="errorMsg">Problem occured while loading commits.</param>
             </result>
         </action>
+        <action name="SearchCommits" shortcut="TestGit\Controllers\Commits:search">
+            <acl type="allow" role="" />
+            <result name="success" type="json">
+                <param name="properties">searchResults</param>
+            </result>
+        </action>
         <action name="Commit" shortcut="TestGit\Controllers\Commits:commitAction">
             <acl type="allow" role="" />
             <result name="ajax:success" type="php">
@@ -220,6 +235,15 @@
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
                 <param name="errorMsg">Problem occured while loading users</param>
+            </result>
+        </action>
+        <action name="SearchUsers" shortcut="TestGit\Controllers\Users:search">
+            <acl type="allow" role="" />
+            <result name="success" type="redirect">
+                <param name="actionName">Users</param>
+            </result>
+            <result name="success" type="json">
+                <param name="properties">searchResults</param>
             </result>
         </action>
         <action name="Accesses" shortcut="TestGit\Controllers\Users:repositoryUsers">
