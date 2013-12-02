@@ -390,7 +390,7 @@ class GitDao extends DaoBase
     ) {
          $queryRepos = Query::factory()
                 ->select()
-                ->from($this->getOption('repositoriesTable'))
+                ->from($this->getOption('repositoriesTable'), 'r')
                 ->where('1 = 1')
                 ->entity(self::ENTITY_REPO);
          
@@ -399,10 +399,10 @@ class GitDao extends DaoBase
             foreach ($user->getAccesses() as $access) {
                 $ids[] = $access->getRepository_id();
             }
-            $queryRepos->andWhere('id IN ('. implode(',', $ids) .')');
-            $queryRepos->orWhere('public = 1');
+            $queryRepos->andWhere('r.id IN ('. implode(',', $ids) .')');
+            $queryRepos->orWhere('r.public = 1');
         } else {
-            $queryRepos->andWhere('public = 1');
+            $queryRepos->andWhere('r.public = 1');
         }
         
         $repos = $this->getDb()->execute($queryRepos);
