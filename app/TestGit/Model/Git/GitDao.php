@@ -388,6 +388,25 @@ class GitDao extends DaoBase
     public function findCommits($text, $type = self::FIND_COMMIT_BOTH, 
         User $user = null
     ) {
+         $queryRepos = Query::factory()
+                ->select()
+                ->from($this->getOption('repositoriesTable'))
+                ->where('1 = 1')
+                ->entity(self::ENTITY_REPO);
+         
+        if ($user !== null) {
+            $ids = array();
+            foreach ($user->getAccesses() as $access) {
+                $ids[] = $access->getRepository_id();
+            }
+            $queryRepos->andWhere('id IN ('. implode(',', $ids) .')');
+            $queryRepos->orWhere('public = 1');
+        } else {
+            $queryRepos->andWhere('public = 1');
+        }
+        
+        $repos = $this->getDb()->execute($queryRepos);
+        
         $query = Query::factory()
                 ->select()
                 ->from($this->getOption('commitsTable'))
@@ -415,6 +434,13 @@ class GitDao extends DaoBase
                 $params[]   = '%'. str_replace(' ', '%', $text) .'%';
                 break;
         }
+        
+        $ids = array();
+        foreach ($repos as $rep) {
+            $ids[] = $rep->getId();
+        }
+        
+        $query->andWhere('repositoryId IN ('. implode(', ', $ids) .')');
         
         return $this->getDb()->execute($query, $params);
     }
