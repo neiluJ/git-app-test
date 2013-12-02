@@ -159,77 +159,7 @@ CREATE TABLE IF NOT EXISTS `commits` (
   KEY `authorId` (`authorId`),
   KEY `committerId` (`committerId`),
   KEY `repositoryId` (`repositoryId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=773 ;
-
---
--- Dumping data for table `commits`
---
-
-INSERT INTO `commits` (`id`, `hash`, `repositoryId`, `pushId`, `authorName`, `authorEmail`, `authorDate`, `authorId`, `committerName`, `committerEmail`, `committerDate`, `committerId`, `message`, `indexDate`) VALUES
-(709, '777ffd15548e724a3b5d5323f717a18eb7b8da9c', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-17 15:17:42', NULL, 0, 0, '2013-10-17 15:17:42', NULL, 'initial import\n', '2013-11-29 16:31:03'),
-(710, '2c0e11cd29d7d08ee96bd16e81a555484f66da85', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-20 21:30:58', NULL, 0, 0, '2013-10-20 21:30:58', NULL, 'new viewHelper use', '2013-11-29 16:31:03'),
-(711, '7ea3dcbe276a3f1a7d576c4920c59e7d619a1b16', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-21 16:00:23', NULL, 0, 0, '2013-10-21 16:00:23', NULL, '...', '2013-11-29 16:31:03'),
-(712, 'c3ef96fd24a56c4303ecc94909de0927ee2c6749', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-21 16:51:19', NULL, 0, 0, '2013-10-21 16:51:19', NULL, '...', '2013-11-29 16:31:03'),
-(713, '17cdd8f2254da00eebcc26f658ba0ce0bbad06ee', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-21 17:32:23', NULL, 0, 0, '2013-10-21 17:32:23', NULL, '...', '2013-11-29 16:31:03'),
-(714, 'ae30f912291e83d14ef09f4edd8dfe2960685653', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-22 16:01:21', NULL, 0, 0, '2013-10-22 16:01:21', NULL, 'powah!', '2013-11-29 16:31:03'),
-(715, '17e98e753ba7757cfd5179b5b6f86149b441b808', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-22 16:29:19', NULL, 0, 0, '2013-10-22 16:29:19', NULL, 'powah!', '2013-11-29 16:31:03'),
-(716, 'a86c682a4688c915bb58aef484158fdee30736f6', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-22 20:31:43', NULL, 0, 0, '2013-10-22 20:31:43', NULL, 'better display', '2013-11-29 16:31:04'),
-(717, '1c7b9a93279d6226cf31df8b580af1e66fcbc98c', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-22 20:32:01', NULL, 0, 0, '2013-10-22 20:32:01', NULL, 'better display', '2013-11-29 16:31:04'),
-(718, '6b357f964748e14344ad3b67c736e3778d1a15ff', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-22 21:27:54', NULL, 0, 0, '2013-10-22 21:27:54', NULL, 'various fixes', '2013-11-29 16:31:04'),
-(719, 'c8526fcc2b756f80223c9713ee770993cfc64b6d', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-22 21:57:12', NULL, 0, 0, '2013-10-22 21:57:12', NULL, 'fixes BlobRaw ', '2013-11-29 16:31:04'),
-(720, '6853b8b032ba0024ab6865d48a853dd6dc180d90', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-24 16:35:13', NULL, 0, 0, '2013-10-24 16:35:13', NULL, 'better angular (still buggy)', '2013-11-29 16:31:04'),
-(721, 'bed4f0ead5b7049ca4e369f4082170e6a883c176', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-24 21:58:02', NULL, 0, 0, '2013-10-24 21:58:02', NULL, 'rebuild navigation', '2013-11-29 16:31:04'),
-(722, '68ef92a366c6930f425ac83749169239c19bfd4c', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-24 22:04:46', NULL, 0, 0, '2013-10-24 22:04:46', NULL, 'rebuild navigation', '2013-11-29 16:31:04'),
-(723, 'aa4501b1c4fd0d97d20f648304cc23f14f1d2d6a', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-25 00:09:37', NULL, 0, 0, '2013-10-25 00:09:37', NULL, 'synchro commits', '2013-11-29 16:31:04'),
-(724, '923a5661b00caa9c5e94980160534b2b225b84d7', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-25 00:27:38', NULL, 0, 0, '2013-10-25 00:27:38', NULL, 'commits ordered', '2013-11-29 16:31:04'),
-(725, 'b48fba01210909dca6effcd66399331633cfe585', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-25 01:12:54', NULL, 0, 0, '2013-10-25 01:12:54', NULL, 'commits browsing', '2013-11-29 16:31:04'),
-(726, 'bce9693c8f20d0a25a1df1321b1eee9fcf4e203d', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-25 13:19:22', NULL, 0, 0, '2013-10-25 13:19:22', NULL, 'added commits cache (+md5.js)\nadded language detection', '2013-11-29 16:31:04'),
-(727, '838aff08d96e755a9047476e54c3a2ee9497cf0a', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-25 14:35:41', NULL, 0, 0, '2013-10-25 14:35:41', NULL, 'fixed blob display', '2013-11-29 16:31:04'),
-(728, '20b9fd3fda2db35971b87fd41c58aa1e47927cd6', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-25 16:14:43', NULL, 0, 0, '2013-10-25 16:14:43', NULL, 'commit view!', '2013-11-29 16:31:04'),
-(729, '7f1c3a70a68dbb576b27123144faaa45dbd73514', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-25 16:22:29', NULL, 0, 0, '2013-10-25 16:22:29', NULL, 'fixed some commit views', '2013-11-29 16:31:04'),
-(730, 'cf46655dcb3ff941ec3d9188d6b6c0919ec63826', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-27 18:33:46', NULL, 0, 0, '2013-10-27 18:33:46', NULL, 'fixed display ', '2013-11-29 16:31:04'),
-(731, '70fd6715041b5383f9ab47254e054ea75ae27211', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-27 19:32:39', NULL, 0, 0, '2013-10-27 19:32:39', NULL, 'fixed display', '2013-11-29 16:31:04'),
-(732, '5f9cb9fae7e54ad74f39dd5d23784ae8ff281fcf', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-27 22:11:14', NULL, 0, 0, '2013-10-27 22:11:14', NULL, 'fixed blob/api\nadded compare/diff \n', '2013-11-29 16:31:04'),
-(733, '4d2849adaa1d82be097c1e437675ee1d5149a454', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-27 23:07:46', NULL, 0, 0, '2013-10-27 23:07:46', NULL, 'added buggy pushstate', '2013-11-29 16:31:04'),
-(734, '3cfb11458fa1daee74d2d5d119e01f6ef455d1f1', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-28 17:32:55', NULL, 0, 0, '2013-10-28 17:32:55', NULL, 'better angular (services) \nneedfix commit view (not changing currentCommit)\nneedfix html5 pushState support\nneedfix compare broken\nneedfix compare direct link', '2013-11-29 16:31:04'),
-(735, 'c8d89599709e59a2be86620927f6d41de230613f', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-29 00:18:36', NULL, 0, 0, '2013-10-29 00:18:36', NULL, 'tinyfix', '2013-11-29 16:31:04'),
-(736, '5e2df7713bd02f5e321b79f900759684995c1756', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-29 09:49:32', NULL, 0, 0, '2013-10-29 09:49:32', NULL, 'fixed compare broken\nfixed compare direct link\nneedfix commit view (not changing currentCommit)\nneedfix html5 pushState support\n', '2013-11-29 16:31:04'),
-(737, '6c5875cf277c637b62ce3f36825904da11545dc0', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-29 16:43:46', NULL, 0, 0, '2013-10-29 16:43:46', NULL, 'added pushState support (needfix/buggy)\nadded Branches/Tags view (need angularization)\n', '2013-11-29 16:31:04'),
-(738, '4d9bb554385d0d5f95dca4904a1a1752a233fb16', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-10-29 17:01:59', NULL, 0, 0, '2013-10-29 17:01:59', NULL, 'added compare button', '2013-11-29 16:31:04'),
-(739, '1427fa0af864814a1ba0ff345b4a82123e9f3516', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-29 21:05:34', NULL, 0, 0, '2013-10-29 21:05:34', NULL, 'fixed ui performances\nfixed commit navigation', '2013-11-29 16:31:04'),
-(740, '798e784476cb4609e42941f19444955b1e210cc2', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-29 22:46:31', NULL, 0, 0, '2013-10-29 22:46:31', NULL, 'fixed html5 pushState ', '2013-11-29 16:31:04'),
-(741, '9ed791bc7b47513dd4493e3a478da0f65978d31d', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-10-30 00:10:23', NULL, 0, 0, '2013-10-30 00:10:23', NULL, 'fixed commit view', '2013-11-29 16:31:04'),
-(742, '1ddfba68f1e92292ce4b5019f69c4f75e71fd279', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-03 21:53:03', NULL, 0, 0, '2013-11-03 21:53:03', NULL, 'fixed commit view: display also remotes branches \nadded users support', '2013-11-29 16:31:04'),
-(743, 'ecf247c9adcf09e70c5be23c940a908cab21600c', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-03 23:04:26', NULL, 0, 0, '2013-11-03 23:04:26', NULL, 'continued users page', '2013-11-29 16:31:04'),
-(744, 'e71ab0613a809417c86f11f79a245b09db882c11', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-04 23:40:19', NULL, 0, 0, '2013-11-04 23:40:19', NULL, '...', '2013-11-29 16:31:04'),
-(745, '98c72263f48762db3c06b93b4497151a0435188c', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-05 16:41:27', NULL, 0, 0, '2013-11-05 16:41:27', NULL, 'still working on users', '2013-11-29 16:31:04'),
-(746, '19dd6a0e90e9fbd9c88d92ddd3cb91e68deff99c', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-07 22:44:04', NULL, 0, 0, '2013-11-07 22:44:04', NULL, 'added escaping in templates\nsynched repositories with database\nimproved user integration\nfixed default branch is now configurable\nfixed clone url is now configurable ', '2013-11-29 16:31:04'),
-(747, '5e251e12f6a87b90a343f8c71770169b4d05b259', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-07 22:47:01', NULL, 0, 0, '2013-11-07 22:47:01', NULL, 'removed Finder dependency', '2013-11-29 16:31:04'),
-(748, 'af103f633980c32a8bb07b7aa04775d009752c56', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-08 17:21:21', NULL, 0, 0, '2013-11-08 17:21:21', NULL, 'added docs etc..', '2013-11-29 16:31:04'),
-(749, '4a79f970e83219c577720b5ac08fa8ab222a286e', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-12 12:47:18', NULL, 0, 0, '2013-11-12 12:47:18', NULL, 'fixed composer.json', '2013-11-29 16:31:04'),
-(750, '06ea80868a037d3712d48d6a23771b703329a19a', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-12 13:28:07', NULL, 0, 0, '2013-11-12 13:28:07', NULL, 'working on commands', '2013-11-29 16:31:04'),
-(751, 'a33a263606657ea9eae705c2d801a63b463506af', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-12 13:37:37', NULL, 0, 0, '2013-11-12 13:37:37', NULL, 'changed hook', '2013-11-29 16:31:04'),
-(752, 'a1ab5f8decc0c364fe85c77455459acb0146927f', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-12 14:53:38', NULL, 0, 0, '2013-11-12 14:53:38', NULL, 'Forgery administration\n', '2013-11-29 16:31:04'),
-(753, 'f3f60f3a3f0a4c61629eddf3d394c274f6b35b60', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-12 17:10:32', NULL, 0, 0, '2013-11-12 17:10:32', NULL, 'working on server-side\nadded "special repos" handling\n', '2013-11-29 16:31:04'),
-(754, '702c4c08fc180d6c3b5cd2f89de206ab812c5fd2', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-12 17:13:49', NULL, 0, 0, '2013-11-12 17:13:49', NULL, 'oops\n', '2013-11-29 16:31:04'),
-(755, '9fd1b76ff971ec1994dcfc1cefaa28e90187afaf', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-12 20:13:39', NULL, 0, 0, '2013-11-12 20:13:39', NULL, 'enhanced repository response time', '2013-11-29 16:31:04'),
-(756, '5c631a164c57dc342ddb60d00e245759555dbea7', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-12 22:11:35', NULL, 0, 0, '2013-11-12 22:11:35', NULL, 'enhanced repository response time', '2013-11-29 16:31:04'),
-(757, 'd26cbf76913b63fbd3c1b016b8c5abb3cf661366', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-13 16:17:00', NULL, 0, 0, '2013-11-13 16:17:00', NULL, 'removed config from repository', '2013-11-29 16:31:04'),
-(758, '8dc5e060bce13723b30160f951380b9d628ce52c', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-13 16:22:13', NULL, 0, 0, '2013-11-13 16:22:13', NULL, 'added gitignore\n', '2013-11-29 16:31:04'),
-(759, '1b770039cf1ca610f788c298f9f52f68b063b417', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-13 16:22:38', NULL, 0, 0, '2013-11-13 16:22:38', NULL, 'added gitignore\n', '2013-11-29 16:31:04'),
-(760, '72436ea37273dfcc1937150603363218013dea69', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-13 16:26:33', NULL, 0, 0, '2013-11-13 16:26:33', NULL, 'removed config from repository', '2013-11-29 16:31:04'),
-(761, '01b4ab858c55a84bc0c8a88aba5a0993d08558fd', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-13 16:27:19', NULL, 0, 0, '2013-11-13 16:27:19', NULL, 'removed config from repository', '2013-11-29 16:31:04'),
-(762, '3abe4b27b338055650c7a06a77d24fec19278a11', 23, 23, 'neiluJ', 'julien@nitronet.org', '2013-11-13 16:29:03', NULL, 0, 0, '2013-11-13 16:29:03', NULL, 'gnak\n', '2013-11-29 16:31:04'),
-(763, 'b7800b42a99c2b1dea26fb183d9884b3c9a9bebc', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 09:12:00', NULL, 0, 0, '2013-11-14 09:12:00', NULL, 'temp tests', '2013-11-29 16:31:05'),
-(764, '92c2ed1967c544ca6adea516fcae61e227665fa9', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 16:10:27', NULL, 0, 0, '2013-11-14 16:10:27', NULL, 'try to fix hooks...', '2013-11-29 16:31:05'),
-(765, '3ebe764099861a4b812a3b056d9ba582ed0f5cd8', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 16:14:26', NULL, 0, 0, '2013-11-14 16:14:26', NULL, 'try to fix hooks...', '2013-11-29 16:31:05'),
-(766, '39c62872b57d030f3731649b1ec02ab2425da377', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 17:25:44', NULL, 0, 0, '2013-11-14 17:25:44', NULL, 'try to fix hooks...', '2013-11-29 16:31:05'),
-(767, '187a58aa9d8c2c396fcc6204519355baacf69efa', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 17:27:51', NULL, 0, 0, '2013-11-14 17:27:51', NULL, 'try to fix hooks...', '2013-11-29 16:31:05'),
-(768, 'f02d8a836ad880af927ede9bc25f4b61a3ae8830', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 17:30:21', NULL, 0, 0, '2013-11-14 17:30:21', NULL, 'try to fix hooks...', '2013-11-29 16:31:05'),
-(769, 'f5e9084d1cdb0235c2dbf8a1fc75666d2978390d', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 17:34:15', NULL, 0, 0, '2013-11-14 17:34:15', NULL, 'try to fix hooks...', '2013-11-29 16:31:05'),
-(770, 'd87b9e393ce1a2a175d44d4a06a567d2266b3b96', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 17:36:24', NULL, 0, 0, '2013-11-14 17:36:24', NULL, 'try to fix hooks...', '2013-11-29 16:31:05'),
-(771, 'b7ac0a7595d7fc8b1ed314513ecc6e24c5a8fee8', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 17:42:42', NULL, 0, 0, '2013-11-14 17:42:42', NULL, 'try to fix hooks...', '2013-11-29 16:31:05'),
-(772, '2b9fb95dcfddb543e4baed4cad0a9fb2b5e1700d', 23, 23, 'neiluj', 'neiluj@baltringue', '2013-11-14 17:44:37', NULL, 0, 0, '2013-11-14 17:44:37', NULL, 'try to fix hooks...', '2013-11-29 16:31:05');
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
 
 -- --------------------------------------------------------
 
@@ -243,13 +173,6 @@ CREATE TABLE IF NOT EXISTS `commits_refs` (
   PRIMARY KEY (`commitId`,`refId`),
   KEY `refId` (`refId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Dumping data for table `commits_refs`
---
-
-INSERT INTO `commits_refs` (`commitId`, `refId`) VALUES
-(709, 75);
 
 -- --------------------------------------------------------
 
@@ -267,13 +190,6 @@ CREATE TABLE IF NOT EXISTS `pushes` (
   KEY `userId` (`userId`),
   KEY `repositoryId` (`repositoryId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=24 ;
-
---
--- Dumping data for table `pushes`
---
-
-INSERT INTO `pushes` (`id`, `userId`, `username`, `repositoryId`, `createdOn`) VALUES
-(23, NULL, NULL, 23, '2013-11-29 16:31:03');
 
 -- --------------------------------------------------------
 
@@ -294,13 +210,6 @@ CREATE TABLE IF NOT EXISTS `refs` (
   KEY `repositoryId` (`repositoryId`),
   KEY `pushId` (`pushId`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=76 ;
-
---
--- Dumping data for table `refs`
---
-
-INSERT INTO `refs` (`id`, `name`, `type`, `fullname`, `repositoryId`, `pushId`, `createdOn`, `commitHash`) VALUES
-(75, 'master', 'branch', 'refs/heads/master', 23, 23, '2013-11-29 16:31:03', '777ffd15548e724a3b5d5323f717a18eb7b8da9c');
 
 -- --------------------------------------------------------
 
