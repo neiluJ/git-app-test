@@ -41,7 +41,7 @@ class CommitsListener
         }
 
         $this->push       = $push;
-        $allReferences    = $gitDao->getAllReferences($repository);
+        $allReferences    = $gitDao->getAllReferences($event->getRepository());
         $commits          = $this->indexCommits($event->getRepository(), $git, $gitDao, $usersDao, $allReferences);
         $tags             = $this->indexTags($event->getRepository(), $git, $gitDao, $allReferences);
         
