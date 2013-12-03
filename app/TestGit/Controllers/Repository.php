@@ -238,6 +238,19 @@ class Repository implements ContextAware, ServicesAware, Preparable
         return Result::FORM;
     }
     
+    public function activity()
+    {
+        try {
+            $this->loadRepository('read');
+        } catch(EmptyRepositoryException $exp) {
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::ERROR;
+        }
+        
+        return Result::SUCCESS;
+    }
+    
     public function cloneUrlAction()
     {
         try {

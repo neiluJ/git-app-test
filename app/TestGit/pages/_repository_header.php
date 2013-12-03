@@ -5,6 +5,7 @@
           <ul class="nav navbar-nav navbar-left">
               <li<?php if($repoMenuActive == 'code'): ?> class="active"<?php endif; ?>><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Browse source"><i class="glyphicon glyphicon-list"></i></a></li>
               <li<?php if($repoMenuActive == 'branches'): ?> class="active"<?php endif; ?>><a href="<?php echo $vh->url('Branches', array('name' => $this->name), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Branches/Tags" class="txt"><i class="glyphicon glyphicon-random"></i> <span><?php echo (strlen($this->branch) == 40 ? substr($this->branch, 0, 6) : $this->branch); ?></span></a></li>
+              <li<?php if($repoMenuActive == 'activity'): ?> class="active"<?php endif; ?>><a href="<?php echo $vh->url('RepoActivity', array('name' => $this->name), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Activity" class="txt"><i class="glyphicon glyphicon-time"></i></a></li>
               <?php if ($this->_helper->isAllowed($this->entity, 'admin')): ?>
               <li<?php if($repoMenuActive == 'accesses'): ?> class="active"<?php endif; ?>><a href="<?php echo $vh->url('Accesses', array('name' => $this->name), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Access Rights"><i class="glyphicon glyphicon-user"></i></a></li>
               <?php endif; ?>
