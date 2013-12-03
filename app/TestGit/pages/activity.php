@@ -7,14 +7,14 @@
     <li class="branch">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
         <i class="glyphicon glyphicon-random"></i> 
-        <?php if ($activity->user instanceof \TestGit\Model\User\User): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->user; ?></i><?php endif; ?>
+        <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
         created a new <?php echo ($activity->reference->isBranch() ? "branch" : "tag"); ?> <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname(), 'branch' => $activity->reference->getName())); ?>"><?php echo $activity->reference->getName(); ?></a></strong> at <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
     </li>
     <?php elseif ($activity->type == "push"): ?>
     <li class="push">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
         <i class="glyphicon glyphicon-circle-arrow-right"></i> 
-        <?php if ($activity->user instanceof \TestGit\Model\User\User): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->user; ?></i><?php endif; ?> pushed <strong><?php echo count($activity->commits); ?> commits</strong> at <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
+        <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?> pushed <strong><?php echo count($activity->commits); ?> commits</strong> at <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
         <ul>
             <?php $idx = 0; foreach ($activity->commits as $commit): ?>
             <?php if ($idx >= 10): ?>

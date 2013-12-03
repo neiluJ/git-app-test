@@ -37,8 +37,9 @@ class Activity extends Controller
             $activity = new \stdClass();
             $activity->type = "push";
             $activity->repository = $repository;
-            $activity->user = ($push->getUserId() != null ? $push->getAuthor() : ($push->getUsername() != null ? $push->getUsername() : 'Anonymous'));
+            $activity->user = ($push->getUserId() != null ? $push->getAuthor() : null);
             $activity->commits = array();
+            $activity->username = ($push->getUsername() != null ? $push->getUsername() : 'Anonymous');
             $activity->date = new \DateTime($push->getCreatedOn());
             
             foreach ($commits as $commit) {
@@ -57,7 +58,8 @@ class Activity extends Controller
                 $activity->type = "new-ref";
                 $activity->reference = $ref;
                 $activity->repository = $repository;
-                $activity->user = ($push->getUserId() != null ? $push->getAuthor() : ($push->getUsername() != null ? $push->getUsername() : 'Anonymous'));
+                $activity->user = ($push->getUserId() != null ? $push->getAuthor() : null);
+                $activity->username = ($push->getUsername() != null ? $push->getUsername() : 'Anonymous');
                 $activity->date = new \DateTime($push->getCreatedOn());
                 
                 $activities[] = $activity;
