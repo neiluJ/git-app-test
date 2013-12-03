@@ -29,10 +29,11 @@ class CommitsListener
         $push->setCreatedOn(date('Y-m-d H:i:s'));
         $push->setRepositoryId($event->getRepository()->getId());
         
-        if (isset($_ENV['GL_USER'])) {
-            $push->setUsername($_ENV['GL_USER']);
+        $username = $event->getUsername();
+        if (!empty($username)) {
+            $push->setUsername($username);
             try {
-                $user = $usersDao->findOne($_ENV['GL_USER']);
+                $user = $usersDao->findOne($username);
                 $push->setUserId($user->getId());
             } catch(\Exception $exp) {
                 $user = null;
