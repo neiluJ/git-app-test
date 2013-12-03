@@ -24,6 +24,7 @@ class Profile extends Repositories implements Preparable, ContextAware
     protected $dateFormat;
     protected $context;
     protected $errorMsg;
+    protected $totalCommits;
     
     public function prepare()
     {
@@ -41,6 +42,7 @@ class Profile extends Repositories implements Preparable, ContextAware
         
         $dao = $this->getGitDao();
         $this->repositories = $this->loadRepositoriesAcls($dao->findMany($this->profile->getId(), GitDao::FIND_OWNER));
+        $this->totalCommits = $dao->countCommits($this->profile);
         
         return Result::SUCCESS;
     }
@@ -138,5 +140,8 @@ class Profile extends Repositories implements Preparable, ContextAware
         $this->context = $context;
     }
 
-
+    public function getTotalCommits() 
+    {
+        return $this->totalCommits;
+    }
 }

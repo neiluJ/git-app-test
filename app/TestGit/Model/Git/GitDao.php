@@ -444,4 +444,47 @@ class GitDao extends DaoBase
         
         return $this->getDb()->execute($query, $params);
     }
+    
+    public function countCommits(User $user)
+    {
+        $query = Query::factory()
+                ->select('COUNT(*) as count')
+                ->from($this->getOption('commitsTable'))
+                ->where('committerId = ?')
+                ->setFetchMode(Query::FETCH_OPT)
+                ;
+        
+        $res = $this->getDb()->execute($query, array($user->getId()));
+        
+        return $res[0]->count;
+    }
+    
+    public function getActivity(array $repositories, User $user = null, $limit = 20)
+    {
+        $params = array();
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('pushesTable'))
+                ->entity(self::ENTITY_PUSH)
+                ->orderBy('createdOn', 'desc')
+                ->where('1 = 1');
+        
+        if (null !== $limit) {
+            $query->limit($limit);
+        }
+        
+        if ($user instanceof User) {
+            $query->andWhere('userId = ?');
+            $params[] = $user->getId();
+        }
+        
+        $ids = array();
+        foreach ($repositories as $rep) {
+            $ids[] = $rep->getId();
+        }
+        
+        $query->andWhere('repositoryId IN ('. implode(', ', $ids) .')');
+        
+        return $this->getDb()->execute($query, $params);
+    }
 }

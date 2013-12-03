@@ -114,4 +114,9 @@ class Reference
     {
         return $this->commit;
     }
+    
+    public function isBranch()
+    {
+        return $this->type === "branch";
+    }
 }

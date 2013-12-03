@@ -457,5 +457,15 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="Activity" shortcut="TestGit\Controllers\Activity:show">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">activity.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
     </actions>
 </fwk>

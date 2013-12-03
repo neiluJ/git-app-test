@@ -47,9 +47,14 @@
                    </div>
                 </div>
                 <?php endif; ?>
+                    
+                <h3>Latest activity</h3> 
+                
+                <?php echo $this->_helper->embed('Activity', array('user' => $this->profile, 'repositories' => $this->repositories)); ?>
             </div>
               <div class="col-md-2">
-                  Some informations
+                  <p class="user-stat"><span class="big-counter"><?php echo count($this->repositories); ?></span> repositories</p>
+                  <p class="user-stat"><span class="big-counter"><?php echo $this->totalCommits; ?></span> commits</p>
               </div>
           </div>
       </div>
