@@ -201,39 +201,6 @@ class CommitsListener
         return $final;
     }
     
-    protected function indexReferences(Repository $repository, $repoCommit, 
-        $allReferences
-    ) {
-        $references     = $repoCommit->getIncludingBranches(true, false);
-        $final          = array();
-        
-        foreach ($references as $ref) {
-            if ($ref instanceof Stash) {
-                continue;
-            }
-            
-            $exists = $this->refExists($ref->getFullname(), $allReferences);
-            if ($exists !== false) {
-                $final[$exists->getName()] = $exists;
-                continue;
-            }
-            
-            $reference = new Reference();
-            $reference->setCreatedOn(date('Y-m-d H:i:s'));
-            $reference->setCommitHash($repoCommit->getHash());
-            $reference->setName($ref->getName());
-            $reference->setRepositoryId($repository->getId());
-            $reference->setFullname($ref->getFullname());
-            $reference->setType(($ref instanceof Branch ? 'branch' : 'tag'));
-            
-           // $this->push->getReferences()->add($reference);
-            
-            $final[$ref->getName()] = $reference;
-        }
-        
-        return $final;
-    }
-    
     protected function refExists($refName, $allReferences)
     {
         foreach ($allReferences as $ref) {
