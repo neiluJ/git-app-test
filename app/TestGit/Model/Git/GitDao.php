@@ -368,7 +368,7 @@ class GitDao extends DaoBase
     {
         $query = Query::factory()
                 ->select()
-                ->from('`'. $this->getOption('referencesTable') .'`')
+                ->from($this->getOption('referencesTable'))
                 ->entity(self::ENTITY_REFERENCE)
                 ->where('repositoryId = ?');
         

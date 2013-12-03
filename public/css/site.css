@@ -436,7 +436,7 @@ a.adv-search:hover, a.adv-search:active, a.adv-search:focus {
 }
 #progress {
     height: 0px;
-    position:absolute;
+    position:fixed;
     top:50px;
     width:100%;
     z-index:1050;
