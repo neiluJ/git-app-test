@@ -41,11 +41,9 @@ class CommitsListener
         }
 
         $this->push       = $push;
-        $commits          = $this->indexCommits($event->getRepository(), $git, $gitDao, $usersDao);
-        
-        if (!count($commits)) {
-            return;
-        }
+        $allReferences    = $gitDao->getAllReferences($repository);
+        $commits          = $this->indexCommits($event->getRepository(), $git, $gitDao, $usersDao, $allReferences);
+        $tags             = $this->indexTags($event->getRepository(), $git, $gitDao, $allReferences);
         
         $gitDao->getDb()->beginTransaction();
         
@@ -62,16 +60,20 @@ class CommitsListener
             $gitDao->saveCommit($commit);
         }
         
+        foreach ($tags as $tag) {
+            $tag->setPushId($push->getId());
+            $gitDao->saveReference($tag);
+        }
+        
         $gitDao->getDb()->commit();
     }
     
     protected function indexCommits(Repository $repository, GitService $git, 
-        GitDao $dao, UsersDao $usersDao
+        GitDao $dao, UsersDao $usersDao, &$allReferences
     ) {
         $repo           = $git->transform($repository);
         $new            = $repository->getLast_commit_hash();
         $lastIndexed    = $dao->getLastIndexedCommit($repository);
-        $allReferences  = $dao->getAllReferences($repository);
         $refs           = null;
         
         if (null !== $lastIndexed && $new !== null) {
@@ -121,6 +123,79 @@ class CommitsListener
             $commit->getReferences()->addAll($refs); 
             
             $final[] = $commit;
+        }
+        
+        return $final;
+    }
+    
+    protected function indexTags(Repository $repository, $git, $gitDao, 
+        $allReferences
+    ) {
+        $repo       = $git->transform($repository);
+        $refs       = $repo->getReferences();
+        $tags       = array();
+        
+        foreach($refs->getAll() as $ref) {
+            if (!$ref instanceof \Gitonomy\Git\Reference\Tag) {
+                continue;
+            }
+            
+            $exit = false;
+            foreach ($allReferences as $existingRef) {
+                if ($existingRef->getName() == $ref->getName()) {
+                    $exit = true;
+                    break;
+                }
+            }
+            
+            if ($exit) {
+                continue;
+            }
+            
+            $reference = new Reference();
+            $reference->setCreatedOn(date('Y-m-d H:i:s'));
+            $reference->setCommitHash($ref->getCommitHash());
+            $reference->setName($ref->getName());
+            $reference->setRepositoryId($repository->getId());
+            $reference->setFullname($ref->getFullname());
+            $reference->setType("tag");
+            
+           // $this->push->getReferences()->add($reference);
+            
+            $tags[$ref->getName()] = $reference;
+        }
+        
+        return $tags;
+    }
+    
+    protected function indexReferences(Repository $repository, $repoCommit, 
+        $allReferences
+    ) {
+        $references     = $repoCommit->getIncludingBranches(true, false);
+        $final          = array();
+        
+        foreach ($references as $ref) {
+            if ($ref instanceof Stash) {
+                continue;
+            }
+            
+            $exists = $this->refExists($ref->getFullname(), $allReferences);
+            if ($exists !== false) {
+                $final[$exists->getName()] = $exists;
+                continue;
+            }
+            
+            $reference = new Reference();
+            $reference->setCreatedOn(date('Y-m-d H:i:s'));
+            $reference->setCommitHash($repoCommit->getHash());
+            $reference->setName($ref->getName());
+            $reference->setRepositoryId($repository->getId());
+            $reference->setFullname($ref->getFullname());
+            $reference->setType(($ref instanceof Branch ? 'branch' : 'tag'));
+            
+           // $this->push->getReferences()->add($reference);
+            
+            $final[$ref->getName()] = $reference;
         }
         
         return $final;

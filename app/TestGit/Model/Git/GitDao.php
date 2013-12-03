@@ -385,6 +385,11 @@ class GitDao extends DaoBase
         return $this->getDb()->table($this->getOption('commitsTable'))->save($commit);
     }
     
+    public function saveReference(Reference $ref)
+    {
+        return $this->getDb()->table($this->getOption('referencesTable'))->save($ref);
+    }
+    
     public function findCommits($text, $type = self::FIND_COMMIT_BOTH, 
         User $user = null
     ) {
