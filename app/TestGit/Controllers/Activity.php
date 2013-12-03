@@ -27,6 +27,7 @@ class Activity extends Controller
             foreach ($this->repositories as $repo) {
                 if ($repo->getId() == $push->getRepositoryId()) {
                     $repository = $repo;
+                    break;
                 }
             }
             
@@ -36,7 +37,7 @@ class Activity extends Controller
             $activity = new \stdClass();
             $activity->type = "push";
             $activity->repository = $repository;
-            $activity->user = ($push->getUserId() != null ? $push->getAuthor() : null);
+            $activity->user = ($push->getUserId() != null ? $push->getAuthor() : ($push->getUsername() != null ? $push->getUsername() : 'Anonymous'));
             $activity->commits = array();
             $activity->date = new \DateTime($push->getCreatedOn());
             
@@ -45,6 +46,7 @@ class Activity extends Controller
             }
             
             krsort($activity->commits);
+            $activities[] = $activity;
             
             foreach ($references as $ref) {
                 if ($ref->getPushId() != $push->getId()) {
@@ -55,13 +57,11 @@ class Activity extends Controller
                 $activity->type = "new-ref";
                 $activity->reference = $ref;
                 $activity->repository = $repository;
-                $activity->user = ($push->getUserId() != null ? $push->getAuthor() : null);
+                $activity->user = ($push->getUserId() != null ? $push->getAuthor() : ($push->getUsername() != null ? $push->getUsername() : 'Anonymous'));
                 $activity->date = new \DateTime($push->getCreatedOn());
                 
                 $activities[] = $activity;
             }
-            
-            $activities[] = $activity;
         }
         
         $this->activities = $activities;
