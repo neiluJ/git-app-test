@@ -34,20 +34,22 @@ class Activity extends Controller
             $commits = $push->getCommits();
             $references = $push->getReferences();
             
-            $activity = new \stdClass();
-            $activity->type = "push";
-            $activity->repository = $repository;
-            $activity->user = ($push->getUserId() != null ? $push->getAuthor() : null);
-            $activity->commits = array();
-            $activity->username = ($push->getUsername() != null ? $push->getUsername() : 'Anonymous');
-            $activity->date = new \DateTime($push->getCreatedOn());
-            
-            foreach ($commits as $commit) {
-                $activity->commits[$commit->getCommitterDateObj()->format('U')] = $commit;
+            if (count($commits)) {
+                $activity = new \stdClass();
+                $activity->type = "push";
+                $activity->repository = $repository;
+                $activity->user = ($push->getUserId() != null ? $push->getAuthor() : null);
+                $activity->commits = array();
+                $activity->username = ($push->getUsername() != null ? $push->getUsername() : 'Anonymous');
+                $activity->date = new \DateTime($push->getCreatedOn());
+
+                foreach ($commits as $commit) {
+                    $activity->commits[$commit->getCommitterDateObj()->format('U')] = $commit;
+                }
+
+                krsort($activity->commits);
+                $activities[] = $activity;
             }
-            
-            krsort($activity->commits);
-            $activities[] = $activity;
             
             foreach ($references as $ref) {
                 if ($ref->getPushId() != $push->getId()) {

@@ -24,7 +24,6 @@
             <li class="commit"><a href="<?php echo $this->_helper->url('Commit', array('name' => $activity->repository->getFullname(), 'hash' => $commit->getHash())); ?>"><?php echo substr($commit->getHash(), 0, 6); ?></a>: <span class="commit-txt"><?php $msg = str_replace("\n", " ", $commit->getMessage()); echo $this->_helper->escape(substr($msg,0,60)); ?></span></li>
             <?php endif; ?>
             <?php endforeach; ?>
-            <li class="menu">
                 <?php 
                 $last = array_shift($activity->commits); 
                 $first = array_pop($activity->commits); 
@@ -32,13 +31,20 @@
                 if (count($activity->commits) > 1) {
                     $comparision = substr($first->getHash(),0, 10) . '..' . substr($last->getHash(),0,10);
                     $compareUrl = $this->_helper->url('Compare', array('name' => $activity->repository->getFullname(), 'compare' => $comparision));
-                } else {
+                } elseif ($last != null) {
                     $comparision = false;
                     $compareUrl = $this->_helper->url('Commit', array('name' => $activity->repository->getFullname(), 'hash' => $last->getHash()));
+                } else {
+                    $comparision = null;
+                    $compareUrl = null;
                 }
+                
+                if (null !== $compareUrl):
                 ?>
+            <li>
                 <a href="<?php echo $compareUrl; ?>">show <?php echo ($comparision === false ? 'commit' : 'comparision'); ?> &rarr;</a>
             </li>
+            <?php endif; ?>
         </ul>
     </li>
     <?php endif; ?>
