@@ -17,6 +17,7 @@ class CommitsListener
 {
     protected $references = array();
     protected $push;
+    protected $usersCache = array();
     
     public function onRepositoryUpdate(RepositoryUpdateEvent $event)
     {
@@ -52,7 +53,9 @@ class CommitsListener
         foreach ($commits as $commit) {
             $commit->setPushId($push->getId());
             foreach ($commit->getReferences() as $ref) {
-                $ref->setPushId($push->getId());
+                if ($ref->getPushId() == null) {
+                    $ref->setPushId($push->getId());
+                }
             }
             
             $gitDao->saveCommit($commit);
@@ -168,16 +171,20 @@ class CommitsListener
     
     protected function findUser($email, $username, UsersDao $usersDao)
     {
-        $user = null;
-        try {
-            $user = $usersDao->findOne($email, UsersDao::FIND_EMAIL);
-        } catch(\Exception $exp) {
+        if (!isset($this->usersCache[$email . $username])) {
+            $user = null;
             try {
-                $user = $usersDao->findOne($username, UsersDao::FIND_USERNAME);
+                $user = $usersDao->findOne($email, UsersDao::FIND_EMAIL);
             } catch(\Exception $exp) {
+                try {
+                    $user = $usersDao->findOne($username, UsersDao::FIND_USERNAME);
+                } catch(\Exception $exp) {
+                }
             }
+            
+            $this->usersCache[$email . $username] = $user;
         }
         
-        return $user;
+        return $this->usersCache[$email . $username];
     }
 }

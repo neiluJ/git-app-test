@@ -468,7 +468,7 @@ class GitService
         
         $str = <<<EOF
 #!/bin/sh
-$phpExecutable $self repository:update $fullname 
+$phpExecutable $self repository:update $fullname \$GL_USER 
 
 EOF;
         return $str;

@@ -25,30 +25,10 @@ class RepoInstallHooks extends Command implements ServicesAware
         $dao = $this->getGitDao();
         try {
             $repository = $dao->findOne($input->getArgument('name'), GitDao::FIND_FULLNAME);
+            $this->getGitService()->installPostReceiveHook($repository, $this->getServices()->get('php.executable'));
         } catch(\Exception $exp) {
             $this->getApplication()->renderException($exp, $output);
             exit(2);
-        }
-        
-        $repoDir = rtrim($this->getGitService()->getRepositoryPath($repository), DIRECTORY_SEPARATOR);
-        $postReceiveFilename = $repoDir . 
-                DIRECTORY_SEPARATOR . "hooks" . 
-                DIRECTORY_SEPARATOR . "post-receive";
-        
-        if (is_file($postReceiveFilename) && !is_writable($postReceiveFilename)) {
-            throw new \RuntimeException(sprintf('File %s is not writable', $postReceiveFilename));
-        } 
-        
-        @file_put_contents($postReceiveFilename, $this->getHookContents($repository), LOCK_EX);
-        
-        if (!is_file($postReceiveFilename)) {
-            throw new \RuntimeException('Unable to write post-receive hook '. $postReceiveFilename);
-        }
-        
-        $proc = new Process(sprintf('chmod +x %s', $postReceiveFilename), $repoDir);
-        $proc->run();
-        if (!$proc->isSuccessful()) {
-            throw new \RuntimeException($proc->getErrorOutput());
         }
         
         $output->writeln("post-receive hook successfully installed in ". $postReceiveFilename);

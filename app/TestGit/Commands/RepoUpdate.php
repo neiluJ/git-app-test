@@ -18,6 +18,7 @@ class RepoUpdate extends Command implements ServicesAware
     {
         $this->setDescription('Updates a repository (pulls changes in workdir)');
         $this->addArgument('name',  InputArgument::REQUIRED, 'Repository to be updated');
+        $this->addArgument('username',  InputArgument::OPTIONAL, 'Gitolite username');
     }
     
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -47,7 +48,7 @@ class RepoUpdate extends Command implements ServicesAware
         $this->getGitDao()->save($repository);
         
         $this->getGitDao()->notify(
-            new RepositoryUpdateEvent($repository, $this->getServices())
+            new RepositoryUpdateEvent($repository, $this->getServices(), $input->getArgument('username'))
         );
     }
     

@@ -7,11 +7,13 @@ use TestGit\Model\Git\Repository;
 
 class RepositoryUpdateEvent extends Event
 {
-    public function __construct(Repository $repository, Container $services = null)
-    {
+    public function __construct(Repository $repository, 
+        Container $services = null, $username = null
+    ) {
         parent::__construct('repositoryUpdate', array(
             'repository'  => $repository,
-            'services'    => $services
+            'services'    => $services,
+            'username'    => $username
         ));
     }
     
@@ -31,5 +33,14 @@ class RepositoryUpdateEvent extends Event
     public function getServices()
     {
         return $this->services;
+    }
+    
+     /**
+     * 
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
     }
 }
