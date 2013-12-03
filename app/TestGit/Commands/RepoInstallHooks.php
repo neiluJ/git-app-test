@@ -31,7 +31,7 @@ class RepoInstallHooks extends Command implements ServicesAware
             exit(2);
         }
         
-        $output->writeln("post-receive hook successfully installed in ". $postReceiveFilename);
+        $output->writeln("post-receive hook successfully installed");
     }
     
     protected function getHookContents(\TestGit\Model\Git\Repository $repository)
