@@ -14,7 +14,7 @@ class StaticActivityListener
         $repo       = $event->getRepository();
         
         $activity->setType(Activity::REPO_CREATE);
-        $activity->setUserId($repo->getOwner()->getId());
+        $activity->setUserId($repo->getOwner_id());
         $activity->setCreatedOn($repo->getCreated_at());
         $activity->setRepositoryId($repo->getId());
         
@@ -29,7 +29,7 @@ class StaticActivityListener
         $fork       = $event->getFork();
         
         $activity->setType(Activity::REPO_FORK);
-        $activity->setUserId($fork->getOwner()->getId());
+        $activity->setUserId($fork->getOwner_id());
         $activity->setCreatedOn($fork->getCreated_at());
         $activity->setRepositoryId($fork->getId());
         
