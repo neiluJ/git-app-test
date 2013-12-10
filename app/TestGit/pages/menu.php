@@ -29,18 +29,6 @@ $active = $this->active;
 $(document).ready(function() {
     $('input.git-search').typeahead([
       {
-        name: 'repositoris',
-        prefetch: {url: "<?php echo $this->_helper->url('SearchRepositories'); ?>", ttl: 5, filter: function(obj) { return obj.searchResults; }},
-         template: [
-        '<p class="repo-name"><i class="glyphicon glyphicon-list"></i> {{value}}</p>',
-        '<p class="repo-desc">{{description}}</p>',
-        ].join(''),
-        engine: Hogan,
-        limit:10,
-        header: '<span class="dropdown-header">REPOSITORIES</span>',
-        cache:false
-      },
-      {
         name: 'usser',
         prefetch: {url: "<?php echo $this->_helper->url('SearchUsers'); ?>", ttl: 5, filter: function(obj) { return obj.searchResults; }},
          template: [
@@ -50,6 +38,18 @@ $(document).ready(function() {
         engine: Hogan,
         limit:10,
         header: '<span class="dropdown-header">USERS</span>',
+        cache:false
+      },
+      {
+        name: 'repositoris',
+        prefetch: {url: "<?php echo $this->_helper->url('SearchRepositories'); ?>", ttl: 5, filter: function(obj) { return obj.searchResults; }},
+         template: [
+        '<p class="repo-name"><i class="glyphicon glyphicon-list"></i> {{value}}</p>',
+        '<p class="repo-desc">{{description}}</p>',
+        ].join(''),
+        engine: Hogan,
+        limit:10,
+        header: '<span class="dropdown-header">REPOSITORIES</span>',
         cache:false
       },
       {
@@ -67,10 +67,6 @@ $(document).ready(function() {
         header: '<span class="dropdown-header">COMMITS</span>'
       },
     ]).bind('typeahead:selected', function (obj, datum) {
-        if (datum != undefined && datum.url != undefined) {
-            window.location = datum.url;
-        }
-    }).bind('typeahead:autocompleted', function (obj, datum) {
         if (datum != undefined && datum.url != undefined) {
             window.location = datum.url;
         }

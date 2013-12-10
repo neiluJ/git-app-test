@@ -76,7 +76,7 @@ class Repositories implements ServicesAware
                 'name'  => $repo->getName(),
                 'description' => $repo->getDescription(),
                 'value'  => $repo->getFullname(),
-                'tokens'  => array($repo->getOwner()->getUsername(), $repo->getName()),
+                'tokens'  => array($repo->getFullname(), $repo->getOwner()->getUsername(), $repo->getName()),
                 'url'   => $this->getServices()->get('viewHelper')->url('Repository', array('name' => $repo->getFullname()))
             );
 
