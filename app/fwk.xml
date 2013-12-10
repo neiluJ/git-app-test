@@ -478,4 +478,68 @@
             </result>
         </action>
     </actions>
+    
+    <url-rewrite>
+        <url route="/" action="Home" />
+        <url route="/repositories" action="Repositories" />
+        <url route="/users" action="Users" />
+        <url route="/login" action="Login" />
+        <url route="/logout" action="Logout" />
+        <url route="/create" action="Create" />
+        <url route="/:username$" action="Profile">
+            <param name="username" required="true" regex=".[^/]+" />
+        </url>
+         <url route="/:username/settings$" action="UserSettings">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/settings/edit$" action="EditUserInfos">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/settings/add-ssh-key$" action="AddSshKey">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/settings/revoke-ssh-key/:id$" action="RevokeSshKey">
+            <param name="username" required="true" />
+            <param name="id" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/:username/settings/chpasswd$" action="ChangePassword">
+            <param name="username" required="true" />
+        </url>
+        <url route="/users/add$" action="AddUser" />
+        <url route="/search$" action="Search" />
+        <url route="/search/repositories$" action="SearchRepositories" />
+        <url route="/search/users$" action="SearchUsers" />
+        <url route="/search/commits$" action="SearchCommits" />
+        <!-- angular not ready for this 
+        <url route="/:name$" action="Repository">
+            <param name="name" required="true" regex=".+" />
+        </url>
+        -->
+        <url route="/:name/branches$" action="Branches">
+            <param name="name" required="true" regex=".+" />
+        </url>
+        <url route="/:name/log$" action="RepoActivity">
+            <param name="name" required="true" regex=".+" />
+        </url>
+        <url route="/:name/accesses$" action="Accesses">
+            <param name="name" required="true" regex=".+" />
+        </url>
+        <url route="/:name/accesses/remove/:userId$" action="RemoveAccess">
+            <param name="name" required="true" regex=".+" />
+            <param name="userId" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/:name/accesses/add$" action="AddAccess">
+            <param name="name" required="true" regex=".+" />
+            <param name="userId" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/:name/settings$" action="Settings">
+            <param name="name" required="true" regex=".+" />
+        </url>
+        <url route="/:name/fork$" action="Fork">
+            <param name="name" required="true" regex=".+" />
+        </url>
+        <url route="/:name/delete$" action="Delete">
+            <param name="name" required="true" regex=".+" />
+        </url>
+    </url-rewrite>
 </fwk>

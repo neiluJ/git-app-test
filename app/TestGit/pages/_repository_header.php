@@ -34,7 +34,7 @@
         <div class="clearfix"></div>
         <?php if($this->_helper->isAllowed($this->entity, 'read')): ?>
         <div class="cloneUrl"><?php echo $this->_helper->embed('CloneUrl', array('name' => $this->name)); ?></div> 
-        <p><?php echo $this->_helper->escape($this->entity->getDescription()); ?> <?php $ws = $this->entity->getWebsite(); if(!empty($ws)): ?>- <a href="<?php echo $this->_helper->escape($ws); ?>"><?php echo $this->_helper->escape($ws); ?></a><?php endif; ?></p>
+        <p><?php if($this->entity->isPrivate()): ?><i class="glyphicon glyphicon-lock"></i> <strong>private repository</strong> - <?php endif; ?> <?php echo $this->_helper->escape($this->entity->getDescription()); ?> <?php $ws = $this->entity->getWebsite(); if(!empty($ws)): ?>- <a href="<?php echo $this->_helper->escape($ws); ?>"><?php echo $this->_helper->escape($ws); ?></a><?php endif; ?></p>
         <?php endif; ?>
     </div>
 </div><!-- /starter-template -->
