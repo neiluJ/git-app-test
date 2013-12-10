@@ -14,6 +14,7 @@ use TestGit\UsersService;
 use TestGit\Events\UserAddEvent;
 use TestGit\Events\UserEditEvent;
 use Fwk\Di\Container;
+use TestGit\Model\User\Activity;
 
 class UsersDao extends Dao implements Provider
 {
@@ -29,6 +30,7 @@ class UsersDao extends Dao implements Provider
     const FIND_SLUG     = 'slug';
     
     const ENTITY_USER   = 'TestGit\\Model\\User\\User';
+    const ENTITY_ACTIVITY   = 'TestGit\\Model\\User\\Activity';
     
     /**
      * Constructeur 
@@ -42,8 +44,9 @@ class UsersDao extends Dao implements Provider
         $options = array())
     {
         $options = array_merge(array(
-            'usersTable'    => Tables::USERS,
-            'sshKeysTable'  => Tables::SSH_KEYS
+            'usersTable'        => Tables::USERS,
+            'activitiesTable'   => Tables::ACTIVITIES,
+            'sshKeysTable'      => Tables::SSH_KEYS
         ), $options);
         
         parent::__construct($connection, $options);
@@ -270,5 +273,42 @@ class UsersDao extends Dao implements Provider
                 ->limit(1);
         
         return $this->getDb()->execute($query, array($id));
+    }
+    
+    public function getUserActivity(array $repositories, User $user = null, $limit = 15)
+    {
+        $params = array();
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('activitiesTable'))
+                ->where('1 = 1')
+                ->entity(self::ENTITY_ACTIVITY)
+                ->orderBy('createdOn', 'desc')
+                ->limit($limit);
+        
+        if (null !== $limit) {
+            $query->limit($limit);
+        }
+        
+        if ($user instanceof User) {
+            $query->andWhere('userId = ?');
+            $params[] = $user->getId();
+        }
+        
+        $ids = array();
+        foreach ($repositories as $rep) {
+            $ids[] = $rep->getId();
+        }
+        
+        $query->andWhere('repositoryId IN ('. implode(', ', $ids) .')');
+        
+        return $this->getDb()->execute($query, $params);
+    }
+    
+    public function saveUserActivity(Activity $activity)
+    {
+        return $this->getDb()
+                ->table($this->getOption('activitiesTable'))
+                ->save($activity);
     }
 }

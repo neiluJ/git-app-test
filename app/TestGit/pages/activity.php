@@ -1,16 +1,30 @@
-<?php if (!count($this->activities)): ?>
+<?php use TestGit\Model\User\Activity; if (!count($this->activities)): ?>
 <div class="alert alert-info">No recent activity found.</div>
 <?php return; endif; ?>
 <ul class="activity">
 <?php foreach ($this->activities as $activity): ?>
-    <?php if ($activity->type == "new-ref"): ?>
+    <?php if ($activity->type == Activity::DYN_REF_CREATE): ?>
     <li class="branch">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
         <i class="glyphicon glyphicon-random"></i> 
         <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
         created a new <?php echo ($activity->reference->isBranch() ? "branch" : "tag"); ?> <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname(), 'branch' => $activity->reference->getName())); ?>"><?php echo $activity->reference->getName(); ?></a></strong> at <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
     </li>
-    <?php elseif ($activity->type == "push"): ?>
+    <?php elseif ($activity->type == Activity::REPO_CREATE): ?>
+    <li class="create">
+        <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
+        <i class="glyphicon glyphicon-plus"></i> 
+        <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
+        created repository <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
+    </li>
+    <?php elseif ($activity->type == Activity::REPO_FORK): ?>
+    <li class="fork">
+        <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
+        <i class="glyphicon glyphicon-random"></i> 
+        <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
+        forked repository <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->obj->getTargetName())); ?>"><?php echo $activity->obj->getTargetName(); ?></a></strong> to <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
+    </li>
+    <?php elseif ($activity->type == Activity::DYN_PUSH): ?>
     <li class="push">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
         <i class="glyphicon glyphicon-circle-arrow-right"></i> 

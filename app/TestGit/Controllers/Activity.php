@@ -5,6 +5,8 @@ use Fwk\Core\Action\Controller;
 use TestGit\Model\Git\GitDao;
 use Fwk\Core\Action\Result;
 use TestGit\Model\User\User;
+use TestGit\Model\User\UsersDao;
+use TestGit\Model\User\Activity as ActivityModel;
 
 class Activity extends Controller
 {
@@ -20,9 +22,10 @@ class Activity extends Controller
         }
         
         $pushes = $this->getGitDao()->getActivity($this->repositories, $this->user);
+        $statics = $this->getUsersDao()->getUserActivity($this->repositories, $this->user);
         
         $activities = array();
-        foreach ($pushes as $push) {
+        foreach ($pushes as $idx => $push) {
             $repository = null;
             foreach ($this->repositories as $repo) {
                 if ($repo->getId() == $push->getRepositoryId()) {
@@ -36,7 +39,7 @@ class Activity extends Controller
             
             if (count($commits)) {
                 $activity = new \stdClass();
-                $activity->type = "push";
+                $activity->type = ActivityModel::DYN_PUSH;
                 $activity->repository = $repository;
                 $activity->user = ($push->getUserId() != null ? $push->getAuthor() : null);
                 $activity->commits = array();
@@ -48,25 +51,50 @@ class Activity extends Controller
                 }
 
                 krsort($activity->commits);
-                $activities[] = $activity;
+                $activities[$activity->date->format('U') . $idx] = $activity;
             }
             
-            foreach ($references as $ref) {
+            foreach ($references as $idx => $ref) {
                 if ($ref->getPushId() != $push->getId()) {
                     continue;
                 }
                 
                 $activity = new \stdClass();
-                $activity->type = "new-ref";
+                $activity->type = ActivityModel::DYN_REF_CREATE;
                 $activity->reference = $ref;
                 $activity->repository = $repository;
                 $activity->user = ($push->getUserId() != null ? $push->getAuthor() : null);
                 $activity->username = ($push->getUsername() != null ? $push->getUsername() : 'Anonymous');
                 $activity->date = new \DateTime($push->getCreatedOn());
                 
-                $activities[] = $activity;
+                $activities[$activity->date->format('U') . $idx] = $activity;
             }
         }
+        
+        foreach ($statics as $idx => $activitiy) {
+            $repository = null;
+            foreach ($this->repositories as $repo) {
+                if ($repo->getId() == $activitiy->getRepositoryId()) {
+                    $repository = $repo;
+                    break;
+                }
+            }
+            
+            $activity = new \stdClass();
+            $activity->type = $activitiy->getType();
+            $activity->obj = $activitiy;
+            
+            if ($repository !== null) {
+                $activity->repository = $repository;
+            }
+            
+            $activity->user = ($activitiy->getUserId() != null ? $activitiy->getUser() : null);
+            $activity->date = new \DateTime($activitiy->getCreatedOn());
+            
+            $activities[$activity->date->format('U') . $idx] = $activity;
+        }
+        
+        krsort($activities);
         
         $this->activities = $activities;
         
@@ -110,5 +138,14 @@ class Activity extends Controller
     public function getActivities()
     {
         return $this->activities;
+    }
+    
+    /**
+     * 
+     * @return UsersDao
+     */
+    public function getUsersDao()
+    {
+        return $this->getServices()->get('usersDao');
     }
 }

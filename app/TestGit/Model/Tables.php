@@ -4,6 +4,7 @@ namespace TestGit\Model;
 final class Tables
 {
     const USERS         = 'users';
+    const ACTIVITIES    = 'activities';
     const USERS_ROLES   = 'users_roles';
     const SSH_KEYS      = 'users_ssh_keys';
     
