@@ -17,6 +17,7 @@ class StaticActivityListener
         $activity->setUserId($repo->getOwner_id());
         $activity->setCreatedOn($repo->getCreated_at());
         $activity->setRepositoryId($repo->getId());
+        $activity->setRepositoryName($repo->getFullname());
         
         $usersDao->saveUserActivity($activity);
     }
@@ -32,6 +33,7 @@ class StaticActivityListener
         $activity->setUserId($fork->getOwner_id());
         $activity->setCreatedOn($fork->getCreated_at());
         $activity->setRepositoryId($fork->getId());
+        $activity->setRepositoryName($fork->getFullname());
         
         $activity->setTargetId($repo->getId());
         $activity->setTargetName($repo->getFullname());
