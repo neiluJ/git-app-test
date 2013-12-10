@@ -422,3 +422,30 @@ ALTER TABLE `users_roles`
 --
 ALTER TABLE `users_ssh_keys`
   ADD CONSTRAINT `users_ssh_keys_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+CREATE TABLE IF NOT EXISTS `activities` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `repositoryId` int(11) DEFAULT NULL,
+  `repositoryName` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `targetId` int(11) DEFAULT NULL,
+  `targetName` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `targetUrl` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `message` text COLLATE utf8_unicode_ci,
+  `createdOn` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
+  KEY `repositoryId` (`repositoryId`),
+  KEY `targetId` (`targetId`),
+  KEY `createdOn` (`createdOn`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+
+--
+-- Constraints for table `activities`
+--
+ALTER TABLE `activities`
+  ADD CONSTRAINT `activities_ibfk_3` FOREIGN KEY (`targetId`) REFERENCES `repositories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `activities_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `activities_ibfk_2` FOREIGN KEY (`repositoryId`) REFERENCES `repositories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
