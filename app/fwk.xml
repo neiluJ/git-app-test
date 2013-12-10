@@ -486,6 +486,11 @@
         <url route="/login" action="Login" />
         <url route="/logout" action="Logout" />
         <url route="/create" action="Create" />
+        <url route="/users/add$" action="AddUser" />
+        <url route="/search$" action="Search" />
+        <url route="/search/repositories$" action="SearchRepositories" />
+        <url route="/search/users$" action="SearchUsers" />
+        <url route="/search/commits$" action="SearchCommits" />
         <url route="/:username$" action="Profile">
             <param name="username" required="true" regex=".[^/]+" />
         </url>
@@ -505,11 +510,6 @@
         <url route="/:username/settings/chpasswd$" action="ChangePassword">
             <param name="username" required="true" />
         </url>
-        <url route="/users/add$" action="AddUser" />
-        <url route="/search$" action="Search" />
-        <url route="/search/repositories$" action="SearchRepositories" />
-        <url route="/search/users$" action="SearchUsers" />
-        <url route="/search/commits$" action="SearchCommits" />
         <!-- angular not ready for this 
         <url route="/:name$" action="Repository">
             <param name="name" required="true" regex=".+" />
