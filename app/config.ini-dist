@@ -1,27 +1,48 @@
-[fwk]
-requestMatcherService = requestMatcher
-resultTypeService = resultTypeService
-viewHelperService = viewHelper
-urlRewriterService = urlRewriter
-consoleService = consoleApp
-sessionService = session
-
 [services]
+; ----------------------
+; Database Configuration
+;
+; - db.hostname : mysql server hostname
+; - db.user     : mysql user
+; - db.password : mysql password
+; - db.driver   : this should be "pdo_mysql" (others might work but haven't been
+;               : tested yet.
+; - db.database : mysql database name
+; ----------------------
 db.hostname = localhost
 db.user = forgery
 db.password = forgery
 db.driver = pdo_mysql
 db.database = forgery
 
-users.table = users
-users.ssh_keys.table = users_ssh_keys
-
+; --------------------------
+; Repositories Configuration
+;
+; - repos.dir           : Directory where "bare" repositories are created 
+;                       : (usually /home/git/repositories)
+; - repos.working.dir   : Directory where Forgery can actually clone/use repos
+;                       : (usually /home/git/workdir)
+; - repos.basePath      : Should be @repos.dir 
+; --------------------------
 repos.dir = /home/git/repositories
 repos.working.dir = /home/git/workdir
-repos.table = repositories
-repos.accesses.table = accesses
 repos.basePath = /home/git/repositories
 
+; ---------------------
+; Cloning Configuration
+;
+; - git.clone.hostname.ssh.remote   : hostname required to clone from a remote
+;                                   : client.
+; - git.clone.hostname.ssh.local    : hostname required to clone from localhost
+; - git.clone.hostname.http.remote  : HTTP hostname required to clone from a remote
+;                                   : client.
+; - git.clone.http.prefix           : Prefix used to hit the git-smart-http handler
+;                                   : (usually "git" - see VHost)
+; - git.clone.http.prefix.public    : Same as @git.clone.http.prefix but for public
+;                                   : http access. (usually gitmob - see VHost)
+; - git.clone.http                  : Enable (1) or Disable (0) HTTP support
+; - git.clone.https                 : Enable (1) or Disable (0) HTTPS support
+; ---------------------
 git.clone.hostname.ssh.remote = gitmachine
 git.clone.hostname.ssh.local = localhost
 git.clone.hostname.http.remote = gitmachine
@@ -32,23 +53,77 @@ git.clone.https = 0
 
 git.date.format = d/m/Y
 
+; ----------------------
+; git user Configuration
+;
+; This user is used by Forgery to clone repositories into @repos.working.dir
+;
+; - git.user.name       : Git User (usually git)
+; - git.user.email      : Git User Email (usually git@localhost)
+; - git.user.fullname   : Git User Fullname (usually Git)
+; ----------------------
 git.user.name = git
 git.user.email    = git@localhost
 git.user.fullname = Git
 
+; ----------------------
+; forgery user Configuration
+;
+; This user is used by Forgery to author commits, merges and online edits 
+;
+; - git.user.name       : Git User (usually git)
+; - git.user.email      : Git User Email (usually git@localhost)
+; - git.user.fullname   : Git User Fullname (usually Git)
+; ----------------------
 forgery.user.name = forgery
 forgery.user.email    = forgery@nitronet.org
 forgery.user.fullname = Forgery
 
+; -------------------------
+; Executables Configuration
+;
+; - php.executable  : /path/to/php on the system
+; - git.executable  : /path/to/git on the system
+; -------------------------
 php.executable = /usr/bin/php
 git.executable = /usr/bin/git
 
+; -----------------------------
+; Apache Htpasswd Configuration
+; 
+; - apache.htpasswd.bin     : /path/to/htpasswd on the system
+; - apache.htpasswd.file    : /path/to/file where http accesses are stored
+;                           : (should match your VirtualHost configuration)
+; -----------------------------
+apache.htpasswd.bin = htpasswd -nmb
+apache.htpasswd.file = /home/git/htpasswd.git
+
+; ---------------------
+; Logging Configuration
+;
+; - log.file    : /path/to/forgery.log file
+; - log.level   : loggin level: debug, info, warn, error
+; ---------------------
+log.file = /home/git/www/logs/forgery.log
+log.level = debug
+
+; --------------------
+; Tables Configuration
+;
+; DO NOT EDIT
+; ---------------------
+users.table = users
+users.ssh_keys.table = users_ssh_keys
+repos.table = repositories
+repos.accesses.table = accesses
 acls.table.roles = acls_roles
 acls.table.resources = acls_resources
 acls.table.permissions = acls_permissions
 
-apache.htpasswd.bin = htpasswd -nmb
-apache.htpasswd.file = /home/git/htpasswd.git
-
-log.file = /home/git/www/logs/forgery.log
-log.level = debug
+[fwk]
+requestMatcherService = requestMatcher
+resultTypeService = resultTypeService
+viewHelperService = viewHelper
+urlRewriterService = urlRewriter
+consoleService = consoleApp
+sessionService = session

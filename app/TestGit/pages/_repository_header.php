@@ -16,7 +16,7 @@
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-cog"></i></a>
                   <ul class="dropdown-menu">
                     <?php if ($this->_helper->isAllowed('repository', 'create') && $this->_helper->isAllowed($this->entity, 'read')): ?>
-                    <li><a href="<?php echo $this->_helper->url('Fork', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-random"></i> Fork</a></li>
+                    <li><a href="<?php echo $this->_helper->url('Fork', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-retweet"></i> Fork</a></li>
                     <?php endif; ?>
                     <?php if ($this->_helper->isAllowed($this->entity, 'admin')): ?>
                     <li><a href="<?php echo $this->_helper->url('Settings', array('name' => $this->entity->getFullname())); ?>"><i class="glyphicon glyphicon-cog"></i> Settings</a></li>
