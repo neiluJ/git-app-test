@@ -23,7 +23,7 @@
     <table class="table table-striped" style="margin-top:20px;">
         <thead>
           <tr>
-            <th style="width: 35px;">&nbsp;</th>
+            <th style="width: 48px;">&nbsp;</th>
             <th style="width: 280px;">Repository</th>
             <th style="width: 120px;">Owner</th>
             <th style="width: 130px;">Last Update</th>
@@ -33,7 +33,11 @@
         </thead>
         <tbody>
           <tr ng-repeat="repo in repositories | filter:query">
-            <td><i class="glyphicon glyphicon-list"></i></td>
+            <td>
+                <i ng-if="!repo.fork" class="glyphicon glyphicon-list"></i>
+                <i ng-if="repo.fork" class="glyphicon glyphicon-retweet"></i>
+                 <i ng-if="repo.private" class="glyphicon glyphicon-lock"></i>
+            </td>
             <td><a href="<?php echo rtrim($vh->url(), '/'); ?>/Repository.action?name={{ repo.fullname }}">{{ repo.name }}</a></td>
             <td><a href="<?php echo rtrim($vh->url(), '/'); ?>/Profile.action?username={{ repo.ownerName }}">{{ repo.ownerName }}</a></td>
             <td>{{ repo.lastCommit.date }}</td>

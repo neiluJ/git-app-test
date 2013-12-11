@@ -75,6 +75,8 @@ class Repositories implements ServicesAware
             $infos = array(
                 'name'  => $repo->getName(),
                 'description' => $repo->getDescription(),
+                'fork'      => $repo->getParent_id() === null ? false : true,
+                'private'   => $repo->isPrivate(),
                 'value'  => $repo->getFullname(),
                 'tokens'  => array($repo->getFullname(), $repo->getOwner()->getUsername(), $repo->getName()),
                 'url'   => $this->getServices()->get('viewHelper')->url('Repository', array('name' => $repo->getFullname()))
@@ -95,6 +97,8 @@ class Repositories implements ServicesAware
                 'name'  => $repo->getName(),
                 'ownerName' => $repo->getOwner()->getUsername(),
                 'fullname'  => $repo->getFullname(),
+                'private'   => $repo->isPrivate(),
+                'fork'      => ($repo->getParent_id() === null ? false : true), 
                 'size'  => 0,
                 'lastCommit' => array(
                     'message'   => $repo->getLast_commit_msg(),

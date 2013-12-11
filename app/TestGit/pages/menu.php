@@ -44,7 +44,7 @@ $(document).ready(function() {
         name: 'repositoris',
         prefetch: {url: "<?php echo $this->_helper->url('SearchRepositories'); ?>", ttl: 5, filter: function(obj) { return obj.searchResults; }},
          template: [
-        '<p class="repo-name"><i class="glyphicon glyphicon-list"></i> {{value}}</p>',
+        '<p class="repo-name"><i class="glyphicon glyphicon-{{#fork}}retweet{{/fork}}{{^fork}}list{{/fork}}"></i>{{#private}} <i class="glyphicon glyphicon-lock"></i> {{/private}} {{value}}</p>',
         '<p class="repo-desc">{{description}}</p>',
         ].join(''),
         engine: Hogan,
@@ -63,7 +63,7 @@ $(document).ready(function() {
         ].join(''),
         engine: Hogan,
         valueKey: "name",
-        limit:10,
+        limit:5,
         header: '<span class="dropdown-header">COMMITS</span>'
       },
     ]).bind('typeahead:selected', function (obj, datum) {

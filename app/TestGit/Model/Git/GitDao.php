@@ -417,7 +417,7 @@ class GitDao extends DaoBase
                 ->from($this->getOption('commitsTable'))
                 ->entity(self::ENTITY_COMMIT)
                 ->orderBy('committerDate', 'desc')
-                ->limit(15)
+                ->limit(8)
                 ;
         
         $params = array();

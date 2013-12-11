@@ -20,7 +20,7 @@
     <?php elseif ($activity->type == Activity::REPO_FORK): ?>
     <li class="fork">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
-        <i class="glyphicon glyphicon-random"></i> 
+        <i class="glyphicon glyphicon-retweet"></i> 
         <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
         forked repository <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->obj->getTargetName())); ?>"><?php echo $activity->obj->getTargetName(); ?></a></strong> to <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
     </li>
