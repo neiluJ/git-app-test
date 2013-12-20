@@ -266,9 +266,10 @@ INSERT INTO `repositories` (`id`, `owner_id`, `type`, `public`, `parent_id`, `na
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `type` varchar(20) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'user',
   `username` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
   `slug` varchar(15) COLLATE utf8_unicode_ci NOT NULL,
-  `password` blob NOT NULL,
+  `password` blob,
   `http_password` varchar(120) COLLATE utf8_unicode_ci DEFAULT NULL,
   `email` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `date_registration` datetime NOT NULL,
@@ -280,8 +281,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `slug` (`slug`),
   UNIQUE KEY `email` (`email`),
-  KEY `active` (`active`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=52 ;
+  KEY `active` (`active`),
+  KEY `type` (`type`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
 
 --
 -- Dumping data for table `users`

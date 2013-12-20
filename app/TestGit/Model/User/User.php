@@ -13,7 +13,11 @@ use Zend\Permissions\Acl\Resource\ResourceInterface;
 class User implements UserInterface, PasswordAware, 
     AclAware, ResourceInterface 
 {
+    const TYPE_USER = 'user';
+    const TYPE_ORG  = 'organization';
+    
     protected $id;
+    protected $type;
     protected $username;
     protected $password;
     protected $http_password;
@@ -158,14 +162,24 @@ class User implements UserInterface, PasswordAware,
         $this->active = $active;
     }
 
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    public function setType($type)
+    {
+        $this->type = $type;
+    }
+
     public function getRoleId()
     {
-        return 'user:'. $this->username;
+        return ($this->isUser() ? 'user' : 'organization') . ':'. $this->username;
     }
     
     public function getResourceId()
     {
-        return 'user:'. $this->username;
+        return ($this->isUser() ? 'user' : 'organization') .':'. $this->username;
     }
 
     public function getRoles()
@@ -173,7 +187,6 @@ class User implements UserInterface, PasswordAware,
         $this->rolesRelation->fetch();
         return $this->rolesRelation->toArray();
     }
-    
     
     /**
      *
@@ -221,5 +234,15 @@ class User implements UserInterface, PasswordAware,
     public function getAccesses()
     {
         return $this->accesses;
+    }
+    
+    public function isOrganization()
+    {
+        return $this->type === self::TYPE_ORG;
+    }
+    
+    public function isUser()
+    {
+        return $this->type === self::TYPE_USER;
     }
 }
