@@ -7,7 +7,7 @@ use Fwk\Form\Filter;
  */
 class RepoNameFilter implements Filter
 {
-    const REPO_REGEX = '/^[^\-][a-z0-9\-\_]+$/';
+    const REPO_REGEX = '/^[^\-][a-z0-9\-\_]+$/i';
     
     /**
      * 

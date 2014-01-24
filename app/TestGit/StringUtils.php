@@ -29,6 +29,6 @@ class StringUtils
         $stripped = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $text);
 
         // -- Returns the slug
-        return strtolower(strtr($text, $table));
+        return strtr($text, $table);
     }
 }
