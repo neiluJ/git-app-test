@@ -220,7 +220,7 @@ class UsersDao extends Dao implements Provider
         $user->setActive(1);
         $user->setDate_registration(date("Y-m-d H:i:s"));
         $user->setEmail($email);
-        
+        $user->setType(BaseUser::TYPE_USER);
         // generate password
         $this->updatePassword($user, $password, $uService);
         $user->getRolesRelation()->addAll($roles);

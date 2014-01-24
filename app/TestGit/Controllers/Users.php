@@ -178,7 +178,7 @@ class Users extends Repository implements ContextAware
             if ($form->has('role_staff') && $form->role_staff && $findRole('staff')) {
                 $extrasRoles[] = 'staff';
             }
-            if ($form->has('role_admin') && $form->role_admin && $findRole('admin')) {
+            if ($form->has('role_admin') && $form->role_admin && $findRole('root')) {
                 $extrasRoles[] = 'root';
             }
             
@@ -407,7 +407,7 @@ class Users extends Repository implements ContextAware
             if (!$findRole('staff')) {
                 $this->addUserForm->remove('role_staff');
             }
-            if (!$findRole('admin')) {
+            if (!$findRole('root')) {
                 $this->addUserForm->remove('role_admin');
             }
         }

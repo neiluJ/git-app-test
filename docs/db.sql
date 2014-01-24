@@ -1,23 +1,25 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.8
+-- version 3.5.6
 -- http://www.phpmyadmin.net
 --
--- Client: 127.0.0.1
--- Généré le : Mar 05 Novembre 2013 à 00:38
--- Version du serveur: 5.5.34
--- Version de PHP: 5.3.10-1ubuntu3.8
+-- Host: 192.168.210.12
+-- Generation Time: Jan 24, 2014 at 01:53 PM
+-- Server version: 5.1.71
+-- PHP Version: 5.4.6-1ubuntu1.4
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT=0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 --
--- Base de données: `forgery`
+-- Database: `gitapp`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `accesses`
+-- Table structure for table `accesses`
 --
 
 CREATE TABLE IF NOT EXISTS `accesses` (
@@ -33,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `accesses` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `acls_permissions`
+-- Table structure for table `acls_permissions`
 --
 
 CREATE TABLE IF NOT EXISTS `acls_permissions` (
@@ -46,19 +48,24 @@ CREATE TABLE IF NOT EXISTS `acls_permissions` (
   KEY `role` (`role`),
   KEY `resource` (`resource`),
   KEY `role_resource` (`role`,`resource`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Contenu de la table `acls_permissions`
+-- Dumping data for table `acls_permissions`
 --
 
 INSERT INTO `acls_permissions` (`id`, `role`, `resource`, `type`, `permission`) VALUES
-(2, 'user', NULL, 'allow', 'view');
+(2, 'guest', NULL, 'deny', 'view'),
+(3, 'repo_create', 'repository', 'allow', 'create'),
+(4, 'root', NULL, 'allow', NULL),
+(5, 'staff', 'users', 'allow', NULL),
+(6, 'staff', 'user', 'allow', 'edit'),
+(7, 'staff', 'repository', 'allow', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `acls_resources`
+-- Table structure for table `acls_resources`
 --
 
 CREATE TABLE IF NOT EXISTS `acls_resources` (
@@ -71,10 +78,19 @@ CREATE TABLE IF NOT EXISTS `acls_resources` (
   KEY `sort` (`sort`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
+--
+-- Dumping data for table `acls_resources`
+--
+
+INSERT INTO `acls_resources` (`resource`, `description`, `parent`, `sort`) VALUES
+('repository', 'Repository resource', NULL, 0),
+('user', 'User resource', NULL, 0),
+('users', 'Users resource', NULL, 0);
+
 -- --------------------------------------------------------
 
 --
--- Structure de la table `acls_roles`
+-- Table structure for table `acls_roles`
 --
 
 CREATE TABLE IF NOT EXISTS `acls_roles` (
@@ -90,12 +106,12 @@ CREATE TABLE IF NOT EXISTS `acls_roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Contenu de la table `acls_roles`
+-- Dumping data for table `acls_roles`
 --
 
 INSERT INTO `acls_roles` (`role`, `description`, `parent`, `sort`, `default`) VALUES
-('email_not_verified', 'tells a user haven''t verified his email address yet', NULL, 99, 1),
 ('guest', 'Guest role', NULL, 0, 0),
+('repo_create', 'Create and Delete repositories', NULL, 0, 0),
 ('root', 'Administrator', NULL, 3, 0),
 ('staff', 'Staff role', 'user', 2, 0),
 ('user', 'Logged in user role', 'guest', 1, 1);
@@ -103,9 +119,112 @@ INSERT INTO `acls_roles` (`role`, `description`, `parent`, `sort`, `default`) VA
 -- --------------------------------------------------------
 
 --
--- Structure de la table `repositories`
+-- Table structure for table `activities`
 --
 
+CREATE TABLE IF NOT EXISTS `activities` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) NOT NULL,
+  `repositoryId` int(11) DEFAULT NULL,
+  `repositoryName` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `targetId` int(11) DEFAULT NULL,
+  `targetName` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `targetUrl` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `type` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
+  `message` text COLLATE utf8_unicode_ci,
+  `createdOn` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
+  KEY `repositoryId` (`repositoryId`),
+  KEY `targetId` (`targetId`),
+  KEY `createdOn` (`createdOn`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `commits`
+--
+
+CREATE TABLE IF NOT EXISTS `commits` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `hash` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  `repositoryId` int(11) NOT NULL,
+  `pushId` int(11) NOT NULL,
+  `authorName` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `authorEmail` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `authorDate` datetime NOT NULL,
+  `authorId` int(11) DEFAULT NULL,
+  `committerName` int(11) DEFAULT NULL,
+  `committerEmail` int(11) NOT NULL,
+  `committerDate` datetime NOT NULL,
+  `committerId` int(11) DEFAULT NULL,
+  `message` text COLLATE utf8_unicode_ci NOT NULL,
+  `indexDate` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `hash` (`hash`,`repositoryId`),
+  KEY `pushId` (`pushId`),
+  KEY `authorId` (`authorId`),
+  KEY `committerId` (`committerId`),
+  KEY `repositoryId` (`repositoryId`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `commits_refs`
+--
+
+CREATE TABLE IF NOT EXISTS `commits_refs` (
+  `commitId` int(11) NOT NULL,
+  `refId` int(11) NOT NULL,
+  PRIMARY KEY (`commitId`,`refId`),
+  KEY `refId` (`refId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pushes`
+--
+
+CREATE TABLE IF NOT EXISTS `pushes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `userId` int(11) DEFAULT NULL,
+  `username` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `repositoryId` int(11) NOT NULL,
+  `createdOn` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `userId` (`userId`),
+  KEY `repositoryId` (`repositoryId`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `refs`
+--
+
+CREATE TABLE IF NOT EXISTS `refs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `type` varchar(10) COLLATE utf8_unicode_ci NOT NULL,
+  `fullname` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `repositoryId` int(11) NOT NULL,
+  `pushId` int(11) NOT NULL,
+  `createdOn` datetime NOT NULL,
+  `commitHash` varchar(40) COLLATE utf8_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `repositoryId` (`repositoryId`),
+  KEY `pushId` (`pushId`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `repositories`
+--
 
 CREATE TABLE IF NOT EXISTS `repositories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -114,9 +233,9 @@ CREATE TABLE IF NOT EXISTS `repositories` (
   `public` tinyint(1) NOT NULL,
   `parent_id` int(11) DEFAULT NULL,
   `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-  `fullname` varchar( 255 ) COLLATE utf8_unicode_ci NOT NULL,
+  `fullname` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `description` varchar(512) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `website` varchar( 200 ) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `website` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
   `path` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `default_branch` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'master',
   `created_at` datetime NOT NULL,
@@ -132,21 +251,19 @@ CREATE TABLE IF NOT EXISTS `repositories` (
   KEY `parent_id` (`parent_id`),
   KEY `owner_id` (`owner_id`),
   KEY `last_commit` (`last_commit_date`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci  ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Contenu de la table `repositories`
+-- Dumping data for table `repositories`
 --
 
-INSERT INTO `repositories` (`id`, `owner_id`, `type`, `public`, `parent_id`, `name`, `description`, `path`, `created_at`, `last_commit_date`, `last_commit_hash`, `last_commit_author`, `last_commit_msg`, `watchers`, `forks`, `languages`) VALUES
-(3, 45, 'private', 1, NULL, 'Core', 'ohyeah', 'neiluJ2/Core.git', '2013-04-10 23:54:56', NULL, NULL, NULL, NULL, 0, 0, NULL),
-(23, 45, 'public', 1, NULL, 'forgery', 'Forgery main repository', 'neiluJ2/forgery.git', '2013-04-26 02:58:23', NULL, NULL, NULL, NULL, 0, 0, NULL),
-(24, 45, 'repository', 1, NULL, 'symfony', 'Symfony fork', 'neiluJ2/symfony.git', '2013-05-02 00:37:10', NULL, NULL, NULL, NULL, 0, 0, NULL);
+INSERT INTO `repositories` (`id`, `owner_id`, `type`, `public`, `parent_id`, `name`, `fullname`, `description`, `website`, `path`, `default_branch`, `created_at`, `last_commit_date`, `last_commit_hash`, `last_commit_author`, `last_commit_msg`, `watchers`, `forks`, `languages`) VALUES
+(1, NULL, 'repository', 0, NULL, 'gitolite-admin', 'gitolite-admin', 'Gitolite Admin Repository', NULL, 'gitolite-admin.git', 'master', NOW(), NULL, NULL, NULL, NULL, 0, 0, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE IF NOT EXISTS `users` (
@@ -166,19 +283,19 @@ CREATE TABLE IF NOT EXISTS `users` (
   UNIQUE KEY `slug` (`slug`),
   UNIQUE KEY `email` (`email`),
   KEY `active` (`active`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Contenu de la table `users`
+-- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `slug`, `password`, `email`, `date_registration`, `date_activation`, `hash`, `active`, `fullname`) VALUES
-(45, 'neiluJ2', 'neiluJ2', 0x4212262fc9b03ad1cdfb9f5a9452220ed6d652f158903599b55ffdfa555c79b38d3d31616c85fd3fd59c819f0777c9c9953ddf617f22b79f8f1ec410fb0ef75f6f7a5034ecc632c782fed64b065d7ffad238221bbaf98896903757912528e7ef57acb636d637fa46641c3739d32bfd088be1b7902af7837db9e161d4394145b3b8362161434abeb46c56fbb92df583e4d9ede15c6632f1ce422e28179a67790089da50713a107b3d18a278e7038e89b73fb6511873ab98750558400a138fc576b0e48f5013eef1ed23d1d3511ed6ae43a67e0604b4cc9fa566a9b242836093dc878b6326571863ce80d12e68d854d13f5593020610091b52a9edee00e5db7adc, 'julien@nitronet.org', '2013-02-04 00:00:26', NULL, NULL, 1, 'Julien Ballestracci');
+INSERT INTO `users` (`id`, `username`, `slug`, `password`, `http_password`, `email`, `date_registration`, `date_activation`, `hash`, `active`, `fullname`) VALUES
+(1, 'user', 'admin', 'admin', 0xf2b73e13710499d51afb6946adc41c1450c25149ae9500a678c468df532f6126c7eb3daaab141381fadad05e95128f699b30779a179728421726141a9f671aa265fee13ff488f0b2eda9d4897401e5d6725990f018523909e86393f4eeeacceb6e058af6b8cda6e7b7905dc893976ac2b83296ed0a1538b1d28d1f3b4b02be1df7abe7f40e39f2641631c37e2d5a52ae70b5c1b730721632f2b11db4ac6cb24972e72d65f2f9b0c4a0f0efe44c275616a7d46e18ef1cc312601465d0267701963b20ffae0f69c75ebfd28a652de5a387c40cbaed338ac6bbba098948240715a5ef46643294e188ced7a655773d232f6057c1bf4d9d3eab4775187baa11fccf84, '$apr1$.od95WXr$LQsYopoRTjum8Cdbei3P3.', 'admin@nitronet.org', '2014-01-24 13:18:15', NULL, NULL, 1, NULL);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `users_roles`
+-- Table structure for table `users_roles`
 --
 
 CREATE TABLE IF NOT EXISTS `users_roles` (
@@ -189,17 +306,19 @@ CREATE TABLE IF NOT EXISTS `users_roles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Contenu de la table `users_roles`
+-- Dumping data for table `users_roles`
 --
 
 INSERT INTO `users_roles` (`user_id`, `role`) VALUES
-(45, 'email_not_verified'),
-(45, 'user');
+(1, 'repo_create'),
+(1, 'root'),
+(1, 'staff'),
+(1, 'user');
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `users_ssh_keys`
+-- Table structure for table `users_ssh_keys`
 --
 
 CREATE TABLE IF NOT EXISTS `users_ssh_keys` (
@@ -213,54 +332,86 @@ CREATE TABLE IF NOT EXISTS `users_ssh_keys` (
   UNIQUE KEY `user_id_2` (`user_id`,`title`),
   UNIQUE KEY `user_id_3` (`user_id`,`hash`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=14 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
--- Contenu de la table `users_ssh_keys`
---
-
-INSERT INTO `users_ssh_keys` (`id`, `user_id`, `title`, `contents`, `hash`, `created_on`) VALUES
-(13, 45, 'homy', 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCgy+FOMWscmMa5Htray1vKXVeUg87gwpOxr8eardH+3Q05nJGC3RRJuqH6Iw8MWdVO57nccRv1uul3fZPn/YI9XaLubPNjWVLxEMkR3gAm88RYCvY2w/HGWUmfM3/MUBIL61fKPyB1e4con4m/Y8YrCtXsu2Lg2L38F7yCSMpEeL7Fj3rRYqc41YZvYMCVbYig/KdrqlasnmMVFSExARCBHaOy7+L73VpFR8qsrna58TUEa5WVoDdJLlacHQX/1snCQVSBlX47kmKxoILhRXILIvzExJJt6Us4S1f7vYCoii357mx8NlKKbCXzrFmVKPamAMcRBcp6fS0/zxANRi11 neiluj@homer', '64881002ec2f71f96292c5d27f01fd1a', '2013-04-07 23:29:29');
-
---
--- Contraintes pour les tables exportées
+-- Constraints for dumped tables
 --
 
 --
--- Contraintes pour la table `acls_permissions`
+-- Constraints for table `acls_permissions`
 --
 ALTER TABLE `acls_permissions`
   ADD CONSTRAINT `acls_permissions_ibfk_1` FOREIGN KEY (`role`) REFERENCES `acls_roles` (`role`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `acls_permissions_ibfk_2` FOREIGN KEY (`resource`) REFERENCES `acls_resources` (`resource`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `acls_resources`
+-- Constraints for table `acls_resources`
 --
 ALTER TABLE `acls_resources`
   ADD CONSTRAINT `acls_resources_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `acls_resources` (`resource`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `acls_roles`
+-- Constraints for table `acls_roles`
 --
 ALTER TABLE `acls_roles`
   ADD CONSTRAINT `acls_roles_ibfk_1` FOREIGN KEY (`parent`) REFERENCES `acls_roles` (`role`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `repositories`
+-- Constraints for table `activities`
+--
+ALTER TABLE `activities`
+  ADD CONSTRAINT `activities_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `activities_ibfk_2` FOREIGN KEY (`repositoryId`) REFERENCES `repositories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `activities_ibfk_3` FOREIGN KEY (`targetId`) REFERENCES `repositories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `commits`
+--
+ALTER TABLE `commits`
+  ADD CONSTRAINT `commits_ibfk_1` FOREIGN KEY (`pushId`) REFERENCES `pushes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `commits_ibfk_2` FOREIGN KEY (`authorId`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `commits_ibfk_3` FOREIGN KEY (`committerId`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `commits_ibfk_4` FOREIGN KEY (`repositoryId`) REFERENCES `repositories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `commits_refs`
+--
+ALTER TABLE `commits_refs`
+  ADD CONSTRAINT `commits_refs_ibfk_1` FOREIGN KEY (`commitId`) REFERENCES `commits` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `commits_refs_ibfk_2` FOREIGN KEY (`refId`) REFERENCES `refs` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `pushes`
+--
+ALTER TABLE `pushes`
+  ADD CONSTRAINT `pushes_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `pushes_ibfk_2` FOREIGN KEY (`repositoryId`) REFERENCES `repositories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `refs`
+--
+ALTER TABLE `refs`
+  ADD CONSTRAINT `refs_ibfk_1` FOREIGN KEY (`repositoryId`) REFERENCES `repositories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `refs_ibfk_2` FOREIGN KEY (`pushId`) REFERENCES `pushes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `repositories`
 --
 ALTER TABLE `repositories`
   ADD CONSTRAINT `repositories_ibfk_1` FOREIGN KEY (`owner_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `repositories_ibfk_2` FOREIGN KEY (`parent_id`) REFERENCES `repositories` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
--- Contraintes pour la table `users_roles`
+-- Constraints for table `users_roles`
 --
 ALTER TABLE `users_roles`
   ADD CONSTRAINT `users_roles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `users_roles_ibfk_2` FOREIGN KEY (`role`) REFERENCES `acls_roles` (`role`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
--- Contraintes pour la table `users_ssh_keys`
+-- Constraints for table `users_ssh_keys`
 --
 ALTER TABLE `users_ssh_keys`
   ADD CONSTRAINT `users_ssh_keys_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+COMMIT;
