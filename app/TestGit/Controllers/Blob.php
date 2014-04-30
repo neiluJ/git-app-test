@@ -67,7 +67,7 @@ class Blob extends Commits implements ContextAware
         
         $tree = $commit->getTree();
         
-        if (null !== $this->path) {
+        if (null !== $this->path && $tree instanceof \Gitonomy\Git\Tree) {
             $tree = $tree->resolvePath($this->path);
         }
         
