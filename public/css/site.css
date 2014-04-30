@@ -426,11 +426,10 @@ h1 span.fork a {
     color: #999;
 }
 .adv-search {
-    margin-top: 8px;
     margin-left: 10px;
-    float:right;
     font-size: 12px;
     color: #ccc;
+    display:inline-block;
 }
 a.adv-search:hover, a.adv-search:active, a.adv-search:focus {
     color: #ccc;
