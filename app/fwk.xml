@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <fwk id="TestApp" version="1.0-dev">
+    <ini>:baseDir/config.ini</ini>
+    
+    <services xml=":baseDir/services.xml" />
+    
     <listener class="Fwk\Core\Components\RequestMatcher\RequestMatcherListener">
         <param>:requestMatcherService</param>
     </listener>

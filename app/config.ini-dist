@@ -102,10 +102,11 @@ apache.htpasswd.file = /home/git/htpasswd.git
 ; Logging Configuration
 ;
 ; - log.file    : /path/to/forgery.log file
-; - log.level   : loggin level: debug, info, warn, error
+; - log.level   : 100 = debug, 200 = info, 250 = notice, 300 = warning, 
+;               : 400 = error, 500 = critical
 ; ---------------------
 log.file = /home/git/www/logs/forgery.log
-log.level = debug
+log.level = 100
 
 ; --------------------
 ; Tables Configuration

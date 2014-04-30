@@ -103,7 +103,7 @@ class Repositories implements ServicesAware
                 'lastCommit' => array(
                     'message'   => $repo->getLast_commit_msg(),
                     'author'    => $repo->getLast_commit_author(),
-                    'date'      => $date->format($this->getServices()->get('git.date.format')),
+                    'date'      => $date->format($this->getServices()->getProperty('git.date.format')),
                     'hash'      => $repo->getLast_commit_hash()
                 )
             );

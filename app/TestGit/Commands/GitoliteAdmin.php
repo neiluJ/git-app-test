@@ -75,7 +75,7 @@ class GitoliteAdmin extends Gitolite
     
     protected function cloneAdminRepository($targetDir, OutputInterface $output)
     {
-        $fullClone      = 'git@'. $this->getServices()->get('git.clone.hostname')
+        $fullClone      = 'git@'. $this->getServices()->getProperty('git.clone.hostname')
                         . ':' . 'gitolite-admin.git';
         
         $output->write("Cloning admin repository... ");

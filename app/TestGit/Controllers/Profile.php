@@ -28,7 +28,7 @@ class Profile extends Repositories implements Preparable, ContextAware
     
     public function prepare()
     {
-        $this->dateFormat = $this->getServices()->get('git.date.format');
+        $this->dateFormat = $this->getServices()->getProperty('git.date.format');
     }
 
     public function show()

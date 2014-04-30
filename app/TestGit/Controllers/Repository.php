@@ -264,32 +264,32 @@ class Repository implements ContextAware, ServicesAware, Preparable
         
         $this->cloneSshUrl = sprintf(
             '%s@%s:%s', 
-            $sc->get('git.user.name'),
-            $sc->get('git.clone.hostname.ssh.remote'),
+            $sc->getProperty('git.user.name'),
+            $sc->getProperty('git.clone.hostname.ssh.remote'),
             $this->entity->getPath()
         );
         
-        if ((int)$sc->get('git.clone.http') <= 0) {
+        if ((int)$sc->getProperty('git.clone.http') <= 0) {
             return Result::SUCCESS;
         }
         
         $this->cloneHttpUrl = sprintf(
             'http%s://%s/%s/%s',
-             ((int)$sc->get('git.clone.https') > 0 ? 's' : ''),
-             $sc->get('git.clone.hostname.http.remote'),
-             $sc->get('git.clone.http.prefix'),
+             ((int)$sc->getProperty('git.clone.https') > 0 ? 's' : ''),
+             $sc->getProperty('git.clone.hostname.http.remote'),
+             $sc->getProperty('git.clone.http.prefix'),
              $this->entity->getPath()   
         );
         
-        $prefix = $sc->get('git.clone.http.prefix.public');
+        $prefix = $sc->getProperty('git.clone.http.prefix.public');
         if (empty($prefix) || $this->entity->isPrivate()) {
             return Result::SUCCESS;
         }
         
         $this->clonePublicUrl = sprintf(
              'http%s://%s/%s/%s',
-             ((int)$sc->get('git.clone.https') > 0 ? 's' : ''),
-             $sc->get('git.clone.hostname.http.remote'),
+             ((int)$sc->getProperty('git.clone.https') > 0 ? 's' : ''),
+             $sc->getProperty('git.clone.hostname.http.remote'),
              $prefix,
              $this->entity->getPath()   
         );
@@ -369,13 +369,13 @@ class Repository implements ContextAware, ServicesAware, Preparable
             $acl->addResource($this->entity, 'repository');
         }
         
-        if ((int)$this->getServices()->get('git.clone.http') <= 0) {
+        if ((int)$this->getServices()->getProperty('git.clone.http') <= 0) {
             $allowHttp = false;
         } else {
             $allowHttp = true;
         }
          
-        $publicPrefix = $this->getServices()->get('git.clone.http.prefix.public');
+        $publicPrefix = $this->getServices()->getProperty('git.clone.http.prefix.public');
         if ($this->entity->isPrivate()) {
             $acl->deny(null, $this->entity);
         } elseif ($allowHttp && !empty($publicPrefix)) {

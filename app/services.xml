@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependency-injection>
+    <ini category="services">:baseDir/config.ini</ini>
+    
+    <class-definition name="requestMatcher" class="Fwk\Core\Components\RequestMatcher\RequestMatcher" shared="true" />
+    <class-definition name="urlRewriter" class="Fwk\Core\Components\UrlRewriter\UrlRewriterService" shared="true" />
+    <class-definition name="resultTypeService" class="Fwk\Core\Components\ResultType\ResultTypeService" shared="true" />
+    <class-definition name="_vh.embed" class="Fwk\Core\Components\ViewHelper\EmbedViewHelper" shared="true" />
+    <class-definition name="_vh.url" class="Fwk\Core\Components\UrlRewriter\UrlViewHelper" shared="true">
+        <argument>requestMatcher</argument>
+        <argument>urlRewriter</argument>
+    </class-definition>
+    <class-definition name="_vh.escape" class="Fwk\Core\Components\ViewHelper\EscapeViewHelper" shared="true" />
+    
+    <!-- GIT APP Specific ViewHelpers -->
+    <class-definition name="_vh.form" class="TestGit\Form\RendererViewHelper" shared="true">
+        <argument>formRenderer</argument>
+    </class-definition>
+    <class-definition name="_vh.formElement" class="TestGit\Form\RendererElementViewHelper" shared="true">
+        <argument>formRenderer</argument>
+    </class-definition>
+    <class-definition name="_vh.allowed" class="TestGit\SecurityViewHelper" shared="true">
+        <argument>security</argument>
+        <argument>guest</argument>
+    </class-definition>
+    
+    <class-definition name="viewHelper" class="Fwk\Core\Components\ViewHelper\ViewHelperService" shared="true">
+        <call method="add">
+            <argument>embed</argument>
+            <argument>@_vh.embed</argument>
+        </call>
+        <call method="add">
+            <argument>url</argument>
+            <argument>@_vh.url</argument>
+        </call>
+        <call method="add">
+            <argument>escape</argument>
+            <argument>@_vh.escape</argument>
+        </call>
+        <call method="add">
+            <argument>asset</argument>
+            <argument>@_vh.AsseticViewHelper</argument>
+        </call>
+        <call method="add">
+            <argument>form</argument>
+            <argument>@_vh.form</argument>
+        </call>
+        <call method="add">
+            <argument>formElement</argument>
+            <argument>@_vh.formElement</argument>
+        </call>
+        <call method="add">
+            <argument>isAllowed</argument>
+            <argument>@_vh.allowed</argument>
+        </call>
+    </class-definition>
+    
+    <!--
+        TWIG (fwk-twig)
+    -->
+    <array-definition name="twig.config">
+        <param key="debug">true</param>
+        <param key="cache">:packageDir/../cache</param>
+    </array-definition>
+    
+    <!-- Twig_Loader definition -->
+    <array-definition name="twig.paths">
+        <param>:packageDir/templates</param>
+    </array-definition>
+    
+    <class-definition name="twig.loader" class="\Twig_Loader_Filesystem" shared="true">
+        <argument>@twig.paths</argument>
+    </class-definition>
+
+    <!-- Twig_Environment definition -->
+    <class-definition name="twigDebugExt" class="\Twig_Extension_Debug" />
+    <class-definition name="twig" class="\Twig_Environment" shared="true">
+        <argument>@twig.loader</argument>
+        <argument>@twig.config</argument>
+        <call method="addExtension">
+            <argument>@twigDebugExt</argument>
+        </call>
+    </class-definition>
+    
+    <!--
+        ASSETIC (fwk-assetic)
+    -->
+    <class-definition name="assetic.CssRewriteFilter" class="FwkAssetic\Filters\CssRewriteFilter" shared="true">
+        <argument>@_vh.AsseticViewHelper</argument>
+    </class-definition>
+    <class-definition name="assetic.FilterManager" class="Assetic\FilterManager" shared="true">
+        <call method="set">
+            <argument>cssrewrite</argument>
+            <argument>@assetic.CssRewriteFilter</argument>
+        </call>
+    </class-definition>
+    <class-definition name="assetic.FilesystemCache" class="Assetic\Cache\FilesystemCache" shared="true">
+        <argument>:assetic.cache.directory</argument>
+    </class-definition>
+    <class-definition name="assetic.CacheBustingWorker" class="Assetic\Factory\Worker\CacheBustingWorker" shared="true">
+        <argument>:assetic.cache.strategy</argument>
+    </class-definition>
+    <class-definition name="assetic.AssetFactory" class="Assetic\Factory\AssetFactory" shared="true">
+        <argument>:assetic.assets.directory</argument>
+        <argument>:assetic.debug</argument>
+        <call method="setFilterManager">
+            <argument>@assetic.FilterManager</argument>
+        </call>
+        <!-- enable assetic cache -->
+        <call method="addWorker">
+            <argument>@assetic.CacheBustingWorker</argument>
+        </call>
+    </class-definition>
+    
+    <array-definition name="assetic.Shortcuts">
+        <param key="theme">:twig.templates.dir/assets</param>
+    </array-definition>
+    
+    <class-definition name="assetic" class="FwkAssetic\AssetsService" shared="true">
+        <argument>@assetic.AssetFactory</argument>
+        <argument>@assetic.FilesystemCache</argument>
+        <call method="addShortcuts">
+            <argument>@assetic.Shortcuts</argument>
+        </call>
+    </class-definition>
+    
+    <class-definition name="_vh.AsseticViewHelper" class="\FwkAssetic\AssetViewHelper" shared="true">
+        <argument>assetic</argument>
+        <argument>url</argument>
+        <argument>:assetic.debug</argument>
+        <argument>:assetic.action.name</argument>
+    </class-definition>
+    
+    <!--
+        CONSOLE
+    -->
+    <class-definition name="consoleApp" class="Symfony\Component\Console\Application" shared="true">
+        <argument>TestGit</argument>
+        <argument>1.0</argument>
+    </class-definition>
+    
+    <!--
+        GIT APP
+    -->
+    <class-definition name="git" class="TestGit\GitService" shared="true">
+        <argument>:repos.dir</argument>
+        <argument>:repos.working.dir</argument>
+        <argument>:git.executable</argument>
+        <argument>:git.date.format</argument>
+        <argument>:forgery.user.name</argument>
+        <argument>:forgery.user.email</argument>
+        <argument>:forgery.user.fullname</argument>
+        <argument>:git.user.name</argument>
+        <argument>:git.clone.hostname.ssh.local</argument>
+        <argument>@logger</argument>
+    </class-definition>
+    
+    <class-definition name="users" class="TestGit\\UsersService" shared="true">
+        <argument>:apache.htpasswd.bin</argument>
+    </class-definition>
+    
+    <class-definition name="gitolite" class="TestGit\GitoliteService" shared="true" />
+    
+    <!--
+        DATABASE & DAOs
+    -->
+    <array-definition name="db.config">
+        <param key="dbname">:db.database</param>
+        <param key="user">:db.user</param>
+        <param key="password">:db.password</param>
+        <param key="driver">:db.driver</param>
+        <param key="host">:db.hostname</param>
+    </array-definition>
+    
+    <class-definition name="db" class="Fwk\Db\Connection" shared="true">
+        <argument>@db.config</argument>
+    </class-definition>
+    
+    <array-definition name="dao.config.users">
+        <param key="usersTable">:users.table</param>
+        <param key="sshKeysTable">:users.ssh_keys.table</param>
+    </array-definition>
+    
+    <class-definition name="usersDao" class="TestGit\Model\User\UsersDao" shared="true">
+        <argument>@db</argument>
+        <argument>@dao.config.users</argument>
+        <call method="addListener">
+            <argument>@gitolite</argument>
+        </call>
+    </class-definition>
+    
+    <array-definition name="dao.config.acls">
+        <param key="rolesTable">:acls.table.roles</param>
+        <param key="resourcesTable">:acls.table.resources</param>
+        <param key="permissionsTable">:acls.table.permissions</param>
+    </array-definition>
+    
+    <class-definition name="aclsDao" class="TestGit\Model\User\AclDao" shared="true">
+        <argument>@db</argument>
+        <argument>@dao.config.acls</argument>
+    </class-definition>
+    
+    <array-definition name="dao.config.git">
+        <param key="repositoriesTable">:repos.table</param>
+        <param key="accessesTable">:repos.accesses.table</param>
+        <param key="repositoriesBasePath">:repos.basePath</param>
+    </array-definition>
+    
+    <class-definition name="gitdao.listener.commits" class="TestGit\Listeners\CommitsListener" />
+    <class-definition name="gitdao.listener.activity" class="TestGit\Listeners\StaticActivityListener" />
+    
+    <class-definition name="gitDao" class="TestGit\Model\Git\GitDao" shared="true">
+        <argument>@db</argument>
+        <argument>@dao.config.git</argument>
+        <call method="addListener">
+            <argument>@gitolite</argument>
+        </call>
+        <call method="addListener">
+            <argument>@gitdao.listener.commits</argument>
+        </call>
+        <call method="addListener">
+            <argument>@gitdao.listener.activity</argument>
+        </call>
+    </class-definition>
+    
+    <!--
+        SECURITY
+    -->
+    <class-definition name="securitySessionStorage" class="Fwk\Security\Http\SessionStorage" shared="true">
+        <argument>@session</argument>
+    </class-definition>
+    
+    <class-definition name="authManager" class="Fwk\Security\Authentication\Manager" shared="true">
+        <argument>@securitySessionStorage</argument>
+    </class-definition>
+    
+    <class-definition name="aclsManager" class="Fwk\Security\Acl\Manager" shared="true">
+        <argument>@aclsDao</argument>
+    </class-definition>
+    
+    <class-definition name="security.listener.loaduseracl" class="Fwk\Security\Acl\LoadUserAclListener" />
+    <class-definition name="security" class="Fwk\Security\Service" shared="true">
+        <argument>@authManager</argument>
+        <argument>@usersDao</argument>
+        <argument>@aclsManager</argument>
+        <call method="addListener">
+            <argument>@security.listener.loaduseracl</argument>
+        </call>
+    </class-definition>
+    
+    <class-definition name="authFilter" class="TestGit\Form\AuthenticationFilter">
+        <argument>@usersDao</argument>
+        <argument>@security</argument>
+    </class-definition>
+    
+    <!--
+        FORM
+    -->
+    <array-definition name="form.renderer.config">
+        <param key="resourcesDir">:packageDir/TestGit/pages/form</param>
+    </array-definition>
+    
+    <class-definition name="formRenderer" class="Fwk\Form\Renderer">
+        <argument>@form.renderer.config</argument>
+    </class-definition>
+    
+    <!--
+        MONOLOG
+    -->
+    <class-definition name="monolog.handler" class="Monolog\Handler\StreamHandler">
+        <argument>:log.file</argument>
+        <argument>:log.level</argument>
+    </class-definition>
+    <class-definition name="logger" class="Monolog\Logger" shared="true">
+        <argument>forgery</argument>
+        <call method="pushHandler">
+            <argument>@monolog.handler</argument>
+        </call>
+    </class-definition>
+    
+</dependency-injection>

@@ -22,14 +22,15 @@
         "symfony/console": "dev-master",
         "symfony/process": "dev-master",
         "fwk/form": "dev-master",
-        "monolog/monolog": "dev-master"
+        "monolog/monolog": "dev-master",
+        "nitronet/fwk-twig": "dev-master",
+        "nitronet/fwk-assetic": "dev-master"
     },
     "require-dev": {
-        "joseph-lenton/php-error": "dev-master"
+        "filp/whoops": "dev-master"
     },
     "autoload": {
         "psr-0": {
-            "Fwk\\Core": "vendor/fwk/core",
             "TestGit": "app"
         }
     }

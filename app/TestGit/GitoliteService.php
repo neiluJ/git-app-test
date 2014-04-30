@@ -21,7 +21,7 @@ class GitoliteService
         $logger = $event->getServices()->get('logger');
         $dao    = $event->getServices()->get('usersDao');
         $users  = $dao->findAll(true);
-        $file   = $event->getServices()->get('apache.htpasswd.file');
+        $file   = $event->getServices()->getProperty('apache.htpasswd.file');
         
         $logger->addInfo(sprintf('[onUserChangePassword] User "%s" changed password. Generating Apache htpasswd file (%s)', $event->getUser()->getUsername(), $file));
         
@@ -146,7 +146,7 @@ class GitoliteService
         
         $logger->addInfo(sprintf('[RepositoryEditEvent:%s] Repository edited by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $committer->getFullname()));
         
-        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->get('forgery.user.name'));
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
         $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
         
         if (!$gitoliteRepo instanceof Model\Git\Repository) {
@@ -190,7 +190,7 @@ class GitoliteService
         
         $logger->addInfo(sprintf('[onRepositoryCreate:%s] Repository created by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $owner->getFullname()));
         
-        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->get('forgery.user.name'));
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
         $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
         
         if (!$gitoliteRepo instanceof Model\Git\Repository) {
@@ -223,7 +223,7 @@ class GitoliteService
         $git->commit($gitoliteRepo, $owner, 'created repository '. $repo->getFullname());
         $git->push($gitoliteRepo);
         $git->createWorkdir($repo);
-        $git->installPostReceiveHook($repo, $event->getServices()->get('php.executable'));
+        $git->installPostReceiveHook($repo, $event->getServices()->getProperty('php.executable'));
     }
     
     public function onRepositoryFork(RepositoryForkEvent $event)
@@ -237,7 +237,7 @@ class GitoliteService
         
         $logger->addInfo(sprintf('[RepositoryForkEvent:%s] Repository created (forked from "%s") by "%s". Generating new gitolite.conf ...', $fork->getFullname(), $repo->getFullname(), $owner->getFullname()));
         
-        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->get('forgery.user.name'));
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
         $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
         
         if (!$gitoliteRepo instanceof Model\Git\Repository) {
@@ -273,7 +273,7 @@ class GitoliteService
         $git->remote($fork, 'add', 'fork', $git->getRepositoryPath($repo));
         $git->pull($fork, 'fork');
         $git->remote($fork, 'rm', 'fork');
-        $git->installPostReceiveHook($fork, $event->getServices()->get('php.executable'));
+        $git->installPostReceiveHook($fork, $event->getServices()->getProperty('php.executable'));
         $git->push($fork);
     }
     
@@ -287,7 +287,7 @@ class GitoliteService
         
         $logger->addInfo(sprintf('[RepositoryDeleteEvent:%s] Repository deleted by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $owner->getFullname()));
         
-        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->get('forgery.user.name'));
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
         $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
         
         if (!$gitoliteRepo instanceof Model\Git\Repository) {

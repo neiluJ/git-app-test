@@ -25,7 +25,7 @@ class RepoInstallHooks extends Command implements ServicesAware
         $dao = $this->getGitDao();
         try {
             $repository = $dao->findOne($input->getArgument('name'), GitDao::FIND_FULLNAME);
-            $this->getGitService()->installPostReceiveHook($repository, $this->getServices()->get('php.executable'));
+            $this->getGitService()->installPostReceiveHook($repository, $this->getServices()->getProperty('php.executable'));
         } catch(\Exception $exp) {
             $this->getApplication()->renderException($exp, $output);
             exit(2);
@@ -37,7 +37,7 @@ class RepoInstallHooks extends Command implements ServicesAware
     protected function getHookContents(\TestGit\Model\Git\Repository $repository)
     {
         $fullname   = $repository->getFullname();
-        $phpExec    = $this->getServices()->get('php.executable');
+        $phpExec    = $this->getServices()->getProperty('php.executable');
         $self       = realpath($_SERVER['SCRIPT_FILENAME']);
         
         $str = <<<EOF
