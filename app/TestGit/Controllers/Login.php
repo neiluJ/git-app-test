@@ -12,7 +12,7 @@ class Login extends Controller implements Preparable
     protected $back;
     
     /**
-     * The Login Form
+     * The Login Forms
      * 
      * @var LoginForm
      */

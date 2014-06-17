@@ -1,29 +1,14 @@
 <?php
 namespace Nitronet\Comments\Model;
 
-class Thread
+use Nitronet\Comments\ThreadInterface;
+
+class Thread implements ThreadInterface
 {
-    protected $id;
     protected $name;
     protected $open;
     protected $comments;
     protected $createdOn;
-
-    /**
-     * @param mixed $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
 
     /**
      * @param mixed $name
@@ -55,6 +40,11 @@ class Thread
     public function getOpen()
     {
         return $this->open;
+    }
+
+    public function isOpen()
+    {
+        return (bool)$this->open;
     }
 
     /**

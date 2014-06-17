@@ -1,0 +1,1 @@
+Error displaying comments thread: <?php echo htmlentities($this->error); ?>

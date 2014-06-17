@@ -31,7 +31,8 @@
     },
     "autoload": {
         "psr-0": {
-            "TestGit": "app"
+            "TestGit": "app",
+            "Nitronet\\Comments": "app"
         }
     }
 }

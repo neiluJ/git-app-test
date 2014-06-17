@@ -38,6 +38,11 @@
             <param name="templatesDir">:packageDir/TestGit/pages</param>
         </result-type>
         <result-type
+                name="php.comments"
+                class="Fwk\Core\Components\ResultType\PhpTemplateResultType">
+            <param name="templatesDir">:packageDir/Nitronet/Comments/templates</param>
+        </result-type>
+        <result-type
             name="json"
             class="Fwk\Core\Components\ResultType\JsonResultType"
         />
@@ -480,6 +485,20 @@
                 <param name="actionName">Error</param>
                 <param name="errorMsg">:errorMsg</param>
             </result>
+        </action>
+
+        <action name="CommentsThread" shortcut="Nitronet\Comments\Controllers\Thread:show">
+            <acl type="allow" role="" />
+            <result name="error" type="php.comments">
+                <param name="file">thread_error.php</param>
+            </result>
+            <result name="success" type="php.comments">
+                <param name="file">thread.php</param>
+            </result>
+        </action>
+
+        <action name="CommentsCount" shortcut="Nitronet\Comments\Controllers\Thread:countComments">
+            <acl type="allow" role="" />
         </action>
     </actions>
     

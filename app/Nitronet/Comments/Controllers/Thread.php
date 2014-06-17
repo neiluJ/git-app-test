@@ -1,0 +1,100 @@
+<?php
+namespace Nitronet\Comments\Controllers;
+
+use Fwk\Core\Action\Controller;
+use Nitronet\Comments\CommentsService;
+use Fwk\Core\Action\Result;
+use Nitronet\Comments\ThreadInterface;
+
+class Thread extends Controller
+{
+    const SORT_ASC = 'asc';
+    const SORT_DESC = 'desc';
+
+    const TYPE_NORMAL = 'normal';
+    const TYPE_THREADED = 'threaded';
+
+    public $id;
+    public $sort = self::SORT_ASC;
+    public $type = self::TYPE_NORMAL;
+
+    protected $thread;
+    protected $error;
+    protected $comments = array();
+
+    public function show()
+    {
+        if (empty($this->id)) {
+            $this->error = "Empty thread id";
+            return Result::ERROR;
+        }
+
+        $service = $this->getService();
+        $this->thread = $service->getThread($this->id);
+        if (!$this->thread) {
+            $this->error = "Thread does not exists";
+            return Result::ERROR;
+        }
+
+        if (!in_array($this->type, array(self::TYPE_NORMAL, self::TYPE_THREADED))) {
+            $this->error = "Invalid type (normal or threaded)";
+            return Result::ERROR;
+        }
+        if (!in_array($this->sort, array(self::SORT_ASC, self::SORT_DESC))) {
+            $this->error = "Invalid sort direction (asc or desc)";
+            return Result::ERROR;
+        }
+
+        $this->comments = $service->getComments($this->thread, $this->sort, $this->type);
+
+        return Result::SUCCESS;
+    }
+
+    public function countComments()
+    {
+        if (empty($this->id)) {
+            $this->error = "Empty thread id";
+            return Result::ERROR;
+        }
+
+        $service = $this->getService();
+        $this->thread = $service->getThread($this->id);
+        if (!$this->thread) {
+            return 0;
+        }
+
+        return $this->thread->getComments();
+    }
+
+    /**
+     * @return CommentsService
+     */
+    protected function getService()
+    {
+        return $this->getServices()->get($this->getServices()->getProperty('commentsService'));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getComments()
+    {
+        return $this->comments;
+    }
+
+    /**
+     * @return ThreadInterface
+     */
+    public function getThread()
+    {
+        return $this->thread;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getError()
+    {
+        return $this->error;
+    }
+}

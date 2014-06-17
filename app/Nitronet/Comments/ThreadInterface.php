@@ -1,8 +1,6 @@
 <?php
 namespace Nitronet\Comments;
 
-use \DateTime;
-
 interface ThreadInterface
 {
     /**
@@ -28,7 +26,7 @@ interface ThreadInterface
     /**
      * @param mixed $createdOn
      */
-    public function setCreatedOn(DateTime $createdOn);
+    public function setCreatedOn($createdOn);
 
     /**
      * @return mixed
@@ -38,7 +36,7 @@ interface ThreadInterface
     /**
      * @param mixed $comments
      */
-    public function setComments();
+    public function setComments($commentsCount);
 
     /**
      * @return mixed
