@@ -5,8 +5,9 @@ use Fwk\Core\Action\Controller;
 use Nitronet\Comments\CommentsService;
 use Fwk\Core\Action\Result;
 use Nitronet\Comments\ThreadInterface;
+use Fwk\Core\Preparable;
 
-class Thread extends Controller
+class Thread extends Controller implements Preparable
 {
     const SORT_ASC = 'asc';
     const SORT_DESC = 'desc';
@@ -21,6 +22,13 @@ class Thread extends Controller
     protected $thread;
     protected $error;
     protected $comments = array();
+    protected $md;
+
+    public function prepare()
+    {
+        $this->md = new \stdClass();
+        $this->md->five = function($str) { return md5($str); };
+    }
 
     public function show()
     {
@@ -96,5 +104,13 @@ class Thread extends Controller
     public function getError()
     {
         return $this->error;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMd()
+    {
+        return $this->md;
     }
 }
