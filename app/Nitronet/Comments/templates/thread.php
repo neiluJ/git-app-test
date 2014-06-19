@@ -87,5 +87,3 @@ foreach ($this->comments as $comment) {
 ?>
 </ol><!-- .comment-list -->
 <?php endif; ?>
-<h4>Post a comment</h4>
-<?php echo $this->_helper->embed('CommentPost', array('thread' => $this->id)); ?>
