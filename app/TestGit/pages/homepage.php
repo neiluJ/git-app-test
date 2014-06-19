@@ -49,6 +49,9 @@
 
        <h3>Comments (<?php echo $this->_helper->embed('CommentsCount', array('id' => 'homepage')); ?>)</h3>
         <?php echo $this->_helper->embed('CommentsThread', array('id' => 'homepage', 'type' => 'threaded')); ?>
+
+        <h4>Post a comment</h4>
+        <?php echo $this->_helper->embed('CommentPost', array('thread' => 'homepage')); ?>
     </div><!-- /.container -->
     
 <?php include __DIR__ .'/_footer.php'; ?>
