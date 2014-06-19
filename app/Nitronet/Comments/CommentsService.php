@@ -6,6 +6,9 @@ use Fwk\Db\Query;
 use Fwk\Events\Dispatcher;
 use InvalidArgumentException;
 use Nitronet\Comments\Controllers\Thread;
+use Nitronet\Comments\Events\CommentAddedEvent;
+use Nitronet\Comments\Events\CommentPostedEvent;
+use Nitronet\Comments\Model\Comment;
 
 class CommentsService extends Dispatcher
 {
@@ -20,8 +23,9 @@ class CommentsService extends Dispatcher
             'threadEntity'  => 'Nitronet\Comments\Model\Thread',
             'commentsTable' => 'comments',
             'commentEntity' => 'Nitronet\Comments\Model\Comment',
-            'commentPostAction' => 'CommentPost',
-            'autoThread'        => false
+            'autoThread'        => false,
+            'autoApprove'       => true,
+            'dateFormat'        => 'Y-m-d H:i:s'
         ));
     }
 
@@ -55,7 +59,7 @@ class CommentsService extends Dispatcher
             throw new InvalidArgumentException('Class "'. $className .'" is not an instanceof ThreadInterface');
         }
 
-        $th->setCreatedOn(date('YYYY-MM-DD H:i:s'));
+        $th->setCreatedOn(date($this->option('dateFormat', 'Y-m-d H:i:s')));
         $th->setName($name);
         $th->setComments(0);
         $th->setOpen(true);
@@ -80,6 +84,89 @@ class CommentsService extends Dispatcher
         $params = array(($thread instanceof ThreadInterface ? $thread->getName() : $thread));
 
         return $this->getDb()->execute($query, $params);
+    }
+
+    public function addComment($thread, CommentFormInterface $form)
+    {
+        $this->notify(new CommentPostedEvent($form, $this));
+
+        if ($form->hasErrors()) {
+            return $form->getErrors();
+        }
+
+        $className = $this->option('commentEntity', 'Nitronet\Comments\Model\Comment');
+        $comment = new $className;
+        if (!$comment instanceof Comment) {
+            throw new InvalidArgumentException('Class "'. $className .'" is not an instanceof CommentInterface');
+        }
+
+        if (!$thread instanceof ThreadInterface) {
+            $thread = $this->getThread($thread);
+        }
+
+        if (!$thread->isOpen()) {
+            return "Thread is closed";
+        }
+
+        if ($form->getParentId() != null) {
+            $parent = $this->getComment($form->getParentId());
+
+            if (null === $parent) {
+                return "Invalid parent comment";
+            }
+
+            if ($parent->getThread() != $thread->getName()) {
+                return "Wrong parent comment (parent not on this thread)";
+            }
+        }
+
+        $comment->setCreatedOn(date($this->option('dateFormat', 'Y-m-d H:i:s')));
+        $comment->setAuthorEmail($form->getAuthorEmail());
+        $comment->setAuthorName($form->getAuthorName());
+        $comment->setAuthorUrl($form->getAuthorUrl());
+        $comment->setContents($form->getComment());
+        $comment->setParentId($form->getParentId());
+        $comment->setThread($thread->getName());
+        $comment->setActive($this->option('autoApprove', true));
+
+        $thread->setComments((int)$thread->getComments()+1);
+
+        $this->getDb()->beginTransaction();
+
+        try {
+            $this->getDb()->table($this->option('threadsTable', 'comments_threads'))->save($thread);
+            $this->getDb()->table($this->option('commentsTable', 'comments'))->save($comment);
+            $this->getDb()->commit();
+        } catch(\Exception $exp) {
+            $this->getDb()->rollBack();
+            return $exp->getMessage();
+        }
+
+        $this->notify(new CommentAddedEvent($thread, $comment));
+
+        return true;
+    }
+
+    /**
+     * @param $id
+     *
+     * @return CommentInterface
+     */
+    public function getComment($id)
+    {
+        $query = Query::factory()
+            ->select()
+            ->from($this->option('commentsTable', 'comments'), 'c')
+            ->where('c.id = ?')
+            ->entity($this->option('commentEntity', 'Nitronet\Comments\Model\Comment'));
+
+        $res = $this->getDb()->execute($query, array($id));
+
+        if (!count($res)) {
+            return null;
+        }
+
+        return $res[0];
     }
 
     /**

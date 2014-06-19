@@ -79,7 +79,7 @@ class Thread extends Controller implements Preparable
      */
     protected function getService()
     {
-        return $this->getServices()->get($this->getServices()->getProperty('commentsService'));
+        return $this->getServices()->get($this->getServices()->getProperty('comments.service'));
     }
 
     /**

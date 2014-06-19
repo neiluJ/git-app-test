@@ -109,6 +109,18 @@ log.file = /home/git/www/logs/forgery.log
 log.level = 100
 
 ; --------------------
+; Comments
+;
+; --------------------
+comments.service = comments
+comments.thread.auto = true
+comments.form.default = Nitronet\Comments\Forms\AnonymousCommentForm
+comments.form.renderer.service = formRenderer
+comments.session.service = session
+comment.entity.thread = Nitronet\Comments\Model\Thread
+comment.entity.comment = Nitronet\Comments\Model\Comment
+
+; --------------------
 ; Tables Configuration
 ;
 ; DO NOT EDIT

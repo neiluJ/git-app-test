@@ -500,6 +500,19 @@
         <action name="CommentsCount" shortcut="Nitronet\Comments\Controllers\Thread:countComments">
             <acl type="allow" role="" />
         </action>
+
+        <action name="CommentPost" shortcut="Nitronet\Comments\Controllers\Comment:post">
+            <acl type="allow" role="" />
+            <result name="form" type="php.comments">
+                <param name="file">post.php</param>
+            </result>
+            <result name="form_error" type="redirect">
+                <param name="uri">:back</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="uri">:back</param>
+            </result>
+        </action>
     </actions>
     
     <url-rewrite>
@@ -563,6 +576,10 @@
         </url>
         <url route="/:name/delete$" action="Delete">
             <param name="name" required="true" regex=".+" />
+        </url>
+
+        <url route="/comment/post/:thread" action="CommentPost">
+            <param name="thread" required="true" regex=".+" />
         </url>
     </url-rewrite>
 </fwk>
