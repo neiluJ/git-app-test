@@ -65,13 +65,7 @@ class Thread extends Controller implements Preparable
             return Result::ERROR;
         }
 
-        $service = $this->getService();
-        $this->thread = $service->getThread($this->id);
-        if (!$this->thread) {
-            return 0;
-        }
-
-        return $this->thread->getComments();
+        return $this->getService()->getCommentsCount($this->id);
     }
 
     /**

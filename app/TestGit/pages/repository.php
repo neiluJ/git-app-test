@@ -18,8 +18,12 @@
             <h4><a href="#" style="float:right;" title="RSS Feed"><i class="glyphicon glyphicon-signal"></i></a> Commits History</h4>
             <ul class="commits-list">
                 <li class="commit-{{ commit.hash|shortHash }} ng-class: {active: currentCommit.hash == commit.hash}" ng-repeat="commit in commits | orderObjectBy:commit.ts">
-                    <strong><a data-placement="top" data-toggle="tooltip" class="commit commit-{{ commit.hash|shortHash }}" ng-click="browseRevisions($event, commit);" href="./{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}" title="{{ commit.message }}">{{ commit.hash|shortHash }}</a></strong> by <a href="#">{{ commit.author }}</a><br />
+                    <strong>
+                        <a data-placement="top" data-toggle="tooltip" class="commit commit-{{ commit.hash|shortHash }}" ng-click="browseRevisions($event, commit);" href="./{{ repoAction }}.action?name={{ repoName }}&amp;branch={{ commit.hash }}&amp;path={{ path }}" title="{{ commit.message }}">{{ commit.hash|shortHash }}</a>
+                    </strong>
+                    by <a href="#">{{ commit.author }}</a><br />
                     <span style="font-size: 12px; color: #666;">{{ commit.date }}</span>
+                    <span style="font-size: 12px; color: #666; float:right" ng-if="commit.comments > 0">{{ commit.comments }} <i class="glyphicon glyphicon-comment"></i></span>
                 </li>
             </ul>
         </div>

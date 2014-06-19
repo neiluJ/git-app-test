@@ -67,7 +67,8 @@ class Commits extends Repository
                 'ts'        => $commit->getAuthorDate()->format('U'),
                 'date_obj'  => $commit->getAuthorDate(),
                 'hash'      => $commit->getHash(),
-                'message'   => $commit->getMessage()
+                'message'   => $commit->getMessage(),
+                'comments'  => $this->getServices()->get('comments')->getCommentsCount('commit-'. $this->getEntity()->getId() .'-'. $commit->getHash())
             );
         }
         
@@ -100,7 +101,8 @@ class Commits extends Repository
             'ts'        => $commit->getAuthorDate()->format('U'),
             'date_obj'  => $commit->getAuthorDate(),
             'hash'      => $commit->getHash(),
-            'message'   => $commit->getMessage()
+            'message'   => $commit->getMessage(),
+            'comments'  => $this->getServices()->get('comments')->getCommentsCount('commit-'. $this->getEntity()->getId() .'-'. $commit->getHash())
         );
         $this->jsonCurrentCommit = $this->jsonCommits[$commit->getHash()];
         

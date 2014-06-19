@@ -67,6 +67,19 @@ class CommentsService extends Dispatcher
         return $th;
     }
 
+    public function getCommentsCount($thread)
+    {
+        if (!$thread instanceof ThreadInterface) {
+            $thread = $this->getThread($thread);
+        }
+
+        if (!$thread) {
+            return 0;
+        }
+
+        return $thread->getComments();
+    }
+
     public function getComments($thread, $sort = Thread::SORT_ASC, $type = Thread::TYPE_NORMAL)
     {
         if ($thread instanceof ThreadInterface && $thread->getComments() <= 0) {

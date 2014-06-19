@@ -93,3 +93,9 @@
     <?php endif; ?>
 </div>
 <?php endforeach; ?>
+
+<h3>Comments (<?php $thId = 'commit-'. $this->entity->getId() .'-'. $this->currentCommit->getHash(); echo $this->_helper->embed('CommentsCount', array('id' => $thId)); ?>)</h3>
+<?php echo $this->_helper->embed('CommentsThread', array('id' => $thId, 'type' => 'threaded')); ?>
+
+<h4>Post a comment</h4>
+<?php echo $this->_helper->embed('CommentPost', array('thread' => $thId)); ?>
