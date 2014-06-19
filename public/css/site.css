@@ -501,3 +501,36 @@ ul.activity>li>span.date {
     color: #999;
     font-size: 12px;
 }
+
+ol.comment-list {
+    list-style: none;
+    list-style-type: none;
+    list-style-position: inside;
+    padding: 0;
+    margin-bottom: 20px;
+}
+ol.comment-list li {
+}
+ol.comment-list li>ol {
+    padding-left: 35px;
+}
+
+ol.comment-list li time {
+    color: #999;
+    font-size:12px;
+}
+
+ol.comment-list li div.comment-meta {
+    background-color: #eee;
+    padding: 5px;
+}
+
+ol.comment-list li div.comment-content {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+ol.comment-list li div.comment-content p {
+    padding:0;
+    margin:0;
+}
