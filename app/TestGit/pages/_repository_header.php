@@ -4,7 +4,9 @@
         <div class="collapse navbar-collapse repo-nav">
           <ul class="nav navbar-nav navbar-left">
               <li<?php if($repoMenuActive == 'code'): ?> class="active"<?php endif; ?>><a href="<?php echo $vh->url('Repository', array('name' => $this->name, 'branch' => $this->branch), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Browse source"><i class="octicon octicon-code"></i></a></li>
+              <?php if (!$this->emptyRepo): ?>
               <li<?php if($repoMenuActive == 'branches'): ?> class="active"<?php endif; ?>><a href="<?php echo $vh->url('Branches', array('name' => $this->name), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Branches/Tags" class="txt"><i class="octicon octicon-git-branch"></i> <span><?php echo (strlen($this->branch) == 40 ? substr($this->branch, 0, 6) : $this->branch); ?></span></a></li>
+              <?php endif; ?>
               <li<?php if($repoMenuActive == 'activity'): ?> class="active"<?php endif; ?>><a href="<?php echo $vh->url('RepoActivity', array('name' => $this->name), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Activity" class="txt"><i class="octicon octicon-history"></i></a></li>
               <?php if ($this->_helper->isAllowed($this->entity, 'admin')): ?>
               <li<?php if($repoMenuActive == 'accesses'): ?> class="active"<?php endif; ?>><a href="<?php echo $vh->url('Accesses', array('name' => $this->name), true); ?>" data-placement="bottom" data-toggle="tooltip" title="Access Rights"><i class="octicon octicon-organization"></i></a></li>
@@ -15,7 +17,7 @@
               <li class="dropdown">
                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="octicon octicon-gear"></i></a>
                   <ul class="dropdown-menu">
-                    <?php if ($this->_helper->isAllowed('repository', 'create') && $this->_helper->isAllowed($this->entity, 'read')): ?>
+                    <?php if (!$this->emptyRepo && $this->_helper->isAllowed('repository', 'create') && $this->_helper->isAllowed($this->entity, 'read')): ?>
                     <li><a href="<?php echo $this->_helper->url('Fork', array('name' => $this->entity->getFullname())); ?>"><i class="octicon octicon-repo-forked"></i> Fork</a></li>
                     <?php endif; ?>
                     <?php if ($this->_helper->isAllowed($this->entity, 'admin')): ?>

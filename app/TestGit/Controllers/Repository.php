@@ -41,6 +41,8 @@ class Repository implements ContextAware, ServicesAware, Preparable
     
     protected $createForm;
     protected $forkForm;
+
+    protected $emptyRepo = false;
     
     public function prepare()
     {
@@ -401,6 +403,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
         $this->branch = (!isset($this->branch) ? $this->entity->getDefault_branch() : $this->branch);
         
         if ($this->getGitService()->isEmpty($this->entity)) {
+            $this->emptyRepo = true;
             throw new EmptyRepositoryException('empty repository');
         }
         
@@ -506,5 +509,13 @@ class Repository implements ContextAware, ServicesAware, Preparable
     public function isPOST()
     {
         return "POST" === $_SERVER['REQUEST_METHOD'];
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getEmptyRepo()
+    {
+        return $this->emptyRepo;
     }
 }
