@@ -174,7 +174,7 @@ RepoNavService.prototype.navigate = function($scope, pushState) {
         action: this.repoAction,
         path: this.repoPath,
         branch: this.repoBranch,
-        currentCommit: (this.currentCommit.hash != undefined ? this.currentCommit.hash : this.currentCommit),
+        currentCommit: (typeof(this.currentCommit) === "object" ? this.currentCommit.hash : this.currentCommit),
         comparision: this.repoCompare
     };
             
