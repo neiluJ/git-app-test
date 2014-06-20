@@ -25,7 +25,8 @@ class Profile extends Repositories implements Preparable, ContextAware
     protected $context;
     protected $errorMsg;
     protected $totalCommits;
-    
+    protected $activityRepositories = array();
+
     public function prepare()
     {
         $this->dateFormat = $this->getServices()->getProperty('git.date.format');
@@ -41,7 +42,13 @@ class Profile extends Repositories implements Preparable, ContextAware
         }
         
         $dao = $this->getGitDao();
-        $this->repositories = $this->loadRepositoriesAcls($dao->findMany($this->profile->getId(), GitDao::FIND_OWNER));
+        $this->activityRepositories = $this->loadRepositoriesAcls($dao->findMany($this->profile->getId(), GitDao::FIND_OWNER, 100, true));
+        foreach ($this->activityRepositories as $repo) {
+             if ($repo->getOwner_id() == $this->profile->getId()) {
+                $this->repositories[] = $repo;
+             }
+        }
+
         $this->totalCommits = $dao->countCommits($this->profile);
         
         return Result::SUCCESS;
@@ -143,5 +150,13 @@ class Profile extends Repositories implements Preparable, ContextAware
     public function getTotalCommits() 
     {
         return $this->totalCommits;
+    }
+
+    /**
+     * @return array
+     */
+    public function getActivityRepositories()
+    {
+        return $this->activityRepositories;
     }
 }

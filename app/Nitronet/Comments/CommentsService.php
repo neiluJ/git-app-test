@@ -18,7 +18,7 @@ class CommentsService extends Dispatcher
     public function __construct(Connection $db, array $options = array())
     {
         $this->db = $db;
-        $this->options = array_merge($options, array(
+        $this->options = array_merge(array(
             'threadsTable'  => 'comments_threads',
             'threadEntity'  => 'Nitronet\Comments\Model\Thread',
             'commentsTable' => 'comments',
@@ -26,7 +26,7 @@ class CommentsService extends Dispatcher
             'autoThread'        => false,
             'autoApprove'       => true,
             'dateFormat'        => 'Y-m-d H:i:s'
-        ));
+        ), $options);
     }
 
     /**
@@ -48,7 +48,7 @@ class CommentsService extends Dispatcher
             return $th;
         }
 
-        if ($this->option('autoThread', false)) {
+        if ($this->option('autoThread', false) == false || $this->option('autoThread', false) == "false") {
             return null;
         }
 
@@ -101,12 +101,6 @@ class CommentsService extends Dispatcher
 
     public function addComment($thread, CommentFormInterface $form)
     {
-        $this->notify(new CommentPostedEvent($form, $this));
-
-        if ($form->hasErrors()) {
-            return $form->getErrors();
-        }
-
         $className = $this->option('commentEntity', 'Nitronet\Comments\Model\Comment');
         $comment = new $className;
         if (!$comment instanceof Comment) {
@@ -117,8 +111,18 @@ class CommentsService extends Dispatcher
             $thread = $this->getThread($thread);
         }
 
-        if (!$thread->isOpen()) {
+        if (!$thread || !$thread->isOpen()) {
             return "Thread is closed";
+        }
+
+        $event = $this->notify(new CommentPostedEvent($form, $comment, $thread, $this));
+
+        if ($event->isStopped()) {
+            return $event->getError();
+        }
+
+        if ($form->hasErrors()) {
+            return $form->getErrors();
         }
 
         if ($form->getParentId() != null) {

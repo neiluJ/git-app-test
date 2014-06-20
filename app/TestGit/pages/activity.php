@@ -61,6 +61,16 @@
             <?php endif; ?>
         </ul>
     </li>
+    <?php elseif ($activity->type == Activity::REPO_COMMENT_COMMIT): ?>
+    <li class="comment">
+        <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
+        <i class="glyphicon glyphicon-comment"></i>
+        <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
+        commented on commit <strong><a href="<?php echo $this->_helper->url('Commit', array('name' => $activity->repository->getFullname(), 'hash' => substr($activity->message, 0, 40))); ?>"><?php echo substr($activity->message, 0, 6); ?></a></strong> at <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->obj->getRepositoryName())); ?>"><?php echo $activity->obj->getRepositoryName(); ?></a></strong>
+        <ul>
+            <li class="commit">"<span class="commit-txt"><?php echo $this->_helper->escape(trim(substr($activity->message, 41, 41+200))); ?></span>"</li>
+        </ul>
+    </li>
     <?php endif; ?>
 <?php endforeach; ?>
 </ul>

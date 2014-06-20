@@ -88,11 +88,12 @@ class GitDao extends DaoBase
      * 
      * @return \Fwk\Db\ResultSet; 
      */
-    public function findMany($text, $search = self::FIND_ID, $limit = 100)
+    public function findMany($text, $search = self::FIND_ID, $limit = 100, $includePublics = false)
     {
         $query = Query::factory()
                         ->select()
-                        ->from($this->getOption('repositoriesTable'));
+                        ->from($this->getOption('repositoriesTable'))
+                        ->where('1 = 1');
 
         if (!is_array($text)) {
             $params = array($text);
@@ -103,18 +104,19 @@ class GitDao extends DaoBase
         switch($search)
         {
             case self::FIND_OWNER:
-                $query->where('owner_id = ?');
-                if (count($params) == 2) {
-                    $query->andWhere('name = ?');
+                if (count($params) == 1) {
+                    $query->andWhere('owner_id = ?');
+                } elseif (count($params) == 2) {
+                    $query->andWhere('(owner_id = ? AND name = ?)');
                 }
                 break;
             
             case self::FIND_ID:
-                $query->where('id = ?');
+                $query->andWhere('id = ?');
                 break;
             
             case self::FIND_NAME:
-                $query->where('name = ?');
+                $query->andWhere('name = ?');
                 break;
             
             default:
@@ -125,7 +127,11 @@ class GitDao extends DaoBase
                     )
                 );
         }
-        
+
+        if ($includePublics == true) {
+            $query->orWhere('public = 1');
+        }
+
         $query->entity(self::ENTITY_REPO)
               ->orderBy('last_commit_date', false);
         

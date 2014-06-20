@@ -280,19 +280,27 @@
 
     <!--
         COMMENTS
+
     -->
     <array-definition name="comments.config">
         <param key="autoThread">:comments.thread.auto</param>
         <param key="threadsTable">comments_threads</param>
         <param key="threadEntity">:comments.entity.thread</param>
         <param key="commentsTable">comments</param>
-        <param key="commentEntity">:comment.entity.comment</param>
+        <param key="commentEntity">:comments.entity.comment</param>
         <param key="autoApprove">true</param>
     </array-definition>
+
+    <class-definition name="comments.listener" class="TestGit\Listeners\CommentsListener">
+        <argument>@self</argument>
+    </class-definition>
 
     <class-definition name="comments" class="Nitronet\Comments\CommentsService" shared="true">
         <argument>@db</argument>
         <argument>@comments.config</argument>
+        <call method="addListener">
+            <argument>@comments.listener</argument>
+        </call>
     </class-definition>
     
 </dependency-injection>

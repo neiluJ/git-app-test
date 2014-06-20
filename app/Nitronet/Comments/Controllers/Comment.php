@@ -50,6 +50,11 @@ class Comment extends Controller implements Preparable
     {
         $form = $this->getFormObj();
         if ($this->getContext()->getRequest()->getMethod() != "POST") {
+            if (!$this->getContext()->hasParent()) {
+                // this should never happend
+                return Result::FORM_ERROR;
+            }
+
             if ($this->getSession()->has(self::SESSION_POST_KEY)) {
                 $data = $this->getSession()->get(self::SESSION_POST_KEY, array());
                 $form->submit($data);

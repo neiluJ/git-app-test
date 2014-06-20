@@ -126,12 +126,12 @@ class Repositories implements ServicesAware
             }
             
             $acl->deny(null, $repo);
-            
+
             if (!$repo->isPrivate()) {
                 $acl->allow(null, $repo, 'read');
             }
         }
-        
+
         try {
             $user = $security->getUser();
             if (!$user instanceof User) {
@@ -149,7 +149,7 @@ class Repositories implements ServicesAware
                 if (null === $repository) {
                     continue;
                 }
-                
+
                 if ($repository->getOwner_id() == $user->getId()) {
                     $acl->allow($user, $repository, 'owner');
                 }

@@ -50,7 +50,7 @@
                     
                 <h3>Latest activity</h3> 
                 
-                <?php echo $this->_helper->embed('Activity', array('user' => $this->profile, 'repositories' => $this->repositories)); ?>
+                <?php echo $this->_helper->embed('Activity', array('user' => $this->profile, 'repositories' => $this->activityRepositories)); ?>
             </div>
               <div class="col-md-2">
                   <p class="user-stat"><span class="big-counter"><?php echo count($this->repositories); ?></span> repositories</p>

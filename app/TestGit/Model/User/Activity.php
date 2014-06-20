@@ -8,10 +8,13 @@ use TestGit\Model\User\UsersDao;
 class Activity
 {
     const DYN_REF_CREATE    = 'new-ref';
-    const DYN_PUSH      = 'push';
+    const DYN_PUSH          = 'push';
     
-    const REPO_CREATE   = 'create';
-    const REPO_FORK     = 'fork';
+    const REPO_CREATE       = 'create';
+    const REPO_FORK         = 'fork';
+
+    const REPO_COMMENT_COMMIT   = 'cmt-commit';
+    const REPO_COMMENT_PR       = 'cmt-compare';
     
     protected $id;
     protected $userId;

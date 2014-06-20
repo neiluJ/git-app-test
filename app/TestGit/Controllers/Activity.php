@@ -90,7 +90,7 @@ class Activity extends Controller
             
             $activity->user = ($activitiy->getUserId() != null ? $activitiy->getUser() : null);
             $activity->date = new \DateTime($activitiy->getCreatedOn());
-            
+            $activity->message = $activitiy->getMessage();
             $activities[$activity->date->format('U') . $idx] = $activity;
         }
         

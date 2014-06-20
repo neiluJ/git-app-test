@@ -80,7 +80,11 @@ class Repository implements ContextAware, ServicesAware, Preparable
         }
         
         $final = array();
-        
+
+        if (is_string($tree)) {
+            $tree = $this->repository->getTree($tree);
+        }
+
         foreach ($tree->getEntries() as $fileName => $infos) {
             $dir = ($infos[0] === '040000' ? true : false);
             $log = $this->repository->getLog($revision, (!empty($this->path) ? ltrim($this->path,'/') . '/' : '') . $fileName, 0, 1);
@@ -384,29 +388,12 @@ class Repository implements ContextAware, ServicesAware, Preparable
         
         try {
             $user = $security->getUser($this->getContext()->getRequest());
-            foreach ($this->entity->getAccesses() as $access) {
-                if ($access->getUser_id() === $user->getId()) {
-                    if ($access->getReadAccess()) {
-                        $acl->allow($user, $this->entity, 'read');
-                    }
-                    if ($access->getWriteAccess()) {
-                        $acl->allow($user, $this->entity, 'write');
-                    }
-                    if ($access->getSpecialAccess()) {
-                        $acl->allow($user, $this->entity, 'special');
-                    }
-                    if ($access->getAdminAccess()) {
-                        $acl->allow($user, $this->entity, 'admin');
-                    }
-                }
-            }
-            if ($user->getId() == $this->entity->getOwner_id()) {
-                $acl->allow($user, $this->entity, 'owner');
-            }
         } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
             $user = new \Zend\Permissions\Acl\Role\GenericRole('guest');
         }
-        
+
+        $this->entity->loadAcls($user, $acl);
+
         if (null !== $permission && !$acl->isAllowed($user, $this->entity, $permission)) {
             throw new \RuntimeException('You\'re not allowed to view this page');
         }

@@ -1,6 +1,8 @@
 <?php
 namespace TestGit\Model\Git;
 
+use Fwk\Security\Acl\Manager;
+use TestGit\Model\User\User;
 use Zend\Permissions\Acl\Resource\ResourceInterface;
 use Fwk\Db\Relations\One2One;
 use TestGit\Model\Tables;
@@ -306,5 +308,41 @@ class Repository implements ResourceInterface
      */
     public function getReferences() {
         return $this->references;
+    }
+
+    public function loadAcls($user, Manager $acl) {
+        if (!$acl->hasResource($this)) {
+            $acl->addResource($this, 'repository');
+        }
+
+        if ($this->isPrivate()) {
+            $acl->deny(null, $this);
+        } else {
+            $acl->allow(null, $this, 'read');
+        }
+
+        if (!$user instanceof User) {
+            return;
+        }
+
+        foreach ($this->getAccesses() as $access) {
+            if ($access->getUser_id() === $user->getId()) {
+                if ($access->getReadAccess()) {
+                    $acl->allow($user, $this, 'read');
+                }
+                if ($access->getWriteAccess()) {
+                    $acl->allow($user, $this, 'write');
+                }
+                if ($access->getSpecialAccess()) {
+                    $acl->allow($user, $this, 'special');
+                }
+                if ($access->getAdminAccess()) {
+                    $acl->allow($user, $this, 'admin');
+                }
+            }
+        }
+        if ($user->getId() == $this->getOwner_id()) {
+            $acl->allow($user, $this, 'owner');
+        }
     }
 }

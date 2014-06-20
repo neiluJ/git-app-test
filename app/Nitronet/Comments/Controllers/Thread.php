@@ -39,7 +39,7 @@ class Thread extends Controller implements Preparable
 
         $service = $this->getService();
         $this->thread = $service->getThread($this->id);
-        if (!$this->thread) {
+        if (null === $this->thread) {
             $this->error = "Thread does not exists";
             return Result::ERROR;
         }

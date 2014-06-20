@@ -39,15 +39,24 @@ function getChildComments($target, $comments)
     return $result;
 }
 
-function printComment($comment, $comments, $type)
+function printComment($comment, $comments, $type, $helper)
 {
+    $author = $comment->getAuthor()->get();
+    $hasAuthor = ($author instanceof \TestGit\Model\User\User);
+    if ($hasAuthor) {
+        $fn = $author->getFullname();
+        $un = $author->getUsername();
+        $displayName = (empty($fn) ? $un : $fn);
+    } else {
+        $displayName = $comment->getAuthorName();
+    }
 ?>
     <li id="comment-<?php echo $comment->getId(); ?>" class="comment">
         <article class="comment-body">
             <div class="comment-meta">
                 <div class="comment-author vcard">
-                    <img alt="<?php echo htmlentities($comment->getAuthorName(), ENT_QUOTES, "utf-8"); ?>" src="//0.gravatar.com/avatar/<?php echo md5($comment->getAuthorEmail()); ?>?s=25&amp;d=identicon" class="avatar" height="25" width="25" />
-                    <b class="fn"><?php if ($comment->getAuthorUrl() != null): ?><a href="<?php echo htmlentities($comment->getAuthorUrl(), ENT_QUOTES, "utf-8"); ?>" rel="external nofollow" class="url"><?php endif; ?><?php echo htmlentities($comment->getAuthorName(), ENT_QUOTES, "utf-8"); ?><?php if ($comment->getAuthorUrl() != null): ?></a><?php endif; ?></b>
+                    <img alt="<?php echo htmlentities($displayName, ENT_QUOTES, "utf-8"); ?>" src="//0.gravatar.com/avatar/<?php echo md5($comment->getAuthorEmail()); ?>?s=25&amp;d=identicon" class="avatar" height="25" width="25" />
+                    <b class="fn"><?php if ($hasAuthor): ?><a href="<?php echo $helper->url('Profile', array('username' => $un)); ?>" rel="nofollow" class="url"><?php endif; ?><?php echo $helper->escape($displayName); ?><?php if ($hasAuthor): ?></a><?php endif; ?></b>
                     <?php $date = new DateTime($comment->getCreatedOn()); ?>
                     <time datetime="<?php echo $date->format(DateTime::ATOM); ?>"><?php echo $date->format(DateTime::COOKIE); ?></time>
                     <?php if ($type == Thread::TYPE_NORMAL && $comment->getParentId() != null): ?>
@@ -64,7 +73,7 @@ function printComment($comment, $comments, $type)
             <?php
                 $childs = getChildComments($comment, $comments);
                 foreach ($childs as $comment2) {
-                    printComment($comment2, $comments, $type);
+                    printComment($comment2, $comments, $type, $helper);
                 }
             ?>
         </ol><!-- .comment-list -->
@@ -81,7 +90,7 @@ function printComment($comment, $comments, $type)
 // main loop
 foreach ($this->comments as $comment) {
   if (($this->type == Thread::TYPE_THREADED && $comment->getParentId() == null) || $this->type == Thread::TYPE_NORMAL) {
-      printComment($comment, $this->comments, $this->type);
+      printComment($comment, $this->comments, $this->type, $this->_helper);
   }
 }
 ?>

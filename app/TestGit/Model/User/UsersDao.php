@@ -29,8 +29,8 @@ class UsersDao extends Dao implements Provider
     const FIND_ID       = 'id';
     const FIND_SLUG     = 'slug';
     
-    const ENTITY_USER   = 'TestGit\\Model\\User\\User';
-    const ENTITY_ACTIVITY   = 'TestGit\\Model\\User\\Activity';
+    const ENTITY_USER   = 'TestGit\Model\User\User';
+    const ENTITY_ACTIVITY   = 'TestGit\Model\User\Activity';
     
     /**
      * Constructeur 
