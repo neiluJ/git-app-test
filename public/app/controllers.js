@@ -54,6 +54,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', '$c
     $scope.currentCommitMessage = null;
     $scope.currentCommitDate = null;
     $scope.currentCommitAuthor = null;
+    $scope.currentCommitComments = 0;
     
     var computePathParts = function(path) {
         var parts = [{path: ($scope.repoName.indexOf('/') !== -1 ? $scope.repoName.split("/")[1] : $scope.repoName), realpath: '', directory: true}];
@@ -81,6 +82,7 @@ gitApp.controller('RepositoryDisplayCtrl', ['$scope', '$rootScope', '$http', '$c
        $scope.currentCommitMessage = currentCommit.message;
        $scope.currentCommitDate = currentCommit.date;
        $scope.currentCommitAuthor = currentCommit.author;
+       $scope.currentCommitComments = currentCommit.comments;
     });
     
     $scope.$on('changePath', function(event, newPath) {
@@ -219,12 +221,14 @@ gitApp.controller('CommitsCtrl', ['$scope', '$http', '$rootScope', 'RepoNavServi
         author: null,
         date: null,
         message: null,
-        hash: null
+        hash: null,
+        comments: 0
     };
     $scope.currentCommitHash = null;
     $scope.currentCommitMessage = null;
     $scope.currentCommitDate = null;
     $scope.currentCommitAuthor = null;
+    $scope.currentCommitComments = 0;
     
     // notify other controllers about commit change
     $scope.$watch('currentCommit', function() {

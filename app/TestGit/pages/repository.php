@@ -30,7 +30,7 @@
          
         <div class="col-xs-12 col-sm-7 col-md-9" ng-controller="RepositoryDisplayCtrl">
             <div id="repo-commit">
-                <h4><a href="#" style="float:right" class="btn btn-default btn-xs" ng-click="navigateToRoot($event, currentCommitHash);">Browse code @<strong>{{ currentCommitHash|shortHash }}</strong></a>Commit <a ng-bind="currentCommitHash" ng-click="navigateToCommit($event, currentCommitHash);" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a></h4>
+                <h4><a href="#" style="float:right" class="btn btn-default btn-xs" ng-click="navigateToRoot($event, currentCommitHash);">Browse code @<strong>{{ currentCommitHash|shortHash }}</strong></a><i class="octicon octicon-git-commit"></i> Commit <a ng-bind="currentCommitHash" ng-click="navigateToCommit($event, currentCommitHash);" href="./Commit.action?name={{ repoName }}&amp;hash={{ currentCommitHash }}">{{ currentCommitHash }}</a> <span ng-if="currentCommitComments > 0"><i title="This commit has comments!" class="octicon octicon-comment"></i></span></h4>
                 <p class="commit-infos commit-txt"><a href="#" class="commit-collapse"><i class="glyphicon glyphicon-plus"></i></a><span ng-bind="currentCommitMessage">{{ currentCommitMessage }}</span></p>
                 <hr style="margin:10px 0;" />
             </div> 
@@ -47,7 +47,7 @@
                     <table class="table table-striped">
                         <thead>
                           <tr>
-                            <th style="width: 35px;">&nbsp;</th>
+                            <th style="width: 25px;">&nbsp;</th>
                             <th style="width: 200px;">File</th>
                             <th>Message</th>
                             <th style="width: 130px;">Last update</th>
@@ -56,8 +56,8 @@
                         <tbody>
                           <tr ng-repeat="(idx,file) in files">
                             <td ng-if="!file.special">
-                                <i ng-if="file.directory" class="glyphicon glyphicon-folder-close"></i>
-                                <i ng-if="!file.directory" class="glyphicon glyphicon-file"></i>
+                                <i ng-if="file.directory" class="octicon octicon-file-directory"></i>
+                                <i ng-if="!file.directory" class="octicon octicon-file-code"></i>
                             </td>
                             <td ng-if="file.special">
                                 &nbsp;

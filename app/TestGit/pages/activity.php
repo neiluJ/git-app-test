@@ -6,28 +6,28 @@
     <?php if ($activity->type == Activity::DYN_REF_CREATE): ?>
     <li class="branch">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
-        <i class="glyphicon glyphicon-random"></i> 
+        <i class="octicon octicon-git-branch-create"></i>
         <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
         created a new <?php echo ($activity->reference->isBranch() ? "branch" : "tag"); ?> <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname(), 'branch' => $activity->reference->getName())); ?>"><?php echo $activity->reference->getName(); ?></a></strong> at <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
     </li>
     <?php elseif ($activity->type == Activity::REPO_CREATE): ?>
     <li class="create">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
-        <i class="glyphicon glyphicon-plus"></i> 
+        <i class="octicon octicon-repo-create"></i>
         <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
         created repository <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
     </li>
     <?php elseif ($activity->type == Activity::REPO_FORK): ?>
     <li class="fork">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
-        <i class="glyphicon glyphicon-retweet"></i> 
+        <i class="octicon octicon-repo-forked"></i>
         <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
         forked repository <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->obj->getTargetName())); ?>"><?php echo $activity->obj->getTargetName(); ?></a></strong> to <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
     </li>
     <?php elseif ($activity->type == Activity::DYN_PUSH): ?>
     <li class="push">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
-        <i class="glyphicon glyphicon-circle-arrow-right"></i> 
+        <i class="octicon octicon-repo-push"></i>
         <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?> pushed <strong><?php echo count($activity->commits); ?> commits</strong> at <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
         <ul>
             <?php $idx = 0; foreach ($activity->commits as $commit): ?>
@@ -64,7 +64,7 @@
     <?php elseif ($activity->type == Activity::REPO_COMMENT_COMMIT): ?>
     <li class="comment">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
-        <i class="glyphicon glyphicon-comment"></i>
+        <i class="octicon octicon-comment"></i>
         <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
         commented on commit <strong><a href="<?php echo $this->_helper->url('Commit', array('name' => $activity->repository->getFullname(), 'hash' => substr($activity->message, 0, 40))); ?>"><?php echo substr($activity->message, 0, 6); ?></a></strong> at <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->obj->getRepositoryName())); ?>"><?php echo $activity->obj->getRepositoryName(); ?></a></strong>
         <ul>

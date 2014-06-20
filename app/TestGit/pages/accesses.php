@@ -11,7 +11,7 @@
             <?php if($this->_helper->isAllowed($this->entity, 'admin')): ?>
             <button type="button" data-toggle="modal" data-target="#addModal" class="btn btn-primary pull-right">Add</button>
             <?php endif; ?>
-            <h3>Access List <i class="glyphicon glyphicon-lock"></i></h3>
+            <h3>Access List <i class="mega-octicon octicon-organization"></i></h3>
             
             <form role="form" action="<?php echo $this->_helper->url('Accesses', array('name' => $this->name), true); ?>" method="post">
             <table class="table table-striped" style="margin-top:20px;">

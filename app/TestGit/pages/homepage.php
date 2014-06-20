@@ -34,9 +34,9 @@
         <tbody>
           <tr ng-repeat="repo in repositories | filter:query">
             <td>
-                <i ng-if="!repo.fork" class="glyphicon glyphicon-list"></i>
-                <i ng-if="repo.fork" class="glyphicon glyphicon-retweet"></i>
-                 <i ng-if="repo.private" class="glyphicon glyphicon-lock"></i>
+                <i ng-if="!repo.fork" class="octicon octicon-repo"></i>
+                <i ng-if="repo.fork" class="octicon octicon-repo-forked"></i>
+                 <i ng-if="repo.private" class="octicon octicon-lock"></i>
             </td>
             <td><a href="<?php echo rtrim($vh->url(), '/'); ?>/Repository.action?name={{ repo.fullname }}">{{ repo.name }}</a></td>
             <td><a href="<?php echo rtrim($vh->url(), '/'); ?>/Profile.action?username={{ repo.ownerName }}">{{ repo.ownerName }}</a></td>

@@ -8,7 +8,7 @@
         
     <div class="row">
         <div class="col-xs-6 col-sm-6 col-md-6">
-            <h3>Branches <i class="glyphicon glyphicon-random"></i></h3>
+            <h3>Branches <i class="mega-octicon octicon-git-branch"></i></h3>
                 <?php if (count($this->branches)): ?>
                 <ul class="tags-list">
                 <?php foreach($this->branches as $tag): ?>
@@ -26,7 +26,7 @@
         </div>
          
         <div class="col-xs-6 col-sm-6 col-md-6">
-            <h3>Tags <i class="glyphicon glyphicon-tags"></i></h3>
+            <h3>Tags <i class="mega-octicon octicon-tag"></i></h3>
             <?php if (count($this->tags)): ?>
             <ul class="tags-list">
                 <?php foreach($this->tags as $tag): ?>

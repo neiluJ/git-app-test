@@ -11,7 +11,7 @@ $active = $this->active;
     </div>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav navbar-left">
-        <li<?php if($active == "repositories"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Repositories', array(), true); ?>"><i class="glyphicon glyphicon-list"></i> Repositories</a></li>
+        <li<?php if($active == "repositories"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Repositories', array(), true); ?>"><span class="octicon octicon-repo"></span> Repositories</a></li>
         <li<?php if($active == "users"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Users', array(), true); ?>"><i class="glyphicon glyphicon-user"></i> Users</a></li>
         <li>
 <form class="navbar-form" style="padding:0; margin-left: 10px;clear:left" method="get" action="<?php echo $this->_helper->url('Search'); ?>">
@@ -44,7 +44,7 @@ $(document).ready(function() {
         name: 'repositoris',
         prefetch: {url: "<?php echo $this->_helper->url('SearchRepositories'); ?>", ttl: 5, filter: function(obj) { return obj.searchResults; }},
          template: [
-        '<p class="repo-name"><i class="glyphicon glyphicon-{{#fork}}retweet{{/fork}}{{^fork}}list{{/fork}}"></i>{{#private}} <i class="glyphicon glyphicon-lock"></i> {{/private}} {{value}}</p>',
+        '<p class="repo-name"><i class="octicon octicon-{{#fork}}repo-forked{{/fork}}{{^fork}}repo{{/fork}}"></i>{{#private}} <i class="octicon octicon-lock"></i> {{/private}} {{value}}</p>',
         '<p class="repo-desc">{{description}}</p>',
         ].join(''),
         engine: Hogan,
@@ -57,7 +57,7 @@ $(document).ready(function() {
         remote: {cache: false, url: "<?php echo $this->_helper->url('SearchCommits'); ?>?q=%QUERY", ttl: 5, filter: function(obj) { return obj.searchResults; }},
         template: [
             '<p class="commit-date">{{date}}</p>',
-            '<p class="repo-name">{{shortHash}}</p>',
+            '<p class="repo-name"><i class="octicon octicon-git-commit"></i> {{shortHash}}</p>',
             '<p class="commit-details"><strong>{{repoName}}</strong> by <strong>{{committer}}</strong></p>',
             '<p class="commit-txt">{{message}}</p>',
         ].join(''),
