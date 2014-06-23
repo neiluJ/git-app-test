@@ -333,6 +333,28 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="addOrganization" shortcut="TestGit\Controllers\Users:addOrg">
+            <acl type="allow" role="" />
+            <result name="form" type="php">
+                <param name="file">addorganization.php</param>
+            </result>
+            <result name="ajax:form" type="php">
+                <param name="file">addorganization_embed.php</param>
+            </result>
+            <result name="ajax:success" type="php">
+                <param name="file">adduser_success.php</param>
+            </result>
+            <result name="embed:form" type="php">
+                <param name="file">addorganization_embed.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Users</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
         <action name="Profile" shortcut="TestGit\Controllers\Profile:show">
             <acl type="allow" role="" />
             <result name="success" type="php">

@@ -6,6 +6,7 @@ use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
 use Fwk\Core\Context;
 use Fwk\Core\ContextAware;
+use TestGit\Form\AddOrganizationForm;
 use TestGit\Form\AddUserForm;
 use Fwk\Form\Validation\EqualsFilter;
 use TestGit\Form\UsernameAlreadyExistsFilter;
@@ -24,6 +25,7 @@ class Users extends Repository implements ContextAware
     protected $context;
     protected $errorMsg;
     protected $addUserForm;
+    protected $addOrganizationForm;
     
     public $userId;
     
@@ -141,7 +143,28 @@ class Users extends Repository implements ContextAware
         
         return Result::SUCCESS;
     }
-    
+
+    public function addOrg()
+    {
+        $form = $this->getAddOrganizationForm();
+        if ($this->isPOST()) {
+            $form->submit($_POST);
+
+            if(!$form->validate()) {
+                return Result::FORM;
+            }
+
+            $dao = $this->getUsersDao();
+
+            $u = $dao->createOrganization($form->username);
+            $dao->save($u, true, $this->getServices());
+
+            return Result::SUCCESS;
+        }
+
+        return Result::FORM;
+    }
+
     public function addUser()
     {
         $form = $this->getAddUserForm();
@@ -412,6 +435,19 @@ class Users extends Repository implements ContextAware
             }
         }
         return $this->addUserForm;
+    }
+
+    public function getAddOrganizationForm()
+    {
+        if (!isset($this->addOrganizationForm)) {
+            $this->addOrganizationForm = new AddOrganizationForm();
+            $this->addOrganizationForm->setAction($this->getServices()->get('viewHelper')->url('addOrganization'));
+            $this->addOrganizationForm->element('username')->filter(
+                new UsernameAlreadyExistsFilter($this->getUsersDao()),
+                "This username is already used. Please choose a different one"
+            );
+        }
+        return $this->addOrganizationForm;
     }
     
     public function isPOST()

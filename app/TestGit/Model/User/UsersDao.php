@@ -227,6 +227,18 @@ class UsersDao extends Dao implements Provider
         
         return $user;
     }
+
+    public function createOrganization($username)
+    {
+        $user = new BaseUser();
+        $user->setUsername($username);
+        $user->setSlug(StringUtils::slugize($username));
+        $user->setActive(1);
+        $user->setDate_registration(date("Y-m-d H:i:s"));
+        $user->setType(BaseUser::TYPE_ORG);
+
+        return $user;
+    }
     
     public function updatePassword(User $user, $newPassword, UsersService $uService = null)
     {
