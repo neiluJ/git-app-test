@@ -150,7 +150,11 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 );
 
                 $this->getGitDao()->save($repo);
-                $this->getGitDao()->notify(new RepositoryCreateEvent($repo, $this->getServices()));
+                $this->getGitDao()->notify(new RepositoryCreateEvent(
+                    $repo,
+                    $this->getServices()->get('security')->getUser(),
+                    $this->getServices())
+                );
                 $this->getGitDao()->getDb()->commit();
                 $this->name = $repo->getFullname();
             } catch(\Exception $exp) {
@@ -201,7 +205,12 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 $fork->setLanguages($this->entity->getLanguages());
                 
                 $this->getGitDao()->save($fork);
-                $this->getGitDao()->notify(new RepositoryForkEvent($this->entity, $fork, $this->getServices()));
+                $this->getGitDao()->notify(new RepositoryForkEvent(
+                    $this->entity,
+                    $fork,
+                    $this->getServices()->get('security')->getUser(),
+                    $this->getServices())
+                );
                 $this->getGitDao()->getDb()->commit();
                 $this->name = $fork->getFullname();
             } catch(\Exception $exp) {
@@ -230,7 +239,11 @@ class Repository implements ContextAware, ServicesAware, Preparable
             $this->getGitDao()->getDb()->beginTransaction();
             try {
                 $this->getGitDao()->delete($this->entity);
-                $this->getGitDao()->notify(new RepositoryDeleteEvent($this->entity, $this->getServices()));
+                $this->getGitDao()->notify(new RepositoryDeleteEvent(
+                    $this->entity,
+                    $this->getServices()->get('security')->getUser(),
+                    $this->getServices())
+                );
                 $this->getGitDao()->getDb()->commit();
             } catch(\Exception $exp) {
                 $this->errorMsg = $exp->getMessage();
@@ -455,13 +468,22 @@ class Repository implements ContextAware, ServicesAware, Preparable
         if (!isset($this->createForm)) {
             $this->createForm = new CreateRepositoryForm();
             $this->createForm->setAction($this->getServices()->get('viewHelper')->url('Create'));
-            
+
+            $user = $this->getServices()->get('security')->getUser();
+            $accesses = $user->getOrgAccesses()->fetch();
+
             // define possible owners
             try {
                 $user = $this->getServices()->get('security')->getUser();
                 $fn = $user->getFullname();
                 $owners = array($user->getId() => (!empty($fn) ? $fn : $user->getUsername()));
-                
+
+                foreach ($accesses as $axs) {
+                    if (true === (bool)$axs->getReposAdminAccess()) {
+                        $owners[$axs->getOrganization_id()] = $axs->getOrganization()->getUsername();
+                    }
+                }
+
                 $this->createForm->element('owner_id')->setOptions($owners);
                 $this->createForm->element('owner_id')->filter(new IsInArrayFilter(array_keys($owners)));
                 $this->createForm->element('owner_id')->setDefault($user->getId());

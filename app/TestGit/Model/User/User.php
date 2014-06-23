@@ -35,6 +35,8 @@ class User implements UserInterface, PasswordAware,
     protected $sshKeys;
     
     protected $accesses;
+
+    protected $orgAccesses;
     
     public function __construct()
     {
@@ -55,6 +57,9 @@ class User implements UserInterface, PasswordAware,
         
         $this->accesses = new One2Many('id', 'user_id', Tables::ACCESSES, 'TestGit\\Model\\Git\\Access');
         $this->accesses->setFetchMode(Relation::FETCH_LAZY);
+
+        $this->orgAccesses = new One2Many('id', 'user_id', Tables::ORG_USERS, 'TestGit\\Model\\User\\OrgAccess');
+        $this->orgAccesses->setFetchMode(Relation::FETCH_LAZY);
         
         /*
         $this->repositories = new One2Many('id', 'owner_id', Tables::REPOSITORIES);
@@ -244,5 +249,21 @@ class User implements UserInterface, PasswordAware,
     public function isUser()
     {
         return $this->type === self::TYPE_USER;
+    }
+
+    /**
+     * @param \Fwk\Db\Relations\One2Many $orgAccesses
+     */
+    public function setOrgAccesses($orgAccesses)
+    {
+        $this->orgAccesses = $orgAccesses;
+    }
+
+    /**
+     * @return \Fwk\Db\Relations\One2Many
+     */
+    public function getOrgAccesses()
+    {
+        return $this->orgAccesses;
     }
 }

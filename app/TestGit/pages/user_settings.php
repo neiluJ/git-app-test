@@ -6,8 +6,13 @@
       <div class="container user-settings">
           <div class="row" style="margin-top:40px;">
             <div class="col-md-2 avatar">
-                <i class="glyphicon glyphicon-user"></i>
-                <h1><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>  
+                <?php if ($this->profile->isUser()): ?>
+                    <i class="glyphicon glyphicon-user"></i>
+                <?php else: ?>
+                    <i class="octicon octicon-organization"></i>
+                    <span class="label label-default">Organization</span>
+                <?php endif; ?>
+                <h1><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>
                 <p><?php echo $vh->escape($this->profile->getFullname()); ?></p>
             </div>
             <div class="col-md-8">

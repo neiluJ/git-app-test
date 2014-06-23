@@ -12,6 +12,7 @@ class Activity
     
     const REPO_CREATE       = 'create';
     const REPO_FORK         = 'fork';
+    const REPO_DELETE       = 'delete';
 
     const REPO_COMMENT_COMMIT   = 'cmt-commit';
     const REPO_COMMENT_PR       = 'cmt-compare';

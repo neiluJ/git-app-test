@@ -333,7 +333,8 @@ class Users extends Repository implements ContextAware
                 'emails'    => array($user->getEmail()),
                 'fullname'  => $user->getFullname(),
                 'added_date'     => $user->getDate_registration(),
-                'active'    => $user->getActive()
+                'active'    => $user->getActive(),
+                'organization' => $user->isOrganization()
             );
         }
         $this->jsonUsers = $final;
@@ -473,6 +474,7 @@ class Users extends Repository implements ContextAware
                 'name'  => $user->getUsername(),
                 'description' => $user->getFullname(),
                 'value'  => $user->getUsername(),
+                'organization' => $user->isOrganization(),
                 'tokens'  => $tokens,
                 'url'   => $this->getServices()->get('viewHelper')->url('Profile', array('username' => $user->getUsername()))
             );

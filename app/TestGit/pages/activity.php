@@ -17,6 +17,13 @@
         <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
         created repository <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $activity->repository->getFullname())); ?>"><?php echo $activity->repository->getFullname(); ?></a></strong>
     </li>
+    <?php elseif ($activity->type == Activity::REPO_DELETE): ?>
+        <li class="delete">
+            <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
+            <i class="octicon octicon-repo-delete"></i>
+            <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
+            deleted repository <strong><?php echo $this->_helper->escape($activity->repositoryName); ?></strong>
+        </li>
     <?php elseif ($activity->type == Activity::REPO_FORK): ?>
     <li class="fork">
         <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>

@@ -7,6 +7,7 @@ final class Tables
     const ACTIVITIES    = 'activities';
     const USERS_ROLES   = 'users_roles';
     const SSH_KEYS      = 'users_ssh_keys';
+    const ORG_USERS     = 'org_users';
     
     const ACL_ROLES     = 'acls_roles';
     const ACL_RESOURCES = 'acls_resources';

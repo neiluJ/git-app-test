@@ -81,13 +81,14 @@ class Activity extends Controller
             }
             
             $activity = new \stdClass();
+            $activity->repositoryName = $activitiy->getRepositoryName();
             $activity->type = $activitiy->getType();
             $activity->obj = $activitiy;
             
             if ($repository !== null) {
                 $activity->repository = $repository;
             }
-            
+
             $activity->user = ($activitiy->getUserId() != null ? $activitiy->getUser() : null);
             $activity->date = new \DateTime($activitiy->getCreatedOn());
             $activity->message = $activitiy->getMessage();

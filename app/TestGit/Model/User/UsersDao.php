@@ -31,6 +31,7 @@ class UsersDao extends Dao implements Provider
     
     const ENTITY_USER   = 'TestGit\Model\User\User';
     const ENTITY_ACTIVITY   = 'TestGit\Model\User\Activity';
+    const ENTITY_ORGACCESS  = 'TestGit\Model\User\OrgAccess';
     
     /**
      * Constructeur 
@@ -311,8 +312,13 @@ class UsersDao extends Dao implements Provider
         foreach ($repositories as $rep) {
             $ids[] = $rep->getId();
         }
-        
-        $query->andWhere('repositoryId IN ('. implode(', ', $ids) .')');
+
+        if ($user instanceof User) {
+            $query->andWhere('repositoryId IN ('. implode(', ', $ids) .') OR type = ?');
+            $params[] = Activity::REPO_DELETE;
+        } else {
+            $query->andWhere('repositoryId IN ('. implode(', ', $ids) .')');
+        }
         
         return $this->getDb()->execute($query, $params);
     }

@@ -6,8 +6,13 @@
       <div class="container">
           <div class="row" style="margin-top:40px;">
             <div class="col-md-2 avatar">
-                <i class="glyphicon glyphicon-user"></i>
-                <h1><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>  
+                <?php if ($this->profile->isUser()): ?>
+                    <i class="glyphicon glyphicon-user"></i>
+                <?php else: ?>
+                    <i class="octicon octicon-organization"></i>
+                    <span class="label label-default">Organization</span>
+                <?php endif; ?>
+                <h1><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>
                 <p><?php echo $vh->escape($this->profile->getFullname()); ?></p>
                 
                 <div class="btn-group">
@@ -18,7 +23,7 @@
             </div>
             <div class="col-md-8">
                 <?php if(!count($this->repositories)): ?>
-                    <div class="alert alert-warning">This user has no public repositories yet.</div>
+                    <div class="alert alert-warning">This <?php echo $this->_helper->escape($this->profile->getType()); ?> has no public repositories yet.</div>
                 <?php else: ?>
                 <div class="panel panel-default">
                   <div class="panel-heading">
@@ -47,14 +52,23 @@
                    </div>
                 </div>
                 <?php endif; ?>
-                    
+
+                <?php if ($this->profile->isUser()): ?>
                 <h3>Latest activity</h3> 
                 
                 <?php echo $this->_helper->embed('Activity', array('user' => $this->profile, 'repositories' => $this->activityRepositories)); ?>
+                <?php else: ?>
+                <h3>Members</h3>
+                <?php endif; ?>
             </div>
               <div class="col-md-2">
+                  <?php if ($this->profile->isUser()): ?>
                   <p class="user-stat"><span class="big-counter"><?php echo count($this->repositories); ?></span> repositories</p>
                   <p class="user-stat"><span class="big-counter"><?php echo $this->totalCommits; ?></span> commits</p>
+                    <?php else: ?>
+                      <p class="user-stat"><span class="big-counter"><?php echo "12"; ?></span> members</p>
+                      <p class="user-stat"><span class="big-counter"><?php echo count($this->repositories); ?></span> repositories</p>
+                  <?php endif; ?>
               </div>
           </div>
       </div>

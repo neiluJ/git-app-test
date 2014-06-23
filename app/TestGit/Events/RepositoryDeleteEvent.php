@@ -4,14 +4,16 @@ namespace TestGit\Events;
 use Fwk\Events\Event;
 use Fwk\Di\Container;
 use TestGit\Model\Git\Repository;
+use TestGit\Model\User\User;
 
 class RepositoryDeleteEvent extends Event
 {
-    public function __construct(Repository $repository, Container $services = null)
+    public function __construct(Repository $repository, User $sender, Container $services = null)
     {
         parent::__construct('repositoryDelete', array(
             'repository'  => $repository,
-            'services'    => $services
+            'services'    => $services,
+            'sender'      => $sender
         ));
     }
     
@@ -31,5 +33,13 @@ class RepositoryDeleteEvent extends Event
     public function getServices()
     {
         return $this->services;
+    }
+
+    /**
+     * @return User
+     */
+    public function getSender()
+    {
+        return $this->sender;
     }
 }

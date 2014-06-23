@@ -184,9 +184,10 @@
     <class-definition name="usersDao" class="TestGit\Model\User\UsersDao" shared="true">
         <argument>@db</argument>
         <argument>@dao.config.users</argument>
+        <!--
         <call method="addListener">
             <argument>@gitolite</argument>
-        </call>
+        </call> -->
     </class-definition>
     
     <array-definition name="dao.config.acls">
@@ -212,9 +213,11 @@
     <class-definition name="gitDao" class="TestGit\Model\Git\GitDao" shared="true">
         <argument>@db</argument>
         <argument>@dao.config.git</argument>
+        <!--
         <call method="addListener">
             <argument>@gitolite</argument>
         </call>
+        -->
         <call method="addListener">
             <argument>@gitdao.listener.commits</argument>
         </call>
