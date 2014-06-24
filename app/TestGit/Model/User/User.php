@@ -37,6 +37,7 @@ class User implements UserInterface, PasswordAware,
     protected $accesses;
 
     protected $orgAccesses;
+    protected $members;
     
     public function __construct()
     {
@@ -60,6 +61,9 @@ class User implements UserInterface, PasswordAware,
 
         $this->orgAccesses = new One2Many('id', 'user_id', Tables::ORG_USERS, 'TestGit\\Model\\User\\OrgAccess');
         $this->orgAccesses->setFetchMode(Relation::FETCH_LAZY);
+
+        $this->members = new One2Many('id', 'organization_id', Tables::ORG_USERS, 'TestGit\\Model\\User\\OrgAccess');
+        $this->members->setFetchMode(Relation::FETCH_LAZY);
         
         /*
         $this->repositories = new One2Many('id', 'owner_id', Tables::REPOSITORIES);
@@ -265,5 +269,30 @@ class User implements UserInterface, PasswordAware,
     public function getOrgAccesses()
     {
         return $this->orgAccesses;
+    }
+
+    /**
+     * @param \Fwk\Db\Relations\One2Many $members
+     */
+    public function setMembers($members)
+    {
+        $this->members = $members;
+    }
+
+    /**
+     * @return \Fwk\Db\Relations\One2Many
+     */
+    public function getMembers()
+    {
+        return $this->members;
+    }
+
+    public function displayName()
+    {
+        if (empty($this->fullname)) {
+            return $this->username;
+        }
+
+        return $this->fullname;
     }
 }

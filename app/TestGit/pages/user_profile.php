@@ -59,6 +59,44 @@
                 <?php echo $this->_helper->embed('Activity', array('user' => $this->profile, 'repositories' => $this->activityRepositories)); ?>
                 <?php else: ?>
                 <h3>Members</h3>
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th style="width: 15px;">&nbsp;</th>
+                        <th style="">User</th>
+                        <th style="width: 100px;font-size:12px;text-align: center;">Write Access</th>
+                        <th style="width: 100px;font-size:12px;text-align: center;">Repos Admin</th>
+                        <th style="width: 110px;font-size:12px;text-align: center;">Members Admin</th>
+                        <th style="width: 100px;font-size:12px;text-align: center;">Admin</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?php $members = $this->profile->getMembers();
+                        foreach($members as $member): ?>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                                <a href="<?php echo $this->_helper->url('Profile', array('username' => $member->getUser()->getUsername())) ?>"><?php echo $this->_helper->escape($member->getUser()->displayName()); ?></a>
+                                <?php if($member->getAdded_by() == $member->getUser_id()): ?>
+                                <span class="label label-default">owner</span>
+                                <?php endif; ?>
+                            </td>
+                            <td style="text-align: center">
+                                <i class="octicon <?php if($member->getReposWriteAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
+                            </td>
+                            <td style="text-align: center">
+                                <i class="octicon <?php if($member->getReposAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
+                            </td>
+                            <td style="text-align: center">
+                                <i class="octicon <?php if($member->getMembersAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
+                            </td>
+                            <td style="text-align: center">
+                                <i class="octicon <?php if($member->getAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                    </table>
                 <?php endif; ?>
             </div>
               <div class="col-md-2">
@@ -66,7 +104,7 @@
                   <p class="user-stat"><span class="big-counter"><?php echo count($this->repositories); ?></span> repositories</p>
                   <p class="user-stat"><span class="big-counter"><?php echo $this->totalCommits; ?></span> commits</p>
                     <?php else: ?>
-                      <p class="user-stat"><span class="big-counter"><?php echo "12"; ?></span> members</p>
+                      <p class="user-stat"><span class="big-counter"><?php echo count($members); ?></span> members</p>
                       <p class="user-stat"><span class="big-counter"><?php echo count($this->repositories); ?></span> repositories</p>
                   <?php endif; ?>
               </div>
