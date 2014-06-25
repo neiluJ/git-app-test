@@ -107,7 +107,29 @@ class Profile extends Repositories implements Preparable, ContextAware
         } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
             $user = new \Zend\Permissions\Acl\Role\GenericRole('guest');
          }
-         
+
+        if ($this->profile->isOrganization() && $user instanceof User) {
+            $members = $this->profile->getMembers();
+            foreach ($members as $access) {
+                if ($user->getId() != $access->getUser_id()) {
+                    continue;
+                }
+
+                if ((bool)$access->getAdminAccess()) {
+                    $acl->allow($user, $this->profile, 'admin');
+                }
+                if ((bool)$access->getMembersAdminAccess()) {
+                    $acl->allow($user, $this->profile, 'edit-members');
+                }
+                if ((bool)$access->getReposAdminAccess()) {
+                    $acl->allow($user, $this->profile, 'repos-admin');
+                }
+                if ((bool)$access->getReposWriteAccess()) {
+                    $acl->allow($user, $this->profile, 'write');
+                }
+            }
+        }
+
         if (null !== $permission && !$acl->isAllowed($user, $this->profile, $permission)) {
             throw new \RuntimeException('You\'re not allowed to view this page');
         }

@@ -81,18 +81,42 @@
                                 <span class="label label-default">owner</span>
                                 <?php endif; ?>
                             </td>
+                            <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
+                            <td style="text-align: center">
+                                <a href="#"><i class="octicon <?php if($member->getReposWriteAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
+                            </td>
+                            <?php else: ?>
                             <td style="text-align: center">
                                 <i class="octicon <?php if($member->getReposWriteAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
                             </td>
-                            <td style="text-align: center">
-                                <i class="octicon <?php if($member->getReposAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
-                            </td>
-                            <td style="text-align: center">
-                                <i class="octicon <?php if($member->getMembersAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
-                            </td>
-                            <td style="text-align: center">
-                                <i class="octicon <?php if($member->getAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
-                            </td>
+                            <?php endif; ?>
+                            <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
+                                <td style="text-align: center">
+                                    <a href="#"><i class="octicon <?php if($member->getReposAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
+                                </td>
+                            <?php else: ?>
+                                <td style="text-align: center">
+                                    <i class="octicon <?php if($member->getReposAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
+                                </td>
+                            <?php endif; ?>
+                            <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
+                                <td style="text-align: center">
+                                    <a href="#"><i class="octicon <?php if($member->getMembersAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
+                                </td>
+                            <?php else: ?>
+                                <td style="text-align: center">
+                                    <i class="octicon <?php if($member->getMembersAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
+                                </td>
+                            <?php endif; ?>
+                            <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
+                                <td style="text-align: center">
+                                    <a href="#"><i class="octicon <?php if($member->getAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
+                                </td>
+                            <?php else: ?>
+                                <td style="text-align: center">
+                                    <i class="octicon <?php if($member->getAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
+                                </td>
+                            <?php endif; ?>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
