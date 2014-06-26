@@ -53,8 +53,10 @@ class UserSettings extends Profile
             if(!$form->validate()) {
                 return Result::FORM;
             }
-            
-            $this->profile->setEmail($form->email);
+
+            if ($form->has('email')) {
+                $this->profile->setEmail($form->email);
+            }
             $this->profile->setFullname($form->fullname);
             
             $this->getUsersDao()->save($this->profile, false);
@@ -199,11 +201,16 @@ class UserSettings extends Profile
             
             if (null !== $this->profile) {
                 $this->generalInfosForm->element('fullname')->setDefault($this->profile->getFullname());
-                $this->generalInfosForm->element('email')->setDefault($this->profile->getEmail());
-                $this->generalInfosForm->element('email')->filter(
-                    new EmailAlreadyExistsFilter($this->getUsersDao(), $this->profile),
-                    "This email is already used. Please choose a different one"
-                );
+
+                if ($this->profile->isUser()) {
+                    $this->generalInfosForm->element('email')->setDefault($this->profile->getEmail());
+                    $this->generalInfosForm->element('email')->filter(
+                        new EmailAlreadyExistsFilter($this->getUsersDao(), $this->profile),
+                        "This email is already used. Please choose a different one"
+                    );
+                } else {
+                    $this->generalInfosForm->remove('email');
+                }
             }
             
             $this->generalInfosForm->setAction($this->getServices()->get('viewHelper')->url('EditUserInfos', array('username' => $this->username)));

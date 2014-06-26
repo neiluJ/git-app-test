@@ -31,6 +31,7 @@
                       <?php echo $this->_helper->form($this->generalInfosForm); ?>
                    </div>
                 </div>
+                <?php if ($this->profile->isUser()): ?>
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h3 class="panel-title">SSH Keys</h3>
@@ -66,12 +67,13 @@
                       <?php echo $this->_helper->form($this->changePasswordForm); ?>
                    </div>
                 </div>
+                <?php endif; ?>
                 <div class="panel panel-default panel-warning">
                   <div class="panel-heading">
                     <h3 class="panel-title">Administration</h3>
                   </div>
                   <div class="panel-body">
-                      Administration
+                      <p>Admin</p>
                    </div>
                 </div>
             </div>
