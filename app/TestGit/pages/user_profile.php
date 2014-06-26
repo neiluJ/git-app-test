@@ -14,12 +14,20 @@
                 <?php endif; ?>
                 <h1><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>
                 <p><?php echo $vh->escape($this->profile->getFullname()); ?></p>
-                
+
+                <?php if ($this->_helper->isAllowed($this->profile, 'edit')): ?>
                 <div class="btn-group">
-                    <?php if ($this->_helper->isAllowed($this->profile, 'edit')): ?>
                     <a href="<?php echo $this->_helper->url('UserSettings', array('username' => $this->profile->getUsername())); ?>" class="btn btn-sm btn-default">Settings</a>
-                    <?php endif; ?>
                 </div>
+                <?php endif; ?>
+
+                <hr />
+                <ul class="nav nav-pills nav-stacked" style="margin-top: 20px; text-align: left;">
+                    <li class="active"><a  style="padding: 5px 15px;" href="#"><b class="octicon octicon-repo"></b> Repositories</a></li>
+                    <li><a style="padding: 5px 15px;" href="#"><b class="octicon octicon-history"></b> Activity</a></li>
+                    <li class="divider"></li>
+                    <li><a style="padding: 5px 15px;" href="#"><b class="octicon octicon-tools"></b> Settings</a></li>
+                </ul>
             </div>
             <div class="col-md-8">
                 <?php if(!count($this->repositories)): ?>
