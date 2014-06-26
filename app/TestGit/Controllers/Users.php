@@ -13,6 +13,7 @@ use TestGit\Form\UsernameAlreadyExistsFilter;
 use TestGit\Form\EmailAlreadyExistsFilter;
 use TestGit\Events\RepositoryEditEvent;
 use TestGit\EmptyRepositoryException;
+use TestGit\Model\User\OrgAccess;
 
 class Users extends Repository implements ContextAware
 {
@@ -158,6 +159,18 @@ class Users extends Repository implements ContextAware
 
             $u = $dao->createOrganization($form->username);
             $dao->save($u, true, $this->getServices());
+
+            $access = new OrgAccess();
+            $access->setAdded_by($this->getServices()->get('security')->getUser()->getId());
+            $access->setAdminAccess(1);
+            $access->setReposAdminAccess(1);
+            $access->setReposWriteAccess(1);
+            $access->setMembersAdminAccess(1);
+
+            $access->setOrganization_id($u->getId());
+            $access->setUser_id($this->getServices()->get('security')->getUser()->getId());
+
+            $dao->saveOrgAccess($access);
 
             return Result::SUCCESS;
         }

@@ -3,6 +3,7 @@ namespace TestGit\Controllers;
 
 use Fwk\Core\Action\Controller;
 use Fwk\Core\Action\Result;
+use TestGit\Model\User\OrgAccess;
 use TestGit\Model\User\User;
 use TestGit\Model\User\UsersDao;
 use TestGit\Model\Git\GitDao;
@@ -13,6 +14,8 @@ use Fwk\Core\Context;
 class Profile extends Repositories implements Preparable, ContextAware
 {
     public $username;
+    public $target;
+    public $right;
     
     /**
      *
@@ -30,6 +33,7 @@ class Profile extends Repositories implements Preparable, ContextAware
     public function prepare()
     {
         $this->dateFormat = $this->getServices()->getProperty('git.date.format');
+        $this->target = (int)$this->target;
     }
 
     public function show()
@@ -133,6 +137,60 @@ class Profile extends Repositories implements Preparable, ContextAware
         if (null !== $permission && !$acl->isAllowed($user, $this->profile, $permission)) {
             throw new \RuntimeException('You\'re not allowed to view this page');
         }
+    }
+
+
+    public function toggleOrgUserRight()
+    {
+        try {
+            $this->loadProfile();
+        } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
+            return Result::ERROR;
+        }
+
+        if (empty($this->target) || empty($this->right) || !in_array($this->right, array('write', 'members', 'repos', 'admin'))
+            || !$this->profile->isOrganization()
+        ) {
+            $this->errorMsg = "invalid request";
+            return Result::ERROR;
+        }
+
+        $members = $this->profile->getMembers();
+        $target = null;
+        foreach ($members as $member) {
+            if ($member->getUser_id() == $this->target) {
+                $target = $member;
+                break;
+            }
+        }
+
+        if (!$target instanceof OrgAccess) {
+            $this->errorMsg = "invalid organization member";
+            return Result::ERROR;
+        }
+
+        switch($this->right) {
+            case 'write':
+                $target->setReposWriteAccess(!$target->getReposWriteAccess());
+                break;
+            case 'members':
+                $target->setMembersAdminAccess(!$target->getMembersAdminAccess());
+                break;
+            case 'repos':
+                $target->setReposAdminAccess(!$target->getReposAdminAccess());
+                break;
+            case 'admin':
+                $target->setAdminAccess(!$target->getAdminAccess());
+                break;
+            default:
+                throw new \InvalidArgumentException('this should never happend');
+        }
+
+        $dao = $this->getUsersDao();
+        $dao->saveOrgAccess($target);
+
+        return Result::SUCCESS;
     }
 
     public function getProfile()

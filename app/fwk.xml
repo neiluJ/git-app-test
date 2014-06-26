@@ -365,6 +365,17 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="ToggleUserRight" shortcut="TestGit\Controllers\Profile:toggleOrgUserRight">
+            <acl type="allow" role="" />
+            <result name="success" type="redirect">
+                <param name="actionName">Profile</param>
+                <param name="username">:username</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
         <action name="UserSettings" shortcut="TestGit\Controllers\UserSettings:show">
             <acl type="allow" role="user" />
             <result name="success" type="php">
@@ -552,6 +563,12 @@
         <url route="/:username$" action="Profile">
             <param name="username" required="true" regex=".[^/]+" />
         </url>
+        <url route="/:username/t/:target/:right$" action="ToggleUserRight">
+            <param name="username" required="true" regex=".[^/]+" />
+            <param name="target" required="true" regex="[0-9]+" />
+            <param name="right" required="true" regex="[a-z]+" />
+        </url>
+
          <url route="/:username/settings$" action="UserSettings">
             <param name="username" required="true" />
         </url>

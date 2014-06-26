@@ -47,7 +47,8 @@ class UsersDao extends Dao implements Provider
         $options = array_merge(array(
             'usersTable'        => Tables::USERS,
             'activitiesTable'   => Tables::ACTIVITIES,
-            'sshKeysTable'      => Tables::SSH_KEYS
+            'sshKeysTable'      => Tables::SSH_KEYS,
+            'orgAccesses'       => Tables::ORG_USERS
         ), $options);
         
         parent::__construct($connection, $options);
@@ -328,5 +329,12 @@ class UsersDao extends Dao implements Provider
         return $this->getDb()
                 ->table($this->getOption('activitiesTable'))
                 ->save($activity);
+    }
+
+    public function saveOrgAccess(OrgAccess $access)
+    {
+        return $this->getDb()
+            ->table($this->getOption('orgAccesses'))
+            ->save($access);
     }
 }

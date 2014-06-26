@@ -83,7 +83,7 @@
                             </td>
                             <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
                             <td style="text-align: center">
-                                <a href="#"><i class="octicon <?php if($member->getReposWriteAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
+                                <a href="<?php echo $this->_helper->url('ToggleUserRight', array('username' => $this->profile->getUsername(), 'target' => $member->getUser_id(), 'right' => 'write')); ?>"><i class="octicon <?php if($member->getReposWriteAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
                             </td>
                             <?php else: ?>
                             <td style="text-align: center">
@@ -92,7 +92,7 @@
                             <?php endif; ?>
                             <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
                                 <td style="text-align: center">
-                                    <a href="#"><i class="octicon <?php if($member->getReposAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
+                                    <a href="<?php echo $this->_helper->url('ToggleUserRight', array('username' => $this->profile->getUsername(), 'target' => $member->getUser_id(), 'right' => 'repos')); ?>"><i class="octicon <?php if($member->getReposAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
                                 </td>
                             <?php else: ?>
                                 <td style="text-align: center">
@@ -101,7 +101,7 @@
                             <?php endif; ?>
                             <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
                                 <td style="text-align: center">
-                                    <a href="#"><i class="octicon <?php if($member->getMembersAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
+                                    <a href="<?php echo $this->_helper->url('ToggleUserRight', array('username' => $this->profile->getUsername(), 'target' => $member->getUser_id(), 'right' => 'members')); ?>"><i class="octicon <?php if($member->getMembersAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
                                 </td>
                             <?php else: ?>
                                 <td style="text-align: center">
@@ -110,7 +110,7 @@
                             <?php endif; ?>
                             <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
                                 <td style="text-align: center">
-                                    <a href="#"><i class="octicon <?php if($member->getAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
+                                    <a href="<?php echo $this->_helper->url('ToggleUserRight', array('username' => $this->profile->getUsername(), 'target' => $member->getUser_id(), 'right' => 'admin')); ?>"><i class="octicon <?php if($member->getAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
                                 </td>
                             <?php else: ?>
                                 <td style="text-align: center">
