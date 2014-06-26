@@ -134,10 +134,6 @@ class Repositories implements ServicesAware
 
         try {
             $user = $security->getUser();
-            if (!$user instanceof User) {
-                return;
-            }
-            
             foreach ($user->getAccesses() as $access) {
                 $repository = null;
                 foreach ($repositories as $repo) {
@@ -146,6 +142,7 @@ class Repositories implements ServicesAware
                         break;
                     }
                 }
+
                 if (null === $repository) {
                     continue;
                 }
@@ -166,6 +163,14 @@ class Repositories implements ServicesAware
                     }
                     if ($access->getAdminAccess()) {
                         $acl->allow($user, $repository, 'admin');
+                    }
+                }
+            }
+
+            if (isset($this->profile) && $this->profile->isOrganization()) {
+                foreach ($repositories as $repo) {
+                    if ($this->profile->isOrgMember($user)) {
+                        $acl->allow($user, $repo, 'read');
                     }
                 }
             }

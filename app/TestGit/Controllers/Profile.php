@@ -46,7 +46,7 @@ class Profile extends Repositories implements Preparable, ContextAware
         }
         
         $dao = $this->getGitDao();
-        $this->activityRepositories = $this->loadRepositoriesAcls($dao->findMany($this->profile->getId(), GitDao::FIND_OWNER, 100, true));
+        $this->activityRepositories = $this->loadRepositoriesAcls($dao->findMany($this->profile->getId(), GitDao::FIND_OWNER, 100, false));
         foreach ($this->activityRepositories as $repo) {
              if ($repo->getOwner_id() == $this->profile->getId()) {
                 $this->repositories[] = $repo;
@@ -120,7 +120,7 @@ class Profile extends Repositories implements Preparable, ContextAware
                 }
 
                 if ((bool)$access->getAdminAccess()) {
-                    $acl->allow($user, $this->profile, 'admin');
+                    $acl->allow($user, $this->profile, 'edit');
                 }
                 if ((bool)$access->getMembersAdminAccess()) {
                     $acl->allow($user, $this->profile, 'edit-members');

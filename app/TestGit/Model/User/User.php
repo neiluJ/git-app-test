@@ -64,6 +64,7 @@ class User implements UserInterface, PasswordAware,
 
         $this->members = new One2Many('id', 'organization_id', Tables::ORG_USERS, 'TestGit\\Model\\User\\OrgAccess');
         $this->members->setFetchMode(Relation::FETCH_LAZY);
+        $this->members->setReference('user_id');
         
         /*
         $this->repositories = new One2Many('id', 'owner_id', Tables::REPOSITORIES);
@@ -294,5 +295,21 @@ class User implements UserInterface, PasswordAware,
         }
 
         return $this->fullname;
+    }
+
+    public function isOrgMember(User $user)
+    {
+        if (!$this->isOrganization()) {
+            return false;
+        }
+
+        $members = $this->members->fetch();
+        foreach ($members as $member) {
+            if ($member->getUser_id() == $user->getId()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
