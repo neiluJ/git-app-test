@@ -29,7 +29,8 @@ class Users extends Repository implements ContextAware
     protected $addOrganizationForm;
     
     public $userId;
-    
+    protected $username;
+
     public function show()
     {
         $this->users = $this->getUsersDao()->findAll(false);
@@ -172,6 +173,8 @@ class Users extends Repository implements ContextAware
 
             $dao->saveOrgAccess($access);
 
+            $this->username = $form->username;
+
             return Result::SUCCESS;
         }
 
@@ -221,7 +224,9 @@ class Users extends Repository implements ContextAware
             $roles = $aclsDao->getDefaultRoles($extrasRoles)->toArray();
             $u = $dao->create($form->username, $form->password, $form->email, $this->getServices()->get('users'), $roles);
             $dao->save($u, true, $this->getServices());
-            
+
+            $this->username = $form->username;
+
             return Result::SUCCESS;
         }
         
@@ -501,5 +506,13 @@ class Users extends Repository implements ContextAware
         }
         
         $this->searchResults = $result;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUsername()
+    {
+        return $this->username;
     }
 }

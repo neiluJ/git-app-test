@@ -1,0 +1,2 @@
+<p>You'll be redirected. Please wait...</p>
+<script type="text/javascript">$(function() { var url = "<?php echo $this->_helper->url('Profile', array('username' => $this->username)); ?>"; window.location.href = url; });</script>

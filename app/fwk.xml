@@ -342,13 +342,14 @@
                 <param name="file">addorganization_embed.php</param>
             </result>
             <result name="ajax:success" type="php">
-                <param name="file">adduser_success.php</param>
+                <param name="file">addorganization_success.php</param>
             </result>
             <result name="embed:form" type="php">
                 <param name="file">addorganization_embed.php</param>
             </result>
             <result name="success" type="redirect">
-                <param name="actionName">Users</param>
+                <param name="actionName">Profile</param>
+                <param name="username">:username</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
