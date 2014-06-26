@@ -334,7 +334,7 @@
             </result>
         </action>
         <action name="addOrganization" shortcut="TestGit\Controllers\Users:addOrg">
-            <acl type="allow" role="" />
+            <acl type="allow" role="user" />
             <result name="form" type="php">
                 <param name="file">addorganization.php</param>
             </result>
@@ -366,7 +366,7 @@
             </result>
         </action>
         <action name="ToggleUserRight" shortcut="TestGit\Controllers\Profile:toggleOrgUserRight">
-            <acl type="allow" role="" />
+            <acl type="allow" role="user" />
             <result name="success" type="redirect">
                 <param name="actionName">Profile</param>
                 <param name="username">:username</param>

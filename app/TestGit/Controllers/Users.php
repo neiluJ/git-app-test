@@ -423,6 +423,11 @@ class Users extends Repository implements ContextAware
                 new EmailAlreadyExistsFilter($this->getUsersDao()),
                 "This email is already used. Please choose a different one"
             );
+
+            if (!$this->getServices()->get('security')->hasUser()) {
+                return Result::ERROR;
+            }
+
             $user = $this->getServices()->get('security')->getUser();
             if (!$user instanceof \TestGit\Model\User\User) {
                 return Result::ERROR;

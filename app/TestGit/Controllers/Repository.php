@@ -5,6 +5,7 @@ use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
 use Fwk\Core\Preparable;
+use Fwk\Security\Exceptions\AuthenticationRequired;
 use TestGit\Model\Git\Repository as RepositoryEntity;
 use Fwk\Core\ContextAware;
 use Fwk\Core\Context;
@@ -400,10 +401,10 @@ class Repository implements ContextAware, ServicesAware, Preparable
         } elseif ($allowHttp && !empty($publicPrefix)) {
             $acl->allow(null, $this->entity, 'read');
         }
-        
-        try {
+
+        if ($security->hasUser()) {
             $user = $security->getUser($this->getContext()->getRequest());
-        } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
+        } else {
             $user = new \Zend\Permissions\Acl\Role\GenericRole('guest');
         }
 
@@ -469,31 +470,25 @@ class Repository implements ContextAware, ServicesAware, Preparable
             $this->createForm = new CreateRepositoryForm();
             $this->createForm->setAction($this->getServices()->get('viewHelper')->url('Create'));
 
-            $user = $this->getServices()->get('security')->getUser();
-            $accesses = $user->getOrgAccesses()->fetch();
+            if (!$this->getServices()->get('security')->hasUser()) {
+                return $this->createForm;
+            }
 
             // define possible owners
-            try {
-                $user = $this->getServices()->get('security')->getUser();
-                $fn = $user->getFullname();
-                $owners = array($user->getId() => (!empty($fn) ? $fn : $user->getUsername()));
+            $user = $this->getServices()->get('security')->getUser();
+            $accesses = $user->getOrgAccesses()->fetch();
+            $fn = $user->getFullname();
+            $owners = array($user->getId() => (!empty($fn) ? $fn : $user->getUsername()));
 
-                foreach ($accesses as $axs) {
-                    if (true === (bool)$axs->getReposAdminAccess()) {
-                        $owners[$axs->getOrganization_id()] = $axs->getOrganization()->getUsername();
-                    }
+            foreach ($accesses as $axs) {
+                if (true === (bool)$axs->getReposAdminAccess()) {
+                    $owners[$axs->getOrganization_id()] = $axs->getOrganization()->getUsername();
                 }
-
-                $this->createForm->element('owner_id')->setOptions($owners);
-                $this->createForm->element('owner_id')->filter(new IsInArrayFilter(array_keys($owners)));
-                $this->createForm->element('owner_id')->setDefault($user->getId());
-                
-                /**
-                 * @todo ROLE_ADMIN can create repositories to anyone
-                 * @todo Organizations
-                 */
-            } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
             }
+
+            $this->createForm->element('owner_id')->setOptions($owners);
+            $this->createForm->element('owner_id')->filter(new IsInArrayFilter(array_keys($owners)));
+            $this->createForm->element('owner_id')->setDefault($user->getId());
         }
         
         return $this->createForm;
@@ -504,25 +499,27 @@ class Repository implements ContextAware, ServicesAware, Preparable
         if (!isset($this->forkForm)) {
             $this->forkForm = new CreateForkForm();
             $this->forkForm->setAction($this->getServices()->get('viewHelper')->url('Fork', array('name' => $this->name)));
-            
-            // define possible owners
-            try {
-                $user = $this->getServices()->get('security')->getUser();
-                $fn = $user->getFullname();
-                $owners = array($user->getId() => (!empty($fn) ? $fn : $user->getUsername()));
-                $this->forkForm->element('owner_id')->setOptions($owners);
-                $this->forkForm->element('owner_id')->filter(new IsInArrayFilter(array_keys($owners)));
-                $this->forkForm->element('owner_id')->setDefault($user->getId());
-                
-                /**
-                 * @todo ROLE_ADMIN can create forks to anyone
-                 * @todo Organizations
-                 */
-                 if (isset($this->entity)) {
-                    $this->forkForm->element('type')->setDefault(($this->entity->isPrivate() ? 'private' : 'public'));
-                 }
-            } catch(\Fwk\Security\Exceptions\AuthenticationRequired $exp) {
+
+            if (!$this->getServices()->get('security')->hasUser()) {
+                return $this->forkForm;
             }
+
+            // define possible owners
+            $user = $this->getServices()->get('security')->getUser();
+            $fn = $user->getFullname();
+            $owners = array($user->getId() => (!empty($fn) ? $fn : $user->getUsername()));
+            $this->forkForm->element('owner_id')->setOptions($owners);
+            $this->forkForm->element('owner_id')->filter(new IsInArrayFilter(array_keys($owners)));
+            $this->forkForm->element('owner_id')->setDefault($user->getId());
+
+            /**
+             * @todo ROLE_ADMIN can create forks to anyone
+             * @todo Organizations
+             */
+             if (isset($this->entity)) {
+                $this->forkForm->element('type')->setDefault(($this->entity->isPrivate() ? 'private' : 'public'));
+             }
+
         }
         
         return $this->forkForm;

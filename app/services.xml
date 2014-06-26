@@ -155,7 +155,7 @@
         <argument>@logger</argument>
     </class-definition>
     
-    <class-definition name="users" class="TestGit\\UsersService" shared="true">
+    <class-definition name="users" class="TestGit\UsersService" shared="true">
         <argument>:apache.htpasswd.bin</argument>
     </class-definition>
     
