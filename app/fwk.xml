@@ -369,7 +369,7 @@
         <action name="ToggleUserRight" shortcut="TestGit\Controllers\Profile:toggleOrgUserRight">
             <acl type="allow" role="user" />
             <result name="success" type="redirect">
-                <param name="actionName">Profile</param>
+                <param name="actionName">OrgMembers</param>
                 <param name="username">:username</param>
             </result>
             <result name="error" type="chain">
@@ -381,6 +381,26 @@
             <acl type="allow" role="user" />
             <result name="success" type="php">
                 <param name="file">user_settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="UserActivity" shortcut="TestGit\Controllers\Profile:showActivity">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">user_activity.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="OrgMembers" shortcut="TestGit\Controllers\Profile:showMembers">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">user_members.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -570,7 +590,13 @@
             <param name="right" required="true" regex="[a-z]+" />
         </url>
 
-         <url route="/:username/settings$" action="UserSettings">
+        <url route="/:username/activity$" action="UserActivity">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/members" action="OrgMembers">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/settings$" action="UserSettings">
             <param name="username" required="true" />
         </url>
         <url route="/:username/settings/edit$" action="EditUserInfos">

@@ -26,6 +26,7 @@ class ReservedRepoNamesFilter implements Filter
         'commit',
         'commits',
         'daemon',
+        'members',
         'creator'       /* gitolite specials (wild repos) */
     );
     

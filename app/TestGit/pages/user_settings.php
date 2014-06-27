@@ -5,16 +5,7 @@
 
       <div class="container user-settings">
           <div class="row" style="margin-top:40px;">
-            <div class="col-md-2 avatar">
-                <?php if ($this->profile->isUser()): ?>
-                    <i class="glyphicon glyphicon-user"></i>
-                <?php else: ?>
-                    <i class="octicon octicon-organization"></i>
-                    <span class="label label-default">Organization</span>
-                <?php endif; ?>
-                <h1><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>
-                <p><?php echo $vh->escape($this->profile->getFullname()); ?></p>
-            </div>
+            <?php $userMenuActive = "settings"; include __DIR__ .'/_user_left.php'; ?>
             <div class="col-md-8">
                 <?php if ($this->updated == 1): ?>
                 <div class="alert alert-success">
@@ -22,7 +13,6 @@
                     <strong>Success!</strong> Your profile informations have been updated.
                 </div>
                 <?php endif; ?>
-                <p><a href="<?php echo $this->_helper->url('Profile', array('username' => $this->profile->getUsername())); ?>">&LongLeftArrow; Back to profile</a></p>
                 <div class="panel panel-default">
                   <div class="panel-heading">
                     <h3 class="panel-title">General Settings</h3>
@@ -77,8 +67,6 @@
                    </div>
                 </div>
             </div>
-              <div class="col-md-2">
-              </div>
           </div>
       </div>
       

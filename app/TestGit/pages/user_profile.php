@@ -5,30 +5,7 @@
 
       <div class="container">
           <div class="row" style="margin-top:40px;">
-            <div class="col-md-2 avatar">
-                <?php if ($this->profile->isUser()): ?>
-                    <i class="glyphicon glyphicon-user"></i>
-                <?php else: ?>
-                    <i class="octicon octicon-organization"></i>
-                    <span class="label label-default">Organization</span>
-                <?php endif; ?>
-                <h1><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>
-                <p><?php echo $vh->escape($this->profile->getFullname()); ?></p>
-
-                <?php if ($this->_helper->isAllowed($this->profile, 'edit')): ?>
-                <div class="btn-group">
-                    <a href="<?php echo $this->_helper->url('UserSettings', array('username' => $this->profile->getUsername())); ?>" class="btn btn-sm btn-default">Settings</a>
-                </div>
-                <?php endif; ?>
-
-                <hr />
-                <ul class="nav nav-pills nav-stacked" style="margin-top: 20px; text-align: left;">
-                    <li class="active"><a  style="padding: 5px 15px;" href="#"><b class="octicon octicon-repo"></b> Repositories</a></li>
-                    <li><a style="padding: 5px 15px;" href="#"><b class="octicon octicon-history"></b> Activity</a></li>
-                    <li class="divider"></li>
-                    <li><a style="padding: 5px 15px;" href="#"><b class="octicon octicon-tools"></b> Settings</a></li>
-                </ul>
-            </div>
+            <?php $userMenuActive = "profile"; include __DIR__ .'/_user_left.php'; ?>
             <div class="col-md-8">
                 <?php if(!count($this->repositories)): ?>
                     <div class="alert alert-warning">This <?php echo $this->_helper->escape($this->profile->getType()); ?> has no public repositories yet.</div>
@@ -61,86 +38,8 @@
                    </div>
                 </div>
                 <?php endif; ?>
-
-                <?php if ($this->profile->isUser()): ?>
-                <h3>Latest activity</h3> 
-                
-                <?php echo $this->_helper->embed('Activity', array('user' => $this->profile, 'repositories' => $this->activityRepositories)); ?>
-                <?php else: ?>
-                <h3>Members</h3>
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th style="width: 15px;">&nbsp;</th>
-                        <th style="">User</th>
-                        <th style="width: 100px;font-size:12px;text-align: center;">Write Access</th>
-                        <th style="width: 100px;font-size:12px;text-align: center;">Repos Admin</th>
-                        <th style="width: 110px;font-size:12px;text-align: center;">Members Admin</th>
-                        <th style="width: 100px;font-size:12px;text-align: center;">Admin</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php $members = $this->profile->getMembers();
-                        foreach($members as $member): ?>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>
-                                <a href="<?php echo $this->_helper->url('Profile', array('username' => $member->getUser()->getUsername())) ?>"><?php echo $this->_helper->escape($member->getUser()->displayName()); ?></a>
-                                <?php if($member->getAdded_by() == $member->getUser_id()): ?>
-                                <span class="label label-default">owner</span>
-                                <?php endif; ?>
-                            </td>
-                            <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
-                            <td style="text-align: center">
-                                <a href="<?php echo $this->_helper->url('ToggleUserRight', array('username' => $this->profile->getUsername(), 'target' => $member->getUser_id(), 'right' => 'write')); ?>"><i class="octicon <?php if($member->getReposWriteAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
-                            </td>
-                            <?php else: ?>
-                            <td style="text-align: center">
-                                <i class="octicon <?php if($member->getReposWriteAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
-                            </td>
-                            <?php endif; ?>
-                            <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
-                                <td style="text-align: center">
-                                    <a href="<?php echo $this->_helper->url('ToggleUserRight', array('username' => $this->profile->getUsername(), 'target' => $member->getUser_id(), 'right' => 'repos')); ?>"><i class="octicon <?php if($member->getReposAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
-                                </td>
-                            <?php else: ?>
-                                <td style="text-align: center">
-                                    <i class="octicon <?php if($member->getReposAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
-                                </td>
-                            <?php endif; ?>
-                            <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
-                                <td style="text-align: center">
-                                    <a href="<?php echo $this->_helper->url('ToggleUserRight', array('username' => $this->profile->getUsername(), 'target' => $member->getUser_id(), 'right' => 'members')); ?>"><i class="octicon <?php if($member->getMembersAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
-                                </td>
-                            <?php else: ?>
-                                <td style="text-align: center">
-                                    <i class="octicon <?php if($member->getMembersAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
-                                </td>
-                            <?php endif; ?>
-                            <?php if ($this->_helper->isAllowed($this->profile, 'edit-members') || $this->_helper->isAllowed($this->profile, 'admin')): ?>
-                                <td style="text-align: center">
-                                    <a href="<?php echo $this->_helper->url('ToggleUserRight', array('username' => $this->profile->getUsername(), 'target' => $member->getUser_id(), 'right' => 'admin')); ?>"><i class="octicon <?php if($member->getAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i></a>
-                                </td>
-                            <?php else: ?>
-                                <td style="text-align: center">
-                                    <i class="octicon <?php if($member->getAdminAccess()): ?>octicon-check<?php else: ?>octicon-x<?php endif; ?>"></i>
-                                </td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                    </tbody>
-                    </table>
-                <?php endif; ?>
             </div>
-              <div class="col-md-2">
-                  <?php if ($this->profile->isUser()): ?>
-                  <p class="user-stat"><span class="big-counter"><?php echo count($this->repositories); ?></span> repositories</p>
-                  <p class="user-stat"><span class="big-counter"><?php echo $this->totalCommits; ?></span> commits</p>
-                    <?php else: ?>
-                      <p class="user-stat"><span class="big-counter"><?php echo count($members); ?></span> members</p>
-                      <p class="user-stat"><span class="big-counter"><?php echo count($this->repositories); ?></span> repositories</p>
-                  <?php endif; ?>
-              </div>
+          <?php include __DIR__ .'/_user_right.php'; ?>
           </div>
       </div>
       

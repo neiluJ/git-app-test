@@ -44,17 +44,49 @@ class Profile extends Repositories implements Preparable, ContextAware
             $this->errorMsg = $exception->getMessage();
             return Result::ERROR;
         }
-        
+
         $dao = $this->getGitDao();
         $this->activityRepositories = $this->loadRepositoriesAcls($dao->findMany($this->profile->getId(), GitDao::FIND_OWNER, 100, false));
         foreach ($this->activityRepositories as $repo) {
-             if ($repo->getOwner_id() == $this->profile->getId()) {
+            if ($repo->getOwner_id() == $this->profile->getId()) {
                 $this->repositories[] = $repo;
-             }
+            }
         }
 
         $this->totalCommits = $dao->countCommits($this->profile);
-        
+
+        return Result::SUCCESS;
+    }
+
+    public function showActivity()
+    {
+        try {
+            $res = $this->show();
+        } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
+            return Result::ERROR;
+        }
+
+        if ($res !== Result::SUCCESS) {
+            return Result::ERROR;
+        }
+
+        return Result::SUCCESS;
+    }
+
+    public function showMembers()
+    {
+        try {
+            $res = $this->show();
+        } catch(\Exception $exception) {
+            $this->errorMsg = $exception->getMessage();
+            return Result::ERROR;
+        }
+
+        if ($res !== Result::SUCCESS) {
+            return Result::ERROR;
+        }
+
         return Result::SUCCESS;
     }
     
