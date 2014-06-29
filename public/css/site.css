@@ -2,9 +2,9 @@
   font-family: "Incosolata";
   src: url(../fonts/Inconsolata.otf) format("opentype");
 }
-
 body {
   padding-top: 50px;
+    font-family: Roboto, sans-serif;
 }
 ul.navbar-nav li.active a {
     border-bottom:solid 2px rgb(50, 118, 177);
@@ -352,6 +352,7 @@ ul.repositories li p.infos {
     padding-bottom: 0;
     margin-bottom:0;
     margin-left: 24px;
+    font-weight: 300;
 }
 ul.repositories li p.infos span {
     color: #666;
@@ -415,6 +416,7 @@ h1 span.fork a {
 .repo-desc {
     color: #666;
     padding-left: 18px;
+    font-weight: 300;
 }
 .commit-details {
     font-size: 10px;
@@ -453,8 +455,8 @@ a.adv-search:hover, a.adv-search:active, a.adv-search:focus {
     line-height: 40px;
     display:block;
     font-weight: bold;
-    font-family: Georgia, sans-serif;
     color: #666;
+    font-weight: 900;
     vertical-align: bottom;
 }
 
@@ -544,4 +546,11 @@ ol.comment-list li>ol>li {
 }
 ol.comment-list li>ol>li div.comment-meta {
     border-top:none;
+}
+
+h1.profile {
+    font-weight: 900;
+}
+p.profile-info {
+    font-weight: 300;
 }

@@ -5,8 +5,8 @@
         <i class="octicon octicon-organization"></i>
         <span class="label label-warning">Organization</span>
     <?php endif; ?>
-    <h1><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>
-    <p><?php echo $vh->escape($this->profile->getFullname()); ?></p>
+    <h1 class="profile"><strong><?php echo $vh->escape($this->profile->getUsername()); ?></strong></h1>
+    <p class="profile-info"><?php echo $vh->escape($this->profile->getFullname()); ?></p>
 
     <hr />
     <ul class="nav nav-pills nav-stacked" style="margin-top: 20px; text-align: left;">
