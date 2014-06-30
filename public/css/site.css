@@ -185,8 +185,16 @@ div.cloneUrl {
     color: #999;
     font-family: Incosolata, "Courier New",Courier,monospace;
 }
+div.cloneUrl p {
+    white-space: pre-line;
+    line-break: loose;
+    word-break: break-all;
+}
+div.btns-clone {
+    margin-bottom: 10px;
+}
 .repo-title div.cloneUrl label {
-    font-weight:bold;
+    font-weight:900;
 }
 .main-view {
     display:none;
@@ -553,4 +561,10 @@ h1.profile {
 }
 p.profile-info {
     font-weight: 300;
+}
+
+#editor {
+    margin: 0;
+    position: relative;
+    border-radius:0;
 }

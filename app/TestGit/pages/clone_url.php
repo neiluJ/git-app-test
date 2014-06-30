@@ -1,5 +1,4 @@
 <?php if ($this->_helper->isAllowed($this->entity, 'read') || $this->_helper->isAllowed($this->entity, 'write')): ?>
-git clone <span id="gitUrl"><?php echo $this->cloneSshUrl; ?></span>
 <div class="btn-group btns-clone" data-toggle="buttons">
     <?php if ($this->_helper->isAllowed($this->entity, 'read') || $this->_helper->isAllowed($this->entity, 'write')): ?>
   <label class="btn btn-default btn-xs active">
@@ -25,7 +24,9 @@ git clone <span id="gitUrl"><?php echo $this->cloneSshUrl; ?></span>
     <?php if ($this->_helper->isAllowed($this->entity, 'read') && $this->clonePublicUrl != null): ?>
     <input type="hidden" name="githost.public" id="gitPublicUrl" value="<?php echo $this->clonePublicUrl; ?>">
     <?php endif; ?>
+    <a href="#" style="margin-left: 5px;" title="Copy URL to clipboard"><i class="octicon octicon-pencil"></i></a>
 </div>
+    <p>git clone <span id="gitUrl"><?php echo $this->cloneSshUrl; ?></span></p>
 <script type="text/javascript">
 $(document).ready(function() {
     var updateUrl = function(type) {

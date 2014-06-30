@@ -15,8 +15,6 @@
     <link href="<?php echo str_replace('/index.php', '/', $vh->url()); ?>css/typeahead.js-bootstrap.css" rel="stylesheet">
     <!-- Custom styles for this template -->
     <link href="<?php echo str_replace('/index.php', '/', $vh->url()); ?>css/site.css" rel="stylesheet">
-    <link href="<?php echo str_replace('/index.php', '/', $vh->url()); ?>js/highlight.js/styles/github.css" rel="stylesheet">
-
     <link href="<?php echo str_replace('/index.php', '/', $vh->url()); ?>fonts/octicons/octicons.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->

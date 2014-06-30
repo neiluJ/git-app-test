@@ -26,6 +26,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     
     protected $repository;
     protected $entity;
+    protected $commit;
     
     protected $services;
     protected $context;
@@ -65,7 +66,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
         }
         
         if (!$this->context->getRequest()->isXmlHttpRequest()) {
-            return Result::SUCCESS;
+            // return Result::SUCCESS;
         }
         
         $refs = $this->repository->getReferences();
@@ -87,6 +88,10 @@ class Repository implements ContextAware, ServicesAware, Preparable
         if (is_string($tree)) {
             $tree = $this->repository->getTree($tree);
         }
+
+        $this->commit = $this->repository->getLog(
+            $revision, ltrim($this->path,'/'), 0, 1
+        )->getSingleCommit();
 
         foreach ($tree->getEntries() as $fileName => $infos) {
             $dir = ($infos[0] === '040000' ? true : false);
@@ -550,5 +555,13 @@ class Repository implements ContextAware, ServicesAware, Preparable
     public function getEmptyRepo()
     {
         return $this->emptyRepo;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCommit()
+    {
+        return $this->commit;
     }
 }

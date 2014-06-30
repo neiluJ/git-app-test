@@ -13,7 +13,8 @@ class Blob extends Commits implements ContextAware
     protected $context;
     
     protected $language;
-    
+    protected $type;
+
     protected static $languages = array(
         'php'   => array('php', 'phtml', 'php3', 'php4', 'php5'),
         'xml'   => array('html', 'xml', 'xhtml'),
@@ -38,7 +39,7 @@ class Blob extends Commits implements ContextAware
         'vbscript' => array('vb'),
         'lua'   => array('lua'),
         'cpp'   => array('cpp'),
-        'objectivec' => array('m', 'h'),
+        'objective-c' => array('m', 'h'),
         'cs'    => array('cs'),
         'sql'   => array('sql'),
         'ini'   => array('ini', 'ini-dist'),
@@ -64,12 +65,20 @@ class Blob extends Commits implements ContextAware
         
         $commit = $revision->getCommit();
         $this->currentCommit = $commit;
-        
+
         $tree = $commit->getTree();
-        
+
+        if (is_string($tree)) {
+            $tree = $this->repository->getTree($tree);
+        }
+
         if (null !== $this->path && $tree instanceof \Gitonomy\Git\Tree) {
             $tree = $tree->resolvePath($this->path);
         }
+
+        $this->commit = $this->repository->getLog(
+            $revision, ltrim($this->path,'/'), 0, 1
+        )->getSingleCommit();
         
         if (!$tree instanceof \Gitonomy\Git\Blob) {
             return Result::ERROR;
@@ -101,6 +110,13 @@ class Blob extends Commits implements ContextAware
         }
         
         return Result::ERROR;
+    }
+
+    public function showNew()
+    {
+        $this->type = $this->show();
+
+        return ($this->type != Result::ERROR ? Result::SUCCESS : Result::ERROR);
     }
     
     public function raw()
@@ -223,5 +239,13 @@ class Blob extends Commits implements ContextAware
         }
         
         return false;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

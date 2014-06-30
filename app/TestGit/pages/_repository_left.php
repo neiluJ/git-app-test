@@ -29,7 +29,7 @@
     <hr />
     <!-- Split button -->
     <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><b class="octicon octicon-git-branch"></b> master</button>
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><b class="octicon octicon-git-branch"></b> <?php echo $this->_helper->escape($this->branch); ?> <b class="caret"></b></button>
         <button type="button" class="btn btn-success"><b class="octicon octicon-git-compare"></b></button>
         <ul class="dropdown-menu" role="menu">
             <li><a href="#">Action</a></li>
@@ -42,12 +42,12 @@
 
     <hr />
     <ul class="nav nav-pills nav-stacked" style="margin-top: 20px; text-align: left;">
-        <li<?php if ($repoMenuActive == "code"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="#"><b class="octicon octicon-code"></b> Browse</a></li>
-        <li<?php if ($repoMenuActive == "commits"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="#"><b class="octicon octicon-git-commit"></b> Commits</a></li>
-        <li<?php if ($repoMenuActive == "activity"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="#"><b class="octicon octicon-history"></b> Activity</a></li>
-        <li<?php if ($repoMenuActive == "branches"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="#"><b class="octicon octicon-git-branch"></b> Branches &amp; Tags</a></li>
-        <li<?php if ($repoMenuActive == "accesses"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="#"><b class="octicon octicon-organization"></b> Access Rights</a></li>
+        <li<?php if ($repoMenuActive == "code"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>"><b class="octicon octicon-code"></b> Browse</a></li>
+        <li<?php if ($repoMenuActive == "commits"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('CommitsNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>"><b class="octicon octicon-git-commit"></b> Commits</a></li>
+        <li<?php if ($repoMenuActive == "activity"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('ActivityNEW', array('name' => $this->entity->getFullname())); ?>"><b class="octicon octicon-history"></b> Activity</a></li>
+        <li<?php if ($repoMenuActive == "branches"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('BranchesNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>"><b class="octicon octicon-git-branch"></b> Branches &amp; Tags</a></li>
+        <li<?php if ($repoMenuActive == "accesses"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('AccessesNEW', array('name' => $this->entity->getFullname())); ?>"><b class="octicon octicon-organization"></b> Access Rights</a></li>
         <li class="divider"></li>
-        <li<?php if ($repoMenuActive == "branches"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="#"><b class="octicon octicon-tools"></b> Settings</a></li>
+        <li<?php if ($repoMenuActive == "settings"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('SettingsNEW', array('name' => $this->entity->getFullname())); ?>"><b class="octicon octicon-tools"></b> Settings</a></li>
     </ul>
 </div>
