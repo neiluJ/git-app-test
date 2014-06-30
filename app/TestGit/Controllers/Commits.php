@@ -91,7 +91,7 @@ class Commits extends Repository
         
         $revision = $this->repository->getRevision($this->hash);
         
-        $commit = $revision->getCommit();
+        $commit = $this->commit = $revision->getCommit();
         
         $this->commits = array($commit);
         $this->currentCommit = $commit;

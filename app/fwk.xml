@@ -233,6 +233,16 @@
                 <param name="errorMsg">Problem occured while loading the commit.</param>
             </result>
         </action>
+        <action name="CommitNEW" shortcut="TestGit\Controllers\Commits:commitAction">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repo_commit.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Problem occured while loading the commit.</param>
+            </result>
+        </action>
         <action name="Compare" shortcut="TestGit\Controllers\Commits:compareAction">
             <acl type="allow" role="" />
             <result name="ajax:success" type="php">
@@ -724,6 +734,10 @@
         </url>
         <url route="/:name/accesses$" action="AccessesNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+        </url>
+        <url route="/:name/commit/:hash$" action="CommitNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="hash" required="true" regex=".*" />
         </url>
         <url route="/:name/accesses/remove/:userId$" action="RemoveAccess">
             <param name="name" required="true" regex=".+" />
