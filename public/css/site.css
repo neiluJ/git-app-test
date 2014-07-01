@@ -567,6 +567,8 @@ p.profile-info {
     margin: 0;
     position: relative;
     border-radius:0;
+    border-top: solid 1px #ddd;
+    margin-bottom: 40px;
 }
 .compare-bulb {
     background-color: #eee;

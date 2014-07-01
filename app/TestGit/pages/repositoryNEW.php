@@ -37,14 +37,6 @@
             <div id="main">
                 <div id="tc" class="mainv">
                     <table class="table table-striped">
-                        <thead>
-                        <tr>
-                            <th style="width: 10px;">&nbsp;</th>
-                            <th style="width: 200px;">File</th>
-                            <th>Message</th>
-                            <th style="width: 130px;">Last update</th>
-                        </tr>
-                        </thead>
                         <tbody>
                         <?php foreach ($this->files as $file): ?>
                         <tr>
