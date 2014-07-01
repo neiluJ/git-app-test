@@ -54,7 +54,20 @@
             </div>
         </div>
         <div class="col-md-2">
-            <div class="cloneUrl"><?php echo $this->_helper->embed('CloneUrl', array('name' => $this->name)); ?></div>
+            <h5 style="margin-top: 0"><b class="octicon octicon-history"></b> History</h5>
+            commits here
+
+            <h5 style="margin-top: 40px;"><b class="octicon octicon-organization"></b> Contributors</h5>
+            contributors
+
+            <h5 style="margin-top: 40px;"><b class="octicon octicon-tools"></b> Tools</h5>
+            <div class="btn-group btn-group-xs">
+                <a class="btn btn-default btn-sm" href="<?php echo $this->_helper->url('BlobRaw', array('name' => $this->name, 'path' => $this->path, 'branch' => $this->branch), true); ?>"><b class="octicon octicon-file-binary"></b> <?php echo ($this->type == "display_binary" ? "Download" : "RAW"); ?></a>
+                <?php if($this->type != 'display_image' && $this->type != 'display_binary'): ?>
+                    <a class="btn btn-default btn-sm" href="<?php echo $this->_helper->url('Blame', array('name' => $this->name, 'path' => $this->path, 'branch' => $this->branch), true); ?>"><b class="octicon octicon-telescope"></b> Blame</a>
+                <?php endif; ?>
+            </div>
+
         </div>
     </div>
     <script type="text/javascript">

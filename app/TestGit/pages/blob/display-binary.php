@@ -1,5 +1,3 @@
-<p>
-    Cannot display a binary file :(<br />
-    However you can still <a href="<?php echo $this->_helper->url('BlobRaw', array('name' => $this->name, 'path' => $this->path, 'branch' => $this->branch), true); ?>" title="download <?php echo $this->_helper->escape($this->path); ?>">download it here</a>.
-
-</p>
+<div class="alert alert-warning" role="alert" style="margin-top: 20px;">
+    We can't display a <b>binary file</b> but you can <b><a href="<?php echo $this->_helper->url('BlobRaw', array('name' => $this->name, 'path' => $this->path, 'branch' => $this->branch), true); ?>" title="download <?php echo $this->_helper->escape($this->path); ?>">download</a></b> this version (<?php echo substr($this->commit->getHash(), 0, 6); ?>).
+</div>
