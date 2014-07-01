@@ -30,7 +30,7 @@
     <!-- Split button -->
     <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><b class="octicon octicon-git-branch"></b> <?php echo $this->_helper->escape($this->branch); ?> <b class="caret"></b></button>
-        <button type="button" class="btn btn-success"><b class="octicon octicon-git-compare"></b></button>
+        <a href="<?php echo $this->_helper->url('CompareNEW', array('name' => $this->entity->getFullname())); ?>" class="btn btn-success"><b class="octicon octicon-git-compare"></b></a>
         <ul class="dropdown-menu" role="menu">
             <li><a href="#">Action</a></li>
             <li><a href="#">Another action</a></li>

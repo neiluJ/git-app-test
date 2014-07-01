@@ -568,3 +568,13 @@ p.profile-info {
     position: relative;
     border-radius:0;
 }
+.compare-bulb {
+    background-color: #eee;
+    padding: 5px 10px;
+}
+.compare-head h6 {
+    text-transform: uppercase;
+    color: #ccc;
+    font-size: 12px;
+    margin: 0 0 5px 0;
+}

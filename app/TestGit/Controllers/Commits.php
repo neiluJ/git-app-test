@@ -120,7 +120,11 @@ class Commits extends Repository
             $this->errorMsg = $exp->getMessage();
             return Result::ERROR;
         }
-        
+
+        if (empty($this->compare)) {
+            return Result::SUCCESS;
+        }
+
         $this->diff = $this->repository->getDiff($this->compare);
         $this->repoAction = 'Compare';
             
