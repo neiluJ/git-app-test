@@ -137,7 +137,23 @@ class GitDao extends DaoBase
         
         return $this->getDb()->execute($query, $params);
     }
-    
+
+    /**
+     *
+     * @return \Fwk\Db\ResultSet;
+     */
+    public function findForks(Repository $repository)
+    {
+        $query = Query::factory()
+            ->select()
+            ->from($this->getOption('repositoriesTable'))
+            ->where('parent_id = ?')
+            ->entity(self::ENTITY_REPO)
+            ->orderBy('last_commit_date', false);
+
+        return $this->getDb()->execute($query, array($repository->getParent_id()));
+    }
+
     /**
      * 
      * @param mixed   $text       Search text

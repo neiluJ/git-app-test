@@ -12,6 +12,9 @@ if(empty($value)) { continue; }
     $value = $element->valueOrDefault();
     if(!empty($value) && !$element instanceof Checkbox):
 ?> value="<?php echo htmlspecialchars($element->valueOrDefault()); ?>"<?php endif; ?>>
+<?php if (1 == 2 && $form->isSubmitted() && $element->hasError()): ?>
+    <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+<?php endif; ?>
 <?php if($element->hasHint()): ?>
         <span class="help-block"><?php echo htmlspecialchars($element->getHint()); ?></span>
 <?php endif; ?>

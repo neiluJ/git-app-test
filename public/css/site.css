@@ -572,11 +572,14 @@ p.profile-info {
 }
 .compare-bulb {
     background-color: #eee;
-    padding: 5px 10px;
+    padding: 5px 5px 0 5px;
 }
 .compare-head h6 {
     text-transform: uppercase;
     color: #ccc;
     font-size: 12px;
     margin: 0 0 5px 0;
+}
+.compare-bulb .form-group {
+    margin-bottom: 5px;
 }

@@ -256,7 +256,7 @@
                 <param name="errorMsg">Problem occured while loading the comparision</param>
             </result>
         </action>
-        <action name="CompareNEW" shortcut="TestGit\Controllers\Commits:compareAction">
+        <action name="CompareNEW" shortcut="TestGit\Controllers\Compare:compareAction">
             <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">repo_compare.php</param>
@@ -748,6 +748,9 @@
         <url route="/:name/commit/:hash$" action="CommitNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
             <param name="hash" required="true" regex=".*" />
+        </url>
+        <url route="/:name/compare" action="CompareNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
         </url>
         <url route="/:name/accesses/remove/:userId$" action="RemoveAccess">
             <param name="name" required="true" regex=".+" />
