@@ -151,7 +151,7 @@ class GitDao extends DaoBase
             ->entity(self::ENTITY_REPO)
             ->orderBy('last_commit_date', false);
 
-        return $this->getDb()->execute($query, array($repository->getParent_id()));
+        return $this->getDb()->execute($query, array($repository->getId()));
     }
 
     /**

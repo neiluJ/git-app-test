@@ -2,6 +2,7 @@
 namespace TestGit\Controllers;
 
 use Fwk\Core\Action\Result;
+use TestGit\EmptyRepositoryException;
 
 class Compare extends Repository
 {
@@ -10,7 +11,7 @@ class Compare extends Repository
     protected $commits      = array();
     protected $targets      = array();
     protected $diff;
-    protected $currentTarget = array();
+    protected $target;
 
     public function prepare()
     {
@@ -21,8 +22,10 @@ class Compare extends Repository
     {
         try {
             $this->loadRepository('read');
+        } catch(EmptyRepositoryException $exp) {
+            return 'empty_repo';
         } catch(\Exception $exp) {
-            $this->errorMsg = $exp->getMessage();
+            $this->errorMsg = $exp;
             return Result::ERROR;
         }
 
@@ -30,7 +33,7 @@ class Compare extends Repository
         $this->targets = $this->loadRepositoriesAcls($forks);
 
         if (empty($this->compare)) {
-            $this->currentTarget = $this->entity->getOwner()->getUsername();
+            $this->target = $this->entity->getOwner()->getUsername();
             return Result::SUCCESS;
         }
 
@@ -134,8 +137,8 @@ class Compare extends Repository
     /**
      * @return array
      */
-    public function getCurrentTarget()
+    public function getTarget()
     {
-        return $this->currentTarget;
+        return $this->target;
     }
 }

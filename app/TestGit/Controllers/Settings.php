@@ -51,7 +51,7 @@ class Settings extends Repository
             $this->generalInfosForm = new GeneralRepoInfosForm();
             
             if (null !== $this->entity) {
-                $this->generalInfosForm->setAction($this->getServices()->get('viewHelper')->url('Settings', array('name' => $this->entity->getFullname())));
+                $this->generalInfosForm->setAction($this->getServices()->get('viewHelper')->url($this->getContext()->getActionName(), array('name' => $this->entity->getFullname())));
                 $this->generalInfosForm->element('description')->setDefault($this->entity->getDescription());
                 $this->generalInfosForm->element('website')->setDefault($this->entity->getWebsite());
             }

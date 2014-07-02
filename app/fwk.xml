@@ -96,6 +96,12 @@
                 <param name="file">error.php</param>
             </result>
         </action>
+        <action name="RepoError" shortcut="TestGit\Controllers\Home:error">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repo_error.php</param>
+            </result>
+        </action>
         <action name="Repositories" shortcut="TestGit\Controllers\Repositories:show">
             <acl type="allow" role="" />
             <result name="success" type="redirect">
@@ -120,7 +126,7 @@
                 <param name="file">repository.php</param>
             </result>
             <result name="empty_repository" type="php">
-                <param name="file">repository_empty.php</param>
+                <param name="file">repo_empty.php</param>
             </result>
             <result name="ajax:success" type="json">
                 <param name="properties">files,path</param>
@@ -136,7 +142,7 @@
                 <param name="file">repositoryNEW.php</param>
             </result>
             <result name="empty_repository" type="php">
-                <param name="file">repository_empty.php</param>
+                <param name="file">repo_empty.php</param>
             </result>
             <result name="ajax:success" type="json">
                 <param name="properties">files,path</param>
@@ -261,9 +267,14 @@
             <result name="success" type="php">
                 <param name="file">repo_compare.php</param>
             </result>
+            <result name="empty_repo" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">This repository is empty.</param>
+                <param name="entity">:entity</param>
+            </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">Problem occured while loading comparision</param>
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction">
@@ -275,7 +286,7 @@
                 <param name="file">branches.php</param>
             </result>
             <result name="empty_repository" type="php">
-                <param name="file">repository_empty.php</param>
+                <param name="file">repo_empty.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -288,7 +299,7 @@
                 <param name="file">repo_branches.php</param>
             </result>
             <result name="empty_repository" type="php">
-                <param name="file">repository_empty.php</param>
+                <param name="file">repo_empty.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -564,6 +575,25 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="ForkNEW" shortcut="TestGit\Controllers\Repository:fork">
+            <acl type="allow" role="repo_create" />
+            <result name="success" type="redirect">
+                <param name="actionName">RepositoryNEW</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">repo_fork.php</param>
+            </result>
+            <result name="empty_repo" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">You can't fork an empty repository.</param>
+                <param name="entity">:entity</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
         <action name="Delete" shortcut="TestGit\Controllers\Repository:delete">
             <acl type="allow" role="repo_create" />
             <result name="success" type="redirect">
@@ -571,6 +601,19 @@
             </result>
             <result name="form" type="php">
                 <param name="file">delete.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="DeleteNEW" shortcut="TestGit\Controllers\Repository:delete">
+            <acl type="allow" role="repo_create" />
+            <result name="success" type="redirect">
+                <param name="actionName">Repositories</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">repo_delete.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -763,10 +806,10 @@
         <url route="/:name/settings$" action="SettingsNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
         </url>
-        <url route="/:name/fork$" action="Fork">
+        <url route="/:name/fork$" action="ForkNEW">
             <param name="name" required="true" regex=".+" />
         </url>
-        <url route="/:name/delete$" action="Delete">
+        <url route="/:name/delete$" action="DeleteNEW">
             <param name="name" required="true" regex=".+" />
         </url>
 

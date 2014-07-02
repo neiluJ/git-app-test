@@ -12,7 +12,9 @@ class Home implements ServicesAware
     
     protected $services;
     protected $user;
-    
+
+    public $entity;
+
     public function show()
     {
         return Result::SUCCESS;

@@ -40,7 +40,7 @@
                                 <div class="input-group-addon"><b class="octicon octicon-repo"></b></div>
                                 <select class="form-control">
                                     <?php foreach ($this->targets as $target): ?>
-                                        <option value="<?php echo $target->getOwner()->getUsername(); ?>"<?php if($this->currentTarget == $target->getOwner()->getUsername()): ?> selected="selected"<?php endif; ?>><?php echo $vh->escape($target->getFullname()); ?></option>
+                                        <option value="<?php echo $target->getOwner()->getUsername(); ?>"<?php if($this->target == $target->getOwner()->getUsername()): ?> selected="selected"<?php endif; ?>><?php echo $vh->escape($target->getFullname()); ?></option>
                                     <?php endforeach; ?>
                                 </select>
                             </div>

@@ -15,7 +15,7 @@
     <?php endif; ?>
 
 
-    <?php if ($this->entity->hasParent()): ?>
+    <?php $this->entity->hasParent(); if ($this->entity->hasParent()): ?>
         <p class="profile-info"><b class="octicon octicon-repo-forked"></b> <a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->entity->getParent()->getFullname())); ?>"><?php echo $vh->escape($this->entity->getParent()->getFullname()); ?></a></p>
     <?php endif; ?>
 

@@ -276,7 +276,7 @@ class Repository implements ResourceInterface
      */
     public function hasParent()
     {
-        return !empty($this->parent_id) && is_int($this->parent_id);
+        return !empty($this->parent_id);
     }
     
     public function isPrivate()
