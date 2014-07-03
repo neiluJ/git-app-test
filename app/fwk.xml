@@ -267,6 +267,11 @@
             <result name="success" type="php">
                 <param name="file">repo_compare.php</param>
             </result>
+            <result name="redirect" type="redirect">
+                <param name="actionName">CompareNEW</param>
+                <param name="name">:name</param>
+                <param name="compare">:compare</param>
+            </result>
             <result name="empty_repo" type="chain">
                 <param name="actionName">RepoError</param>
                 <param name="errorMsg">This repository is empty.</param>
@@ -792,8 +797,9 @@
             <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
             <param name="hash" required="true" regex=".*" />
         </url>
-        <url route="/:name/compare" action="CompareNEW">
+        <url route="/:name/compare/:compare" action="CompareNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="compare" required="false" regex=".*" />
         </url>
         <url route="/:name/accesses/remove/:userId$" action="RemoveAccess">
             <param name="name" required="true" regex=".+" />

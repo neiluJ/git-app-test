@@ -248,7 +248,7 @@ ul.diff-files {
     list-style-type:none;
     list-style-position:inside;
     font-size: 12px;
-    margin-bottom: 40px;
+    margin: 20px 0;
     padding:0;
 }
 ul.diff-files li { padding: 0; margin: 0; }
@@ -582,4 +582,36 @@ p.profile-info {
 }
 .compare-bulb .form-group {
     margin-bottom: 5px;
+}
+
+ul.commits-history {
+    list-style: none;
+    list-style-type: none;
+    margin:0 0 40px 0;
+    padding:0;
+}
+.commits-history li.date {
+    border:solid 1px #ccc;
+    margin-top:20px;
+    border-bottom:none;
+    display:block;
+}
+.commits-history li.date>p {
+    margin:0;
+    padding:5px 10px;
+    color: #666;
+    background-color: #eee;
+    border-bottom: solid 1px #ccc;
+    font-weight: 600;
+}
+.commits-history li table {
+    display:table;
+    width: 100%;
+}
+.commits-history li table tr {
+    display:table-row;
+    border-bottom: solid 1px #ccc;
+}
+.commits-history li table tr td {
+    padding: 5px 10px;
 }

@@ -8,7 +8,12 @@
         <?php $repoMenuActive = "commits"; include __DIR__ .'/_repository_left.php'; ?>
         <div class="col-md-10">
             <div id="repo-commit">
-                <h5 style="margin-top:0;"><i class="octicon octicon-git-commit"></i> Commit <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->entity->getFullname(), 'hash' => $this->commit->getHash())); ?>"><?php echo $this->commit->getHash(); ?></a></h5>
+                <h5 style="margin-top:0;">
+                    <?php $thId = 'commit-'. $this->entity->getId() .'-'. $this->commit->getHash(); $comments = $this->_helper->embed('CommentsCount', array('id' => $thId)); if ($comments > 0): ?>
+                        <span class="pull-right"><?php echo $comments; ?> <b class="octicon octicon-comment"></b></span>
+                    <?php endif; ?>
+                    <i class="octicon octicon-git-commit"></i> Commit <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->entity->getFullname(), 'hash' => $this->commit->getHash())); ?>"><?php echo $this->commit->getHash(); ?></a>
+                </h5>
                 <p class="commit-infos commit-txt" style="height: auto"><?php echo $this->_helper->escape($this->commit->getMessage()); ?></p>
                 <hr style="margin:10px 0;" />
             </div>
@@ -22,9 +27,9 @@
                     <?php $parents = $this->currentCommit->getParents(); if (!count($parents)): ?>
                         <strong>initial commit</strong>
                     <?php elseif (count($parents) == 1): ?>
-                        <strong>parent</strong> <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->name, 'hash' => $parents[0]->getHash()), true); ?>" ng-click="navigateToCommit($event, '<?php echo $parents[0]->getHash(); ?>')"><?php echo $parents[0]->getHash(); ?></a>
+                        <strong>parent</strong> <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->name, 'hash' => $parents[0]->getHash()), true); ?>"><?php echo $parents[0]->getHash(); ?></a>
                     <?php else: ?>
-                        <strong>parents</strong> <?php foreach($parents as $parent): ?><a ng-click="navigateToCommit($event, '<?php echo $parent->getHash(); ?>')" href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $parent->getHash()), true); ?>"><?php echo substr($parent->getHash(), 0, 6); ?></a>, <?php endforeach; ?>
+                        <strong>parents</strong> <?php foreach($parents as $parent): ?><a href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $parent->getHash()), true); ?>"><?php echo substr($parent->getHash(), 0, 6); ?></a>, <?php endforeach; ?>
                     <?php endif; ?>
                 </p>
                 <p class="author"><i class="glyphicon glyphicon-user"></i> <span><?php echo $this->_helper->escape($this->currentCommit->getCommitterName()); ?></span> authored on <span class="date"> <?php echo $this->_helper->escape($this->currentCommit->getCommitterDate()->format('l F d Y H:i:s')); ?></span></p>

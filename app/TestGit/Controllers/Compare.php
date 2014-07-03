@@ -2,6 +2,7 @@
 namespace TestGit\Controllers;
 
 use Fwk\Core\Action\Result;
+use Gitonomy\Git\Exception\ProcessException;
 use TestGit\EmptyRepositoryException;
 
 class Compare extends Repository
@@ -12,6 +13,9 @@ class Compare extends Repository
     protected $targets      = array();
     protected $diff;
     protected $target;
+    protected $base;
+    protected $baseRef;
+    protected $targetRef;
 
     public function prepare()
     {
@@ -29,15 +33,34 @@ class Compare extends Repository
             return Result::ERROR;
         }
 
-        $forks = $this->getServices()->get('gitDao')->findForks($this->entity);
+        $forks  = $this->getServices()->get('gitDao')->findForks($this->entity);
         $this->targets = $this->loadRepositoriesAcls($forks);
+        $post   = ($this->getContext()->getRequest()->getMethod() == "POST");
 
         if (empty($this->compare)) {
-            $this->target = $this->entity->getOwner()->getUsername();
+            if (!$post) {
+                $this->target = $this->entity->getOwner()->getUsername();
+                return Result::SUCCESS;
+            }
+
+            $this->compare = $this->makeCompareStringFromPost();
+            if ($this->compare !== false) {
+                return Result::REDIRECT;
+            }
             return Result::SUCCESS;
         }
 
-        $this->diff = $this->repository->getDiff($this->compare);
+        $res = $this->parseCompareString();
+        if (!$res) {
+            return Result::SUCCESS;
+        }
+
+        try {
+            $this->diff = $this->repository->getDiff($this->compare);
+            $this->commits = $this->repository->getRevision($this->compare)->getLog(null, 0);
+        } catch(ProcessException $exp) {
+            $this->errorMsg = $exp;
+        }
 
         return Result::SUCCESS;
     }
@@ -140,5 +163,89 @@ class Compare extends Repository
     public function getTarget()
     {
         return $this->target;
+    }
+
+    protected function makeCompareStringFromPost()
+    {
+        $post = ($this->getContext()->getRequest()->getMethod() == "POST");
+        if (!$post || !isset($_POST['base']) || !isset($_POST['baseRef']) || !isset($_POST['target']) || !isset($_POST['targetRef'])) {
+            $this->errorMsg = "Invalid POST data.";
+            return false;
+        }
+
+        $base = (empty($_POST['base']) ? $this->entity->getOwner()->getUsername() : $_POST['base']);
+        $target = (empty($_POST['target']) ? $this->entity->getOwner()->getUsername() : $_POST['target']);
+        $baseRef = (empty($_POST['baseRef']) ? $this->entity->getDefault_branch() : $_POST['baseRef']);
+        $targetRef = (empty($_POST['targetRef']) ? $this->entity->getDefault_branch() : $_POST['targetRef']);
+
+        if ($base != $target) {
+            return sprintf("%s:%s...%s:%s", $base, $baseRef, $target, $targetRef);
+        } else {
+            return sprintf("%s...%s", $baseRef, $targetRef);
+        }
+    }
+
+    protected function parseCompareString()
+    {
+        if (empty($this->compare)) {
+            $this->errorMsg = "Empty comparision";
+            return false;
+        }
+
+        if (strpos($this->compare, "...") === false) {
+            $this->errorMsg = "Invalid comparision string";
+            return false;
+        }
+
+        list($base, $target) = explode('...', $this->compare);
+        if (strpos($base, ':') !== false) {
+            list($baseOwner, $baseRef) = explode(':', $base);
+        } else {
+            $baseOwner = $this->entity->getOwner()->getUsername();
+            $baseRef = $base;
+        }
+
+        if (strpos($target, ':') !== false) {
+            list($targetOwner, $targetRef) = explode(':', $target);
+        } else {
+            $targetOwner = $this->entity->getOwner()->getUsername();
+            $targetRef = $target;
+        }
+
+        $this->base = $baseOwner;
+        $this->baseRef = $baseRef;
+        $this->target = $targetOwner;
+        $this->targetRef = $targetRef;
+
+        return true;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBaseRef()
+    {
+        return $this->baseRef;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTargetRef()
+    {
+        return $this->targetRef;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBase()
+    {
+        return $this->base;
+    }
+
+    public function getErrorMsg()
+    {
+        return $this->errorMsg;
     }
 }

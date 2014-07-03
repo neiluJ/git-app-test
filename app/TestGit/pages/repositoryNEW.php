@@ -8,7 +8,12 @@
         <?php $repoMenuActive = "code"; include __DIR__ .'/_repository_left.php'; ?>
         <div class="col-md-8">
             <div id="repo-commit">
-                <h5 style="margin-top:0;"><i class="octicon octicon-git-commit"></i> Commit <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->entity->getFullname(), 'hash' => $this->commit->getHash())); ?>"><?php echo $this->commit->getHash(); ?></a></h5>
+                <h5 style="margin-top:0;">
+                    <?php $thId = 'commit-'. $this->entity->getId() .'-'. $this->commit->getHash(); $comments = $this->_helper->embed('CommentsCount', array('id' => $thId)); if ($comments > 0): ?>
+                        <span class="pull-right"><?php echo $comments; ?> <b class="octicon octicon-comment"></b></span>
+                    <?php endif; ?>
+                    <i class="octicon octicon-git-commit"></i> Commit <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->entity->getFullname(), 'hash' => $this->commit->getHash())); ?>"><?php echo $this->commit->getHash(); ?></a>
+                </h5>
                 <p class="commit-infos commit-txt"><a href="#" class="commit-collapse"><i class="glyphicon glyphicon-plus"></i></a><span><?php echo $this->_helper->escape($this->commit->getMessage()); ?></span></p>
                 <hr style="margin:10px 0;" />
             </div>
