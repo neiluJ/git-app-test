@@ -61,6 +61,11 @@
         </form>
         <hr />
 
+        <div class="alert alert-info" role="alert" style="margin-top: 20px;">
+            <a href="#"  class="pull-right btn btn-success btn-lg"><b class="octicon octicon-git-merge"></b> Merge</a>
+            <b>Heads up!</b><br />Merge this comparision onto your master branch !
+        </div>
+        <hr />
         <?php if (!empty($this->errorMsg)): ?>
             <div class="alert alert-warning" role="alert" style="margin-top: 20px;">
                 <?php echo $vh->escape($this->errorMsg); ?>
