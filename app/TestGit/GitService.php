@@ -230,7 +230,36 @@ class GitService
             throw new \RuntimeException($proc->getErrorOutput());
         }
     }
-    
+
+    public function impersonateString(User $user)
+    {
+        $fn     = $user->getFullname();
+
+        // doing the impersonation commit stuff
+        $exec   = sprintf("export GIT_AUTHOR_NAME='%s' ".
+            "&& export GIT_AUTHOR_EMAIL='%s' ".
+            "&& export GIT_COMMITTER_NAME='%s' ".
+            "&& export GIT_COMMITTER_EMAIL='%s' ",
+            $this->forgeryUsername,
+            $this->forgeryEmail,
+            (empty($fn) ? $user->getUsername() : $fn),
+            $user->getEmail()
+        );
+
+        return $exec;
+    }
+
+    public function impersonationRemove()
+    {
+        // doing the impersonation commit stuff
+        $exec   = sprintf("unset GIT_AUTHOR_NAME ".
+            "&& unset GIT_AUTHOR_EMAIL ".
+            "&& unset GIT_COMMITTER_NAME ".
+            "&& unset GIT_COMMITTER_EMAIL");
+
+        return $exec;
+    }
+
     public function commit(RepositoryEntity $repository, User $committer, $message)
     {
         $this->logger->addDebug('[commit:'. $repository->getFullname() .'] committing "'. $message .'" by '. $committer->getUsername());
@@ -344,15 +373,15 @@ class GitService
         
         $proc = new Process(sprintf('%s remote %s %s %s', $this->gitExecutable, $action, $name, $url), $repoPath);
         $logger = $this->logger;
-        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+        $proc->run(function ($type, $buffer) use ($logger, $repository, $action) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
             
             if ('err' !== $type) {
-                array_walk($buffer, function($line) use ($logger, $repository) {
+                array_walk($buffer, function($line) use ($logger, $repository, $action) {
                     $logger->addDebug('[remote:'. $repository->getFullname() .'] git remote '. $action .': '. $line);
                 });
             } else {
-                array_walk($buffer, function($line) use ($logger, $repository) {
+                array_walk($buffer, function($line) use ($logger, $repository, $action) {
                     $logger->addError('[remote:'. $repository->getFullname() .'] git remote '. $action .': ' . $line);
                 });
             }
@@ -512,5 +541,78 @@ EOF;
             $logger->addCritical('[delete:'. $repository->getFullname() .'] rm FAIL: '. $proc->getErrorOutput());
             throw new \RuntimeException($proc->getErrorOutput());
         }
+    }
+
+    public function tryMerge(RepositoryEntity $repository, $baseRef, RepositoryEntity $target, $targetRef)
+    {
+        $repoPath = $this->getWorkDirPath($repository);
+
+        if ($repository->getId() == $target->getId()) {
+            $compare = sprintf('%s..%s', $baseRef, $targetRef);
+        } else {
+            $compare = sprintf('%s..%s:%s', $baseRef, $target->getOwner()->getUsername(), $targetRef);
+        }
+
+        $proc = new Process(sprintf('%s diff %s | %s apply --check - --verbose', $this->gitExecutable, $compare, $this->gitExecutable), $repoPath);
+        $msg = "";
+
+        $proc->run(function ($type, $buffer) use (&$msg) {
+            $msg .= $buffer;
+        });
+
+        $res = new \stdClass();
+        $res->success = $proc->isSuccessful();
+        $res->message = $msg;
+
+        return $res;
+    }
+
+    public function merge(RepositoryEntity $repository, $baseRef, RepositoryEntity $target, $targetRef, User $user, $commitMsg = null)
+    {
+        $repoPath = $this->getWorkDirPath($repository);
+
+        if ($repository->getId() == $target->getId()) {
+            $compare = sprintf('%s..%s', $baseRef, $targetRef);
+        } else {
+            $compare = sprintf('%s..%s:%s', $baseRef, $target->getOwner()->getUsername(), $targetRef);
+        }
+
+        $this->logger->addDebug('[merge:'. $repository->getFullname() .'] merging '. $compare);
+
+        // first, checkout the base
+        $proc = new Process(sprintf('%s checkout %s', $this->gitExecutable, $baseRef), $repoPath);
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[checkout:'. $repository->getFullname() .'] checkout: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[checkout:'. $repository->getFullname() .'] checkout: '. $line);
+                });
+            }
+        });
+
+
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[checkout:'. $repository->getFullname() .'] checkout FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+
+        $proc = new Process(sprintf('%s && %s merge %s --no-ff --commit --no-edit && %s', $this->impersonateString($user), $this->gitExecutable, $targetRef, $this->impersonationRemove()), $repoPath);
+        $msg = "";
+        $proc->run(function ($type, $buffer) use (&$msg) {
+            $msg .= $buffer;
+        });
+
+        $this->push($repository, 'origin', $baseRef);
+
+        $res = new \stdClass();
+        $res->success = $proc->isSuccessful();
+        $res->message = $msg;
+
+        return $res;
     }
 }

@@ -615,3 +615,12 @@ ul.commits-history {
 .commits-history li table tr td {
     padding: 5px 10px;
 }
+
+pre#mergeOutput {
+    max-height: 200px;
+    overflow-x: auto;
+    color: #fff;
+    background-color: #000;
+    border: solid 1px #ccc;
+    padding: 5px;
+}

@@ -62,9 +62,10 @@
         <hr />
 
         <div class="alert alert-info" role="alert" style="margin-top: 20px;">
-            <a href="#"  class="pull-right btn btn-success btn-lg"><b class="octicon octicon-git-merge"></b> Merge</a>
+            <button data-toggle="modal" data-target="#mergeModal" class="pull-right btn btn-success btn-lg"><b class="octicon octicon-git-merge"></b> Merge</button>
             <b>Heads up!</b><br />Merge this comparision onto your master branch !
         </div>
+
         <hr />
         <?php if (!empty($this->errorMsg)): ?>
             <div class="alert alert-warning" role="alert" style="margin-top: 20px;">
@@ -225,4 +226,64 @@ foreach ($this->commits as $commit) {
     </div>
 </div><!-- /row -->
 </div><!-- /.container -->
+
+<div class="modal" id="mergeModal">
+    <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Merge <?php echo $vh->escape($this->targetRef); ?> to <?php echo $vh->escape($this->baseRef); ?></h4>
+                </div>
+                <div class="modal-body" id="mergeContents">
+                    <div class="alert" id="mergeAlert" role="alert"></div>
+                    <h5>Merge output:</h5>
+                    <pre id="mergeOutput"></pre>
+                </div>
+                <div class="modal-footer">
+                    <form action="<?php echo $vh->url('Merge', array('name' => $this->entity->getFullname(), 'compare' => $this->compare)); ?>" method="post">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success" id="mergeBtn" disabled="disabled">Apply Merge</button>
+                    </form>
+                </div>
+            </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script type="text/javascript">
+    $(function() {
+        $('#mergeModal').on('shown.bs.modal', function (e) {
+            var url = "<?php echo $vh->url('Merge', array('name' => $this->entity->getFullname(), 'compare' => $this->compare)); ?>";
+            $('#mergeOutput').html("");
+            $('#mergeAlert').removeClass('alert-error').removeClass('alert-success').html('');
+            $('#mergeBtn').attr("disabled", "disabled");
+            $.ajax({
+                url: url,
+                async: true,
+                dataType: "json",
+                error: function(xhr, text, err) {
+                    $('#mergeOutput').html(err);
+                    $('#mergeAlert').addClass('alert-danger').html('An error occured: '+ text);
+                    $('#mergeBtn').attr("disabled", "disabled");
+                },
+                success: function(data) {
+                    if (data.mergeSuccess === undefined) {
+                        $('#mergeOutput').html("");
+                        $('#mergeAlert').addClass('alert-danger').html('Bogus response from server');
+                        $('#mergeBtn').attr("disabled", "disabled");
+                        return;
+                    }
+                    if (data.mergeSuccess === false) {
+                        $('#mergeOutput').html(data.mergeMsg);
+                        $('#mergeAlert').addClass('alert-warning').html('This merge <b>CAN\'T</b> be completed automatically.<br /> Use your repository to perform it and push the changes.');
+                        $('#mergeBtn').attr("disabled", "disabled");
+                    } else {
+                        $('#mergeOutput').html(data.mergeMsg);
+                        $('#mergeAlert').addClass('alert-success').html('These changes can be merged automatically !');
+                        $('#mergeBtn').attr("disabled", false);
+                    }
+                }
+            });
+        })
+    });
+</script>
 <?php include __DIR__ .'/_footer.php'; ?>

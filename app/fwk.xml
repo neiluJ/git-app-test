@@ -282,6 +282,28 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="Merge" shortcut="TestGit\Controllers\Compare:mergeAction">
+            <acl type="allow" role="" />
+            <result name="success" type="redirect">
+                <param name="actionName">RepositoryNEW</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">mergeMsg, mergeSuccess</param>
+            </result>
+            <result name="ajax:merge_error" type="json">
+                <param name="properties">mergeMsg, mergeSuccess</param>
+            </result>
+            <result name="merge_error" type="redirect">
+                <param name="actionName">CompareNEW</param>
+                <param name="name">:name</param>
+                <param name="compare">:compare</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
         <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction">
             <acl type="allow" role="" />
         </action>
@@ -798,6 +820,10 @@
             <param name="hash" required="true" regex=".*" />
         </url>
         <url route="/:name/compare/:compare" action="CompareNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="compare" required="false" regex=".*" />
+        </url>
+        <url route="/:name/merge/:compare" action="Merge">
             <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
             <param name="compare" required="false" regex=".*" />
         </url>

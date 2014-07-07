@@ -16,6 +16,8 @@ class Compare extends Repository
     protected $base;
     protected $baseRef;
     protected $targetRef;
+    protected $mergeSuccess;
+    protected $mergeMsg;
 
     public function prepare()
     {
@@ -64,7 +66,34 @@ class Compare extends Repository
 
         return Result::SUCCESS;
     }
-    
+
+    public function mergeAction()
+    {
+        $res = $this->compareAction();
+        if ($res != Result::SUCCESS || null !== $this->errorMsg) {
+            return Result::ERROR;
+        }
+
+        $service    = $this->getGitService();
+        $post       = ($this->getContext()->getRequest()->getMethod() == "POST");
+
+        $result = $service->tryMerge($this->entity, $this->baseRef, $this->entity, $this->targetRef);
+
+        $this->mergeMsg = $result->message;
+        $this->mergeSuccess = $result->success;
+
+        if (!$this->mergeSuccess) {
+            return 'merge_error';
+        }
+
+        if ($post) {
+            $res = $service->merge($this->entity, $this->baseRef, $this->entity, $this->targetRef, $this->getServices()->get('security')->getUser(), false);
+            die(print_r($res, true));
+        }
+
+        return Result::SUCCESS;
+    }
+
     public function getCommits()
     {
         return $this->commits;
@@ -179,9 +208,9 @@ class Compare extends Repository
         $targetRef = (empty($_POST['targetRef']) ? $this->entity->getDefault_branch() : $_POST['targetRef']);
 
         if ($base != $target) {
-            return sprintf("%s:%s...%s:%s", $base, $baseRef, $target, $targetRef);
+            return sprintf("%s:%s..%s:%s", $base, $baseRef, $target, $targetRef);
         } else {
-            return sprintf("%s...%s", $baseRef, $targetRef);
+            return sprintf("%s..%s", $baseRef, $targetRef);
         }
     }
 
@@ -192,12 +221,12 @@ class Compare extends Repository
             return false;
         }
 
-        if (strpos($this->compare, "...") === false) {
+        if (strpos($this->compare, "..") === false) {
             $this->errorMsg = "Invalid comparision string";
             return false;
         }
 
-        list($base, $target) = explode('...', $this->compare);
+        list($base, $target) = explode('..', $this->compare);
         if (strpos($base, ':') !== false) {
             list($baseOwner, $baseRef) = explode(':', $base);
         } else {
@@ -247,5 +276,21 @@ class Compare extends Repository
     public function getErrorMsg()
     {
         return $this->errorMsg;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMergeMsg()
+    {
+        return $this->mergeMsg;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getMergeSuccess()
+    {
+        return $this->mergeSuccess;
     }
 }
