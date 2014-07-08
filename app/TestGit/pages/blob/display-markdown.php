@@ -1,7 +1,6 @@
-<?php 
-use dflydev\markdown\MarkdownExtraParser;
-$parser = new MarkdownExtraParser();
+<?php
+use Michelf\MarkdownExtra;
 ?>
 <div class="markdown">
-<?php echo $parser->transform($this->blob->getContent());  ?>
+<?php echo MarkdownExtra::defaultTransform($this->blob->getContent());  ?>
 </div>

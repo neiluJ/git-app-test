@@ -45,6 +45,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     protected $forkForm;
 
     protected $emptyRepo = false;
+    protected $readme = null;
     
     public function prepare()
     {
@@ -109,6 +110,10 @@ class Repository implements ContextAware, ServicesAware, Preparable
                     'message'       => $commit->getShortMessage(55)
                 )
             );
+
+            if (!$dir && strpos($fileName, 'README', 0) !== false) {
+                $this->readme = (!empty($this->path) ? $this->path . DIRECTORY_SEPARATOR : '') . $fileName;
+            }
         }
         
         if (!empty($this->path)) {
@@ -565,5 +570,13 @@ class Repository implements ContextAware, ServicesAware, Preparable
     public function getCommit()
     {
         return $this->commit;
+    }
+
+    /**
+     * @return null
+     */
+    public function getReadme()
+    {
+        return $this->readme;
     }
 }
