@@ -61,12 +61,14 @@
         </form>
         <hr />
 
+        <?php if($vh->isAllowed($this->entity, 'write') && $this->target == $this->entity->getOwner()->getUsername() && $this->baseRef != $this->targetRef): ?>
         <div class="alert alert-info" role="alert" style="margin-top: 20px;">
             <button data-toggle="modal" data-target="#mergeModal" class="pull-right btn btn-success btn-lg"><b class="octicon octicon-git-merge"></b> Merge</button>
             <b>Heads up!</b><br />Merge this comparision onto your master branch !
         </div>
-
         <hr />
+        <?php endif; ?>
+
         <?php if (!empty($this->errorMsg)): ?>
             <div class="alert alert-warning" role="alert" style="margin-top: 20px;">
                 <?php echo $vh->escape($this->errorMsg); ?>
@@ -117,8 +119,8 @@
         <?php else: ?>
         <div class="alert alert-warning" role="alert" style="margin-top: 20px;">
             <?php
-                list($base, $target) = explode('...', $this->compare);
-                $inverse = $target .'...'. $base;
+                list($base, $target) = explode('..', $this->compare);
+                $inverse = $target .'..'. $base;
             ?>
             No changes to display. <?php if ($inverse != $this->compare): ?>Try the <b><a href="<?php echo $vh->url('CompareNEW', array('name' => $this->entity->getFullname(), 'compare' => $inverse)); ?>">inverse comparision</a></b>.<?php endif; ?>
         </div>
