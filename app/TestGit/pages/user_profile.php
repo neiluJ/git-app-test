@@ -41,11 +41,81 @@ include __DIR__ .'/_header.php';
                       </ul>
                    </div>
                 </div>
+                <div class="row">
+                    <div class="col col-md-12">
+                        <canvas id="userContrib" height="200"></canvas>
+                    </div>
+                </div>
                 <?php endif; ?>
             </div>
           <?php include __DIR__ .'/_user_right.php'; ?>
           </div>
       </div>
-      
+
+    <script src="<?php echo str_replace('/index.php', '/', $vh->url()); ?>js/chartjs/Chart.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var ctx = document.getElementById("userContrib").getContext("2d");
+            var myLineChart = new Chart(ctx).Line({
+                labels: ["January", "February", "March", "April", "May", "June"],
+                datasets: [
+                    {
+                        label: "My Second dataset",
+                        fillColor: "rgba(151,187,205,0.2)",
+                        strokeColor: "rgba(151,187,205,1)",
+                        pointColor: "rgba(151,187,205,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(151,187,205,1)",
+                        data: [28, 48, 40, 19, 86, 27]
+                    }
+                ]
+            },{
+                ///Boolean - Whether grid lines are shown across the chart
+                scaleShowGridLines : false,
+
+                //String - Colour of the grid lines
+                scaleGridLineColor : "rgba(0,0,0,.05)",
+
+                //Number - Width of the grid lines
+                scaleGridLineWidth : 1,
+
+                //Boolean - Whether the line is curved between points
+                bezierCurve : true,
+
+                //Number - Tension of the bezier curve between points
+                bezierCurveTension : 0.4,
+
+                //Boolean - Whether to show a dot for each point
+                pointDot : true,
+
+                //Number - Radius of each point dot in pixels
+                pointDotRadius : 4,
+
+                //Number - Pixel width of point dot stroke
+                pointDotStrokeWidth : 0,
+
+                //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
+                pointHitDetectionRadius : 20,
+
+                //Boolean - Whether to show a stroke for datasets
+                datasetStroke : false,
+
+                //Number - Pixel width of dataset stroke
+                datasetStrokeWidth : 2,
+
+                //Boolean - Whether to fill the dataset with a colour
+                datasetFill : true,
+            });
+        });
+
+        function resizeCanvas() {
+            var px = $('.col-md-8').width(), canvas = document.getElementById('userContrib');
+            canvas.width = px;
+        };
+
+        resizeCanvas();
+
+    </script>
   </body>
 <?php include __DIR__ .'/_footer.php'; ?> 

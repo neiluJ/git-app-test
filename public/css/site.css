@@ -314,6 +314,7 @@ ul.tags-list li a i {
 }
 div.avatar {
     text-align: center;
+    margin-bottom: 40px;
 }
 div.avatar i {
     font-size: 6em;
