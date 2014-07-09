@@ -44,9 +44,13 @@
     <hr />
     <ul class="nav nav-pills nav-stacked" style="margin-top: 20px; text-align: left;">
         <li<?php if ($repoMenuActive == "code"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>"><b class="octicon octicon-code"></b> Browse</a></li>
+        <?php if(!$this->emptyRepo): ?>
         <li<?php if ($repoMenuActive == "commits"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('CommitsNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>"><b class="octicon octicon-git-commit"></b> Commits</a></li>
+        <?php endif; ?>
         <li<?php if ($repoMenuActive == "activity"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('ActivityNEW', array('name' => $this->entity->getFullname())); ?>"><b class="octicon octicon-history"></b> Activity</a></li>
+        <?php if(!$this->emptyRepo): ?>
         <li<?php if ($repoMenuActive == "branches"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('BranchesNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>"><b class="octicon octicon-git-branch"></b> Branches &amp; Tags</a></li>
+        <?php endif; ?>
         <?php if ($this->_helper->isAllowed($this->entity, 'admin')): ?>
         <li<?php if ($repoMenuActive == "accesses"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('AccessesNEW', array('name' => $this->entity->getFullname())); ?>"><b class="octicon octicon-organization"></b> Access Rights</a></li>
         <li class="divider"></li>

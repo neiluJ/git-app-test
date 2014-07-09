@@ -80,7 +80,7 @@
                         }
                         ?>
                         <div class="diff-head" style="clear:both;">
-                            <a href="<?php echo $this->_helper->url('Blob', array('name' => $this->name, 'branch' => $this->currentCommit->getHash(), 'path' => $file->getName()), true); ?>" ng-click="navigateToBlob($event, '<?php echo $file->getName(); ?>', '<?php echo $this->_helper->escape($this->currentCommit->getHash()); ?>');" class="btn btn-xs btn-default" style="float:right;">View file @<strong><?php echo substr($this->currentCommit->getHash(),0,6); ?></strong></a>
+                            <a href="<?php echo $this->_helper->url('BlobNEW', array('name' => $this->name, 'branch' => $this->currentCommit->getHash(), 'path' => $file->getName()), true); ?>" class="btn btn-xs btn-default" style="float:right;">View file @<strong><?php echo substr($this->currentCommit->getHash(),0,6); ?></strong></a>
                             <h4><a name="<?php echo $this->_helper->escape($file->getName()); ?>"></a> <?php echo $this->_helper->escape($file->getName()); ?></h4>
                         </div>
 
