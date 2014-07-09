@@ -1,5 +1,9 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php
+$fn = $this->profile->getFullname();
+$page_title = $this->profile->getUsername() . (!empty($fn) ? ' ('. $fn .')' : '');
+include __DIR__ .'/_header.php';
+?>
   <body>
     <?php echo $vh->embed('Menu', array('active' => 'users')); ?>
 

@@ -1,5 +1,5 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php $page_title = "Repositories"; include __DIR__ .'/_header.php'; ?>
   <body ng-controller="RepositoriesCtrl">
     <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 

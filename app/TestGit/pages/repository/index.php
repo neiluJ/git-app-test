@@ -1,5 +1,17 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ . '/../_header.php'; ?>
+<?php
+    if (empty($this->path)) {
+        $page_title = $this->entity->getFullname();
+    } else {
+        $page_title = $this->entity->getName() . "/" . $this->path;
+    }
+
+    if ($this->branch != $this->entity->getDefault_branch()) {
+        $page_title .= " at ". $this->branch;
+    }
+
+    include __DIR__ . '/../_header.php';
+?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 

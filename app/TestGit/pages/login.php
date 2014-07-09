@@ -1,5 +1,5 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php $page_title = "Login"; include __DIR__ .'/_header.php'; ?>
   <body>
     <?php echo $vh->embed('Menu'); ?>
 

@@ -1,8 +1,9 @@
 <?php $vh = $this->_helper;
         $hasEntity = ($this->entity instanceof \TestGit\Model\Git\Repository);
         $this->branch = ($hasEntity ? $this->entity->getDefault_branch() : 'master');
+        $page_title = "/!\\ Repository Error";
+        include __DIR__ . '/../_header.php';
 ?>
-<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 

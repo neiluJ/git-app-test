@@ -75,16 +75,16 @@ class Repository implements ContextAware, ServicesAware, Preparable
         
         $commit = $revision->getCommit();
         $tree = $commit->getTree();
-        
+
+        if (is_string($tree)) {
+            $tree = $this->repository->getTree($tree);
+        }
+
         if (null !== $this->path) {
             $tree = $tree->resolvePath($this->path);
         }
         
         $final = array();
-
-        if (is_string($tree)) {
-            $tree = $this->repository->getTree($tree);
-        }
 
         $this->commit = $this->repository->getLog(
             $revision, ltrim($this->path,'/'), 0, 1

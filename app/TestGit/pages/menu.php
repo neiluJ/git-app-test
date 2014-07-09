@@ -6,7 +6,7 @@ $active = $this->active;
   <div class="container">
     <div class="navbar-header">
         <a class="navbar-brand" href="<?php echo $vh->url(); ?>" style="padding-right: 30px;">
-            TestGit
+            <?php echo $vh->escape($vh->appTitle()); ?>
         </a>
     </div>
     <div class="collapse navbar-collapse">

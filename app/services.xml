@@ -23,7 +23,8 @@
         <argument>security</argument>
         <argument>guest</argument>
     </class-definition>
-    
+    <class-definition name="_vh.appTitle" class="TestGit\AppTitleViewHelper" shared="true" />
+
     <class-definition name="viewHelper" class="Fwk\Core\Components\ViewHelper\ViewHelperService" shared="true">
         <call method="add">
             <argument>embed</argument>
@@ -52,6 +53,10 @@
         <call method="add">
             <argument>isAllowed</argument>
             <argument>@_vh.allowed</argument>
+        </call>
+        <call method="add">
+            <argument>appTitle</argument>
+            <argument>@_vh.appTitle</argument>
         </call>
     </class-definition>
     

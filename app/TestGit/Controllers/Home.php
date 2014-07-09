@@ -40,7 +40,7 @@ class Home implements ServicesAware
     
     public function error()
     {
-        $this->debug = $this->getServices()->getProperty('debug', false);
+        $this->debug = $this->getServices()->getProperty('app.debug', false);
 
         if ($this->errorMsg instanceof \Exception && !$this->debug) {
             $this->errorMsg = $this->errorMsg->getMessage();

@@ -4,7 +4,8 @@
 ;
 ; When debug = true, error messages are full exception's stack.
 ; -------------------
-debug = false
+app.debug = true
+app.title = Factory
 
 ; ----------------------
 ; Database Configuration
