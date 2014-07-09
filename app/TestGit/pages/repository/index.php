@@ -80,7 +80,7 @@
 
                     <?php if($this->readme != null): ?>
                         <div class="panel panel-default">
-                            <div class="panel-heading"><?php $i = pathinfo($this->readme, PATHINFO_FILENAME) . '.'. pathinfo($this->readme, PATHINFO_EXTENSION); echo $i; ?></div>
+                            <div class="panel-heading"><i class="octicon octicon-file-text pull-right"></i> <?php $i = pathinfo($this->readme, PATHINFO_FILENAME) . '.'. pathinfo($this->readme, PATHINFO_EXTENSION); echo $i; ?></div>
                             <div class="panel-body" style="padding: 5px 10px;"><?php echo $vh->embed('BlobNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch, 'path' => $this->readme)); ?></div>
                         </div>
                     <?php endif; ?>
@@ -88,7 +88,9 @@
             </div>
         </div>
         <div class="col-md-2">
+            <?php if($this->_helper->isAllowed($this->entity, 'read')): ?>
             <div class="cloneUrl"><?php echo $this->_helper->embed('CloneUrl', array('name' => $this->name)); ?></div>
+            <?php endif; ?>
         </div>
 </div>
 <script type="text/javascript">
