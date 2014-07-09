@@ -50,7 +50,7 @@
                 $first = array_pop($activity->commits); 
                 
                 if (count($activity->commits) > 1) {
-                    $comparision = substr($first->getHash(),0, 10) . '...' . substr($last->getHash(),0,10);
+                    $comparision = substr($first->getHash(),0, 10) . '..' . substr($last->getHash(),0,10);
                     $compareUrl = $this->_helper->url('CompareNEW', array('name' => $activity->repository->getFullname(), 'compare' => $comparision));
                 } elseif ($last != null) {
                     $comparision = false;

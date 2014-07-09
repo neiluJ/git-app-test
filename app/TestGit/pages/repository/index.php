@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
 <div class="container">
     <div class="row" style="margin-top:40px;">
-        <?php $repoMenuActive = "code"; include __DIR__ .'/_repository_left.php'; ?>
+        <?php $repoMenuActive = "code"; include __DIR__ . '/_left.php'; ?>
         <div class="col-md-8">
             <div id="repo-commit">
                 <h5 style="margin-top:0;">
@@ -105,4 +105,4 @@
     });
 </script>
 </body>
-<?php include __DIR__ .'/_footer.php'; ?> 
+<?php include __DIR__ . '/../_footer.php'; ?>

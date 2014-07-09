@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
 <div class="container">
     <div class="row" style="margin-top:40px;">
-<?php $repoMenuActive = "compare"; include __DIR__ .'/_repository_left.php'; ?>
+<?php $repoMenuActive = "compare"; include __DIR__ . '/_left.php'; ?>
     <div class="col-md-10">
 
         <form action="<?php echo $this->_helper->url('CompareNEW', array('name' => $this->entity->getFullname())); ?>" method="post">
@@ -155,7 +155,7 @@ foreach ($this->commits as $commit) {
                                     <?php endif; ?>
                                 </td>
                                 <td  style="width:150px;"><?php echo $vh->escape($commit->getAuthorName()); ?></td>
-                                <td style="display:block"><span class="commit-txt"><?php echo $vh->escape($commit->getShortMessage()); ?></span></td>
+                                <td style="display:block"><span class="commit-txt"><?php echo $vh->escape($commit->getMessage()); ?></span></td>
                             </tr>
                             <?php endforeach; ?>
                             </tbody>
@@ -288,4 +288,4 @@ foreach ($this->commits as $commit) {
         })
     });
 </script>
-<?php include __DIR__ .'/_footer.php'; ?>
+<?php include __DIR__ . '/../_footer.php'; ?>

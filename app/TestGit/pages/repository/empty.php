@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
     <div class="container">
         <div class="row" style="margin-top:40px;">
-            <?php $repoMenuActive = "none"; include __DIR__ .'/_repository_left.php'; ?>
+            <?php $repoMenuActive = "none"; include __DIR__ . '/_left.php'; ?>
             <div class="col-md-8">
                 <?php if($this->_helper->isAllowed($this->entity, 'write')): ?>
                     <div class="alert alert-info" style="margin-bottom: 20px;">
@@ -48,4 +48,4 @@ $(document).ready(function() {
    });
 });
 </script>    
-<?php include __DIR__ .'/_footer.php'; ?>
+<?php include __DIR__ . '/../_footer.php'; ?>

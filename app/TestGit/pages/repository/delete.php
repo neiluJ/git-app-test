@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
 <div class="container">
     <div class="row" style="margin-top:40px;">
-<?php $repoMenuActive = "none"; include __DIR__ .'/_repository_left.php'; ?>
+<?php $repoMenuActive = "none"; include __DIR__ . '/_left.php'; ?>
     <div class="col-md-8">
 
             <h3 style="margin-top:0">Delete this repository <i class="mega-octicon octicon-repo-delete"></i></h3>
@@ -27,4 +27,4 @@
         </div>
     </div><!-- /row -->
 </div><!-- /.container -->
-<?php include __DIR__ .'/_footer.php'; ?>
+<?php include __DIR__ . '/../_footer.php'; ?>

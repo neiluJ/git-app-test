@@ -79,7 +79,7 @@ class Repositories implements ServicesAware
                 'private'   => $repo->isPrivate(),
                 'value'  => $repo->getFullname(),
                 'tokens'  => array($repo->getFullname(), $repo->getOwner()->getUsername(), $repo->getName()),
-                'url'   => $this->getServices()->get('viewHelper')->url('Repository', array('name' => $repo->getFullname()))
+                'url'   => $this->getServices()->get('viewHelper')->url('RepositoryNEW', array('name' => $repo->getFullname()))
             );
 
             array_push($result, $infos);

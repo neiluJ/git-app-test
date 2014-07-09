@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
     <div class="container">
         <div class="row" style="margin-top:40px;">
-            <?php $repoMenuActive = "branches"; include __DIR__ .'/_repository_left.php'; ?>
+            <?php $repoMenuActive = "branches"; include __DIR__ . '/_left.php'; ?>
             <div class="col-md-5">
                 <h3 style="margin-top:0;">Branches <i class="mega-octicon octicon-git-branch"></i></h3>
                 <?php if (count($this->branches)): ?>
@@ -44,4 +44,4 @@
     
 </div><!-- /.container -->
     
-<?php include __DIR__ .'/_footer.php'; ?>
+<?php include __DIR__ . '/../_footer.php'; ?>

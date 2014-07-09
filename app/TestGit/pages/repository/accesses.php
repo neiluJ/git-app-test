@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
     <div class="container">
         <div class="row" style="margin-top:40px;">
-            <?php $repoMenuActive = "accesses"; include __DIR__ .'/_repository_left.php'; ?>
+            <?php $repoMenuActive = "accesses"; include __DIR__ . '/_left.php'; ?>
             <div class="col-md-8">
                 <?php if($this->_helper->isAllowed($this->entity, 'admin')): ?>
                 <button type="button" data-toggle="modal" data-target="#addModal" class="btn btn-primary pull-right">Add</button>
@@ -98,4 +98,4 @@
   </div><!-- /.modal-dialog -->
 <?php endif; ?>
 
-<?php include __DIR__ .'/_footer.php'; ?>
+<?php include __DIR__ . '/../_footer.php'; ?>

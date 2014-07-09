@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
 <div class="container">
     <div class="row" style="margin-top:40px;">
-        <?php $repoMenuActive = "code"; include __DIR__ .'/_repository_left.php'; ?>
+        <?php $repoMenuActive = "code"; include __DIR__ . '/_left.php'; ?>
         <div class="col-md-8">
             <div id="repo-commit">
                 <h5 style="margin-top:0;"><i class="octicon octicon-git-commit"></i> Commit <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->entity->getFullname(), 'hash' => $this->commit->getHash())); ?>"><?php echo $this->commit->getHash(); ?></a></h5>
@@ -38,16 +38,16 @@
                 <div id="tc" class="mainv">
                     <?php switch($this->type) {
                         case 'display_image':
-                            include __DIR__ .'/blob/display-image.php';
+                            include __DIR__ . '/blob/display-image.php';
                             break;
                         case 'display_binary':
-                            include __DIR__ .'/blob/display-binary.php';
+                            include __DIR__ . '/blob/display-binary.php';
                             break;
                         case 'display_markdown':
-                            include __DIR__ .'/blob/display-markdown.php';
+                            include __DIR__ . '/blob/display-markdown.php';
                             break;
                         case 'display_text':
-                            include __DIR__ .'/blob/display-text.php';
+                            include __DIR__ . '/blob/display-text.php';
                             break;
                     } ?>
                 </div>
@@ -84,4 +84,4 @@
         });
     </script>
 </body>
-<?php include __DIR__ .'/_footer.php'; ?> 
+<?php include __DIR__ . '/../_footer.php'; ?>

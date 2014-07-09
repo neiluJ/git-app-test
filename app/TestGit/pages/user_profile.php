@@ -23,14 +23,14 @@
                           <li>
                               <div class="btn-group pull-right">
                                   <?php if ($this->_helper->isAllowed('repository', 'create')): ?>
-                                <a href="<?php echo $this->_helper->url('Fork', array('name' => $repo->getFullname())); ?>" class="btn btn-sm btn-default">Fork</a>
+                                <a href="<?php echo $this->_helper->url('ForkNEW', array('name' => $repo->getFullname())); ?>" class="btn btn-sm btn-default">Fork</a>
                                  <?php endif; ?>
                                  <?php if (($this->profile->isOrganization() && $this->_helper->isAllowed($this->profile, 'repos-admin'))
                                  || ($this->profile->isUser() && $this->_helper->isAllowed($repo, 'owner'))):?>
-                                 <a href="<?php echo $this->_helper->url('Delete', array('name' => $repo->getFullname())); ?>" class="btn btn-sm btn-danger">Delete</a>
+                                 <a href="<?php echo $this->_helper->url('DeleteNEW', array('name' => $repo->getFullname())); ?>" class="btn btn-sm btn-danger">Delete</a>
                                 <?php endif; ?>
                               </div>
-                              <?php if($repo->getParent_id() == null): ?><i class="octicon octicon-repo"></i><?php else: ?><i class="octicon octicon-repo-forked"></i><?php endif; ?> <?php if($repo->isPrivate()): ?><i class="octicon octicon-lock"></i><?php endif; ?> <a class="repo-name" href="<?php echo $this->_helper->url('Repository', array('name' => $repo->getFullname())); ?>"><?php echo $this->_helper->escape($repo->getName()); ?></a> <?php if($repo->getParent_id() != null): ?><span class="fork">forked from <a class="repo-name" href="<?php echo $this->_helper->url('Repository', array('name' => $repo->getParent()->getFullname())); ?>"><?php echo $this->_helper->escape($repo->getParent()->getFullname()); ?></a></span><?php endif; ?>
+                              <?php if($repo->getParent_id() == null): ?><i class="octicon octicon-repo"></i><?php else: ?><i class="octicon octicon-repo-forked"></i><?php endif; ?> <?php if($repo->isPrivate()): ?><i class="octicon octicon-lock"></i><?php endif; ?> <a class="repo-name" href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $repo->getFullname())); ?>"><?php echo $this->_helper->escape($repo->getName()); ?></a> <?php if($repo->getParent_id() != null): ?><span class="fork">forked from <a class="repo-name" href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $repo->getParent()->getFullname())); ?>"><?php echo $this->_helper->escape($repo->getParent()->getFullname()); ?></a></span><?php endif; ?>
                               <p class="infos">Created on <span><?php $date = new \DateTime($repo->getCreated_at()); echo $date->format($this->dateFormat); ?></span>. <?php if ($repo->getLast_commit_date() != null): ?>Last updated on <span><?php $date = new \DateTime($repo->getLast_commit_date()); echo $date->format($this->dateFormat); ?></span>.<?php endif; ?></p>
                           </li>
                           <?php endforeach; ?>

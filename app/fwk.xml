@@ -99,7 +99,7 @@
         <action name="RepoError" shortcut="TestGit\Controllers\Home:error">
             <acl type="allow" role="" />
             <result name="success" type="php">
-                <param name="file">repo_error.php</param>
+                <param name="file">repository/error.php</param>
             </result>
         </action>
         <action name="Repositories" shortcut="TestGit\Controllers\Repositories:show">
@@ -126,7 +126,7 @@
                 <param name="file">repository.php</param>
             </result>
             <result name="empty_repository" type="php">
-                <param name="file">repo_empty.php</param>
+                <param name="file">repository/empty.php</param>
             </result>
             <result name="ajax:success" type="json">
                 <param name="properties">files,path</param>
@@ -139,10 +139,10 @@
         <action name="RepositoryNEW" shortcut="TestGit\Controllers\Repository:show">
             <acl type="allow" role="" />
             <result name="success" type="php">
-                <param name="file">repositoryNEW.php</param>
+                <param name="file">repository/index.php</param>
             </result>
             <result name="empty_repository" type="php">
-                <param name="file">repo_empty.php</param>
+                <param name="file">repository/empty.php</param>
             </result>
             <result name="ajax:success" type="json">
                 <param name="properties">files,path</param>
@@ -158,51 +158,14 @@
                 <param name="file">clone_url.php</param>
             </result>
         </action>
-        <action name="Blob" shortcut="TestGit\Controllers\Blob:blobAction">
-            <acl type="allow" role="" />
-            <result name="success" type="php">
-                <param name="file">repository.php</param>
-            </result>
-            <result name="ajax:success" type="chain">
-                <param name="actionName">BlobDisplay</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">File not found.</param>
-            </result>
-        </action>
-        
-        <action name="BlobDisplay" shortcut="TestGit\Controllers\Blob:show">
-            <acl type="allow" role="" />
-            <result name="success" type="php">
-                <param name="file">blob.php</param>
-            </result>
-            <result name="display_markdown" type="php">
-                <param name="file">blob/display-markdown.php</param>
-            </result>
-            <result name="display_image" type="php">
-                <param name="file">blob/display-image.php</param>
-            </result>
-            <result name="display_text" type="php">
-                <param name="file">blob/display-text.php</param>
-            </result>
-            <result name="display_binary" type="php">
-                <param name="file">blob/display-binary.php</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">File not found.</param>
-            </result>
-        </action>
-
         <action name="BlobNEW" shortcut="TestGit\Controllers\Blob:showNew">
             <acl type="allow" role="" />
             <result name="success" type="php">
-                <param name="file">repo_blob.php</param>
+                <param name="file">repository/blob.php</param>
             </result>
 
             <result name="embed:success" type="php">
-                <param name="file">repo_blob_embed.php</param>
+                <param name="file">repository/blob_embed.php</param>
             </result>
 
             <result name="error" type="chain">
@@ -230,46 +193,20 @@
                 <param name="properties">searchResults</param>
             </result>
         </action>
-        <action name="Commit" shortcut="TestGit\Controllers\Commits:commitAction">
-            <acl type="allow" role="" />
-            <result name="ajax:success" type="php">
-                <param name="file">commit.php</param>
-            </result>
-            <result name="success" type="php">
-                <param name="file">repository.php</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">Problem occured while loading the commit.</param>
-            </result>
-        </action>
         <action name="CommitNEW" shortcut="TestGit\Controllers\Commits:commitAction">
             <acl type="allow" role="" />
             <result name="success" type="php">
-                <param name="file">repo_commit.php</param>
+                <param name="file">repository/commit.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
                 <param name="errorMsg">Problem occured while loading the commit.</param>
-            </result>
-        </action>
-        <action name="Compare" shortcut="TestGit\Controllers\Commits:compareAction">
-            <acl type="allow" role="" />
-            <result name="ajax:success" type="php">
-                <param name="file">compare.php</param>
-            </result>
-            <result name="success" type="php">
-                <param name="file">repository.php</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">Problem occured while loading the comparision</param>
             </result>
         </action>
         <action name="CompareNEW" shortcut="TestGit\Controllers\Compare:compareAction">
             <acl type="allow" role="" />
             <result name="success" type="php">
-                <param name="file">repo_compare.php</param>
+                <param name="file">repository/compare.php</param>
             </result>
             <result name="redirect" type="redirect">
                 <param name="actionName">CompareNEW</param>
@@ -311,26 +248,14 @@
         <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction">
             <acl type="allow" role="" />
         </action>
-        <action name="Branches" shortcut="TestGit\Controllers\Branches:show">
-            <acl type="allow" role="" />
-            <result name="success" type="php">
-                <param name="file">branches.php</param>
-            </result>
-            <result name="empty_repository" type="php">
-                <param name="file">repo_empty.php</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">Problem occured while loading branches</param>
-            </result>
-        </action>
+
         <action name="BranchesNEW" shortcut="TestGit\Controllers\Branches:show">
             <acl type="allow" role="" />
             <result name="success" type="php">
-                <param name="file">repo_branches.php</param>
+                <param name="file">repository/branches.php</param>
             </result>
             <result name="empty_repository" type="php">
-                <param name="file">repo_empty.php</param>
+                <param name="file">repository/empty.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -359,20 +284,11 @@
                 <param name="properties">searchResults</param>
             </result>
         </action>
-        <action name="Accesses" shortcut="TestGit\Controllers\Users:repositoryUsers">
-            <acl type="allow" role="user" />
-            <result name="success" type="php">
-                <param name="file">accesses.php</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">:errorMsg</param>
-            </result>
-        </action>
+
         <action name="AccessesNEW" shortcut="TestGit\Controllers\Users:repositoryUsers">
             <acl type="allow" role="user" />
             <result name="success" type="php">
-                <param name="file">repo_accesses.php</param>
+                <param name="file">repository/accesses.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -382,7 +298,7 @@
         <action name="AddAccess" shortcut="TestGit\Controllers\Users:addAccess">
             <acl type="allow" role="user" />
             <result name="success" type="redirect">
-                <param name="actionName">Accesses</param>
+                <param name="actionName">AccessesNEW</param>
                 <param name="name">:name</param>
             </result>
             <result name="error" type="chain">
@@ -393,7 +309,7 @@
         <action name="RemoveAccess" shortcut="TestGit\Controllers\Users:removeAccess">
             <acl type="allow" role="user" />
             <result name="success" type="redirect">
-                <param name="actionName">Accesses</param>
+                <param name="actionName">AccessesNEW</param>
                 <param name="name">:name</param>
             </result>
             <result name="error" type="chain">
@@ -581,25 +497,11 @@
         <action name="Create" shortcut="TestGit\Controllers\Repository:create">
             <acl type="allow" role="repo_create" />
             <result name="success" type="redirect">
-                <param name="actionName">Repository</param>
+                <param name="actionName">RepositoryNEW</param>
                 <param name="name">:name</param>
             </result>
             <result name="form" type="php">
                 <param name="file">create.php</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">:errorMsg</param>
-            </result>
-        </action>
-        <action name="Fork" shortcut="TestGit\Controllers\Repository:fork">
-            <acl type="allow" role="repo_create" />
-            <result name="success" type="redirect">
-                <param name="actionName">Repository</param>
-                <param name="name">:name</param>
-            </result>
-            <result name="form" type="php">
-                <param name="file">fork.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -613,25 +515,12 @@
                 <param name="name">:name</param>
             </result>
             <result name="form" type="php">
-                <param name="file">repo_fork.php</param>
+                <param name="file">repository/fork.php</param>
             </result>
             <result name="empty_repo" type="chain">
                 <param name="actionName">RepoError</param>
                 <param name="errorMsg">You can't fork an empty repository.</param>
                 <param name="entity">:entity</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">:errorMsg</param>
-            </result>
-        </action>
-        <action name="Delete" shortcut="TestGit\Controllers\Repository:delete">
-            <acl type="allow" role="repo_create" />
-            <result name="success" type="redirect">
-                <param name="actionName">Repositories</param>
-            </result>
-            <result name="form" type="php">
-                <param name="file">delete.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -644,22 +533,7 @@
                 <param name="actionName">Repositories</param>
             </result>
             <result name="form" type="php">
-                <param name="file">repo_delete.php</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">:errorMsg</param>
-            </result>
-        </action>
-        <action name="Settings" shortcut="TestGit\Controllers\Settings:show">
-            <acl type="allow" role="user" />
-            <result name="success" type="redirect">
-                <param name="actionName">Settings</param>
-                <param name="name">:name</param>
-                <param name="updated">1</param>
-            </result>
-            <result name="form" type="php">
-                <param name="file">settings.php</param>
+                <param name="file">repository/delete.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -674,7 +548,7 @@
                 <param name="updated">1</param>
             </result>
             <result name="form" type="php">
-                <param name="file">repo_settings.php</param>
+                <param name="file">repository/settings.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -691,21 +565,11 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
-        <action name="RepoActivity" shortcut="TestGit\Controllers\Repository:activity">
-            <acl type="allow" role="" />
-            <result name="success" type="php">
-                <param name="file">activity_repo.php</param>
-            </result>
-            <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">:errorMsg</param>
-            </result>
-        </action>
 
         <action name="ActivityNEW" shortcut="TestGit\Controllers\Repository:activity">
             <acl type="allow" role="" />
             <result name="success" type="php">
-                <param name="file">repo_activity.php</param>
+                <param name="file">repository/activity.php</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">Error</param>
@@ -785,50 +649,47 @@
             <param name="username" required="true" />
         </url>
         <url route="/:name$" action="RepositoryNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
         </url>
         <url route="/:name/tree/:branch$" action="RepositoryNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" required="true" />
         </url>
         <url route="/:name/tree/:branch/:path$" action="RepositoryNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" required="true" />
             <param name="path" required="true" regex=".*" />
         </url>
         <url route="/:name/blob/:branch/:path$" action="BlobNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" required="true" />
             <param name="path" required="true" regex=".*" />
         </url>
         <url route="/:name/raw/:branch/:path$" action="BlobRaw">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" required="true" />
             <param name="path" required="true" regex=".*" />
         </url>
-        <url route="/:name/branches$" action="Branches">
-            <param name="name" required="true" regex=".+" />
-        </url>
         <url route="/:name/branches/:branch$" action="BranchesNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" required="false" />
         </url>
         <url route="/:name/log$" action="ActivityNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
         </url>
         <url route="/:name/accesses$" action="AccessesNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
         </url>
         <url route="/:name/commit/:hash$" action="CommitNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="hash" required="true" regex=".*" />
         </url>
         <url route="/:name/compare/:compare" action="CompareNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="compare" required="false" regex=".*" />
         </url>
         <url route="/:name/merge/:compare" action="Merge">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="compare" required="false" regex=".*" />
         </url>
         <url route="/:name/accesses/remove/:userId$" action="RemoveAccess">
@@ -840,7 +701,7 @@
             <param name="userId" required="true" regex="[0-9]+" />
         </url>
         <url route="/:name/settings$" action="SettingsNEW">
-            <param name="name" required="true" regex="[a-zA-Z0-9]+/[a-zA-Z0-9]+" />
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
         </url>
         <url route="/:name/fork$" action="ForkNEW">
             <param name="name" required="true" regex=".+" />

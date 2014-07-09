@@ -169,7 +169,7 @@ class Commits extends Repository
                 'repoName'  => $res->getRepository()->getFullname(),
                 'shortHash' => substr($res->getHash(), 0, 10),
                 'message'   => substr($res->getMessage(), 0, 60) . (strlen($res->getMessage()) > 60 ? '...' : ''),
-                'url'       => $this->getServices()->get('viewHelper')->url('Commit', array('name' => $res->getRepository()->getFullname(), 'hash' => $res->getHash()))
+                'url'       => $this->getServices()->get('viewHelper')->url('CommitNEW', array('name' => $res->getRepository()->getFullname(), 'hash' => $res->getHash()))
             );
         }
         

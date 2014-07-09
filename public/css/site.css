@@ -624,3 +624,7 @@ pre#mergeOutput {
     border: solid 1px #ccc;
     padding: 5px;
 }
+
+div.avatar {
+    word-break: break-all;
+}

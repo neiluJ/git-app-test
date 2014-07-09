@@ -1,11 +1,11 @@
 <?php $vh = $this->_helper; ?>
-<?php include __DIR__ .'/_header.php'; ?>
+<?php include __DIR__ . '/../_header.php'; ?>
 <body>
 <?php echo $vh->embed('Menu', array('active' => 'repositories')); ?>
 
 <div class="container">
     <div class="row" style="margin-top:40px;">
-        <?php $repoMenuActive = "commits"; include __DIR__ .'/_repository_left.php'; ?>
+        <?php $repoMenuActive = "commits"; include __DIR__ . '/_left.php'; ?>
         <div class="col-md-10">
             <div id="repo-commit">
                 <h5 style="margin-top:0;">
@@ -19,7 +19,7 @@
             </div>
             <div class="commit-head">
                 <?php foreach ($this->currentCommit->getIncludingBranches(true, true) as $branch): ?>
-                    <i class="octicon octicon-git-branch"></i> <a href="<?php echo $this->_helper->url('Repository', array('name' => $this->name, 'branch' => $branch->getName()), true); ?>"><?php echo $branch->getName(); ?></a>,
+                    <i class="octicon octicon-git-branch"></i> <a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->name, 'branch' => $branch->getName()), true); ?>"><?php echo $branch->getName(); ?></a>,
                 <?php endforeach; ?>
             </div>
             <div class="commit-infos">
@@ -134,4 +134,4 @@
         </div>
     </div><!-- /row -->
 </div><!-- /.container -->
-<?php include __DIR__ .'/_footer.php'; ?>
+<?php include __DIR__ . '/../_footer.php'; ?>

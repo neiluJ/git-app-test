@@ -38,8 +38,8 @@
                 <i ng-if="repo.fork" class="octicon octicon-repo-forked"></i>
                  <i ng-if="repo.private" class="octicon octicon-lock"></i>
             </td>
-            <td><a href="<?php echo rtrim($vh->url(), '/'); ?>/Repository.action?name={{ repo.fullname }}">{{ repo.name }}</a></td>
-            <td><a href="<?php echo rtrim($vh->url(), '/'); ?>/Profile.action?username={{ repo.ownerName }}">{{ repo.ownerName }}</a></td>
+            <td><a href="<?php echo rtrim($vh->url(), '/'); ?>/{{ repo.fullname }}">{{ repo.name }}</a></td>
+            <td><a href="<?php echo rtrim($vh->url(), '/'); ?>/{{ repo.ownerName }}">{{ repo.ownerName }}</a></td>
             <td>{{ repo.lastCommit.date }}</td>
             <td class="commit-txt">[<a href="#">{{ repo.lastCommit.author }}</a>] {{ repo.lastCommit.message }} (<a href="#">{{ repo.lastCommit.hash|shortHash }}</a>)</td>
             <td>{{ repo.size }}</td>
