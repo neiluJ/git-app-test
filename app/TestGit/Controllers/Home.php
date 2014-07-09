@@ -14,6 +14,7 @@ class Home implements ServicesAware
     protected $user;
 
     public $entity;
+    protected $debug = false;
 
     public function show()
     {
@@ -39,9 +40,18 @@ class Home implements ServicesAware
     
     public function error()
     {
+        $this->debug = $this->getServices()->getProperty('debug', false);
+
+        if ($this->errorMsg instanceof \Exception && !$this->debug) {
+            $this->errorMsg = $this->errorMsg->getMessage();
+        }
+
         return Result::SUCCESS;
     }
-    
+
+    /**
+     * @return Container
+     */
     public function getServices()
     {
         return $this->services;
@@ -55,5 +65,13 @@ class Home implements ServicesAware
     public function getUser()
     {
         return $this->user;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getDebug()
+    {
+        return $this->debug;
     }
 }

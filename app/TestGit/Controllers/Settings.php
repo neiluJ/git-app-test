@@ -17,7 +17,7 @@ class Settings extends Repository
             $this->cloneUrlAction();
         } catch(EmptyRepositoryException $exp) {
         } catch(\Exception $exp) {
-            $this->errorMsg = $exp->getMessage();
+            $this->errorMsg = $exp;
             return Result::ERROR;
         }
         
@@ -35,7 +35,7 @@ class Settings extends Repository
            try {
                $this->getGitDao()->save($this->entity);
            } catch(\Exception $exp) {
-               $this->errorMsg = $exp->getMessage();
+               $this->errorMsg = $exp;
                return Result::ERROR;
            }
            

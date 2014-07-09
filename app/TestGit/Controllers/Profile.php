@@ -41,7 +41,7 @@ class Profile extends Repositories implements Preparable, ContextAware
         try {
             $this->loadProfile();
         } catch(\Exception $exception) {
-            $this->errorMsg = $exception->getMessage();
+            $this->errorMsg = $exception;
             return Result::ERROR;
         }
 
@@ -63,7 +63,7 @@ class Profile extends Repositories implements Preparable, ContextAware
         try {
             $res = $this->show();
         } catch(\Exception $exception) {
-            $this->errorMsg = $exception->getMessage();
+            $this->errorMsg = $exception;
             return Result::ERROR;
         }
 
@@ -79,7 +79,7 @@ class Profile extends Repositories implements Preparable, ContextAware
         try {
             $res = $this->show();
         } catch(\Exception $exception) {
-            $this->errorMsg = $exception->getMessage();
+            $this->errorMsg = $exception;
             return Result::ERROR;
         }
 
@@ -177,7 +177,7 @@ class Profile extends Repositories implements Preparable, ContextAware
         try {
             $this->loadProfile();
         } catch(\Exception $exception) {
-            $this->errorMsg = $exception->getMessage();
+            $this->errorMsg = $exception;
             return Result::ERROR;
         }
 

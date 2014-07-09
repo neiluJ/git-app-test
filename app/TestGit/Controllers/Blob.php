@@ -52,33 +52,33 @@ class Blob extends Commits implements ContextAware
     {
         try {
             $this->loadRepository('read');
+            $refs = $this->repository->getReferences();
+            if ($refs->hasBranch($this->branch)) {
+                $revision = $refs->getBranch($this->branch);
+            } else {
+                $revision = $this->repository->getRevision($this->branch);
+            }
+
+            $commit = $revision->getCommit();
+            $this->currentCommit = $commit;
+
+            $tree = $commit->getTree();
+
+            if (is_string($tree)) {
+                $tree = $this->repository->getTree($tree);
+            }
+
+            if (null !== $this->path && $tree instanceof \Gitonomy\Git\Tree) {
+                $tree = $tree->resolvePath($this->path);
+            }
+
+            $this->commit = $this->repository->getLog(
+                $revision, ltrim($this->path,'/'), 0, 1
+            )->getSingleCommit();
         } catch(\Exception $exp) {
+            $this->errorMsg = $exp;
             return Result::ERROR;
         }
-        
-        $refs = $this->repository->getReferences();
-        if ($refs->hasBranch($this->branch)) {
-            $revision = $refs->getBranch($this->branch);
-        } else {
-            $revision = $this->repository->getRevision($this->branch);
-        }
-        
-        $commit = $revision->getCommit();
-        $this->currentCommit = $commit;
-
-        $tree = $commit->getTree();
-
-        if (is_string($tree)) {
-            $tree = $this->repository->getTree($tree);
-        }
-
-        if (null !== $this->path && $tree instanceof \Gitonomy\Git\Tree) {
-            $tree = $tree->resolvePath($this->path);
-        }
-
-        $this->commit = $this->repository->getLog(
-            $revision, ltrim($this->path,'/'), 0, 1
-        )->getSingleCommit();
         
         if (!$tree instanceof \Gitonomy\Git\Blob) {
             return Result::ERROR;

@@ -17,7 +17,7 @@ class Branches extends Repository
             $this->cloneUrlAction();
             return 'empty_repository';
         } catch(\Exception $exp) {
-            $this->errorMsg = $exp->getMessage();
+            $this->errorMsg = $exp;
             return Result::ERROR;
         }
         

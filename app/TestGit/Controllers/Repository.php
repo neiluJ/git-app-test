@@ -62,14 +62,10 @@ class Repository implements ContextAware, ServicesAware, Preparable
             $this->cloneUrlAction();
             return 'empty_repository';
         } catch(\Exception $exp) {
-            $this->errorMsg = $exp->getMessage();
+            $this->errorMsg = $exp;
             return Result::ERROR;
         }
-        
-        if (!$this->context->getRequest()->isXmlHttpRequest()) {
-            // return Result::SUCCESS;
-        }
-        
+
         $refs = $this->repository->getReferences();
         if ($refs->hasBranch($this->branch)) {
             $revision = $refs->getBranch($this->branch);
@@ -169,7 +165,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 $this->getGitDao()->getDb()->commit();
                 $this->name = $repo->getFullname();
             } catch(\Exception $exp) {
-                $this->errorMsg = $exp->getMessage();
+                $this->errorMsg = $exp;
                 $this->getGitDao()->getDb()->rollBack();
                 return Result::ERROR;
             }
@@ -227,7 +223,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 $this->getGitDao()->getDb()->commit();
                 $this->name = $fork->getFullname();
             } catch(\Exception $exp) {
-                $this->errorMsg = $exp->getMessage();
+                $this->errorMsg = $exp;
                 $this->getGitDao()->getDb()->rollBack();
                 return Result::ERROR;
             }
@@ -259,7 +255,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 );
                 $this->getGitDao()->getDb()->commit();
             } catch(\Exception $exp) {
-                $this->errorMsg = $exp->getMessage();
+                $this->errorMsg = $exp;
                 $this->getGitDao()->getDb()->rollBack();
                 return Result::ERROR;
             }
@@ -274,9 +270,8 @@ class Repository implements ContextAware, ServicesAware, Preparable
     {
         try {
             $this->loadRepository('read');
-        } catch(EmptyRepositoryException $exp) {
         } catch(\Exception $exp) {
-            $this->errorMsg = $exp->getMessage();
+            $this->errorMsg = $exp;
             return Result::ERROR;
         }
         

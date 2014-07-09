@@ -148,7 +148,8 @@
                 <param name="properties">files,path</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
+                <param name="actionName">RepoError</param>
+                <param name="entity">:entity</param>
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
@@ -169,8 +170,9 @@
             </result>
 
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">File not found.</param>
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
             </result>
         </action>
 
@@ -199,8 +201,9 @@
                 <param name="file">repository/commit.php</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">Problem occured while loading the commit.</param>
+                <param name="actionName">RepoError</param>
+                <param name="entity">:entity</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="CompareNEW" shortcut="TestGit\Controllers\Compare:compareAction">
@@ -220,6 +223,7 @@
             </result>
             <result name="error" type="chain">
                 <param name="actionName">RepoError</param>
+                <param name="entity">:entity</param>
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
@@ -243,6 +247,7 @@
             <result name="error" type="chain">
                 <param name="actionName">RepoError</param>
                 <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
             </result>
         </action>
         <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction">
@@ -258,8 +263,9 @@
                 <param name="file">repository/empty.php</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
-                <param name="errorMsg">Problem occured while loading branches</param>
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
             </result>
         </action>
         <action name="Users" shortcut="TestGit\Controllers\Users:show">
@@ -523,8 +529,9 @@
                 <param name="entity">:entity</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
+                <param name="actionName">RepoError</param>
                 <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
             </result>
         </action>
         <action name="DeleteNEW" shortcut="TestGit\Controllers\Repository:delete">
@@ -536,8 +543,9 @@
                 <param name="file">repository/delete.php</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
+                <param name="actionName">RepoError</param>
                 <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
             </result>
         </action>
         <action name="SettingsNEW" shortcut="TestGit\Controllers\Settings:show">
@@ -551,8 +559,9 @@
                 <param name="file">repository/settings.php</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
+                <param name="actionName">RepoError</param>
                 <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
             </result>
         </action>
         <action name="Activity" shortcut="TestGit\Controllers\Activity:show">
@@ -565,15 +574,15 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
-
         <action name="ActivityNEW" shortcut="TestGit\Controllers\Repository:activity">
             <acl type="allow" role="" />
             <result name="success" type="php">
                 <param name="file">repository/activity.php</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
+                <param name="actionName">RepoError</param>
                 <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
             </result>
         </action>
 

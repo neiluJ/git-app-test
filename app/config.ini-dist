@@ -1,4 +1,11 @@
 [services]
+; Debug Configuration
+; -------------------
+;
+; When debug = true, error messages are full exception's stack.
+; -------------------
+debug = false
+
 ; ----------------------
 ; Database Configuration
 ;

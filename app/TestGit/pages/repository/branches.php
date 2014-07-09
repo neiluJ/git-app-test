@@ -12,8 +12,8 @@
                 <ul class="tags-list">
                 <?php foreach($this->branches as $tag): ?>
                 <li>
-                    <a style="float:right" class="btn btn-xs btn-default" href="<?php echo $this->_helper->url('Compare', array('name' => $this->name, 'compare' => $tag->getName() . '..' . $this->branch), true); ?>">Compare</a>
-                    <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>"><?php echo $tag->getName(); ?></a></strong> <small>@ <a href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $tag->getCommit()->getHash()), true); ?>"><?php echo substr($tag->getCommit()->getHash(),0,6); ?></a></small>
+                    <a style="float:right" class="btn btn-xs btn-default" href="<?php echo $this->_helper->url('CompareNEW', array('name' => $this->name, 'compare' => $this->branch . '..' . $tag->getName()), true); ?>">Compare</a>
+                    <strong><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>"><?php echo $tag->getName(); ?></a></strong> <small>@ <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->name, 'hash' => $tag->getCommit()->getHash()), true); ?>"><?php echo substr($tag->getCommit()->getHash(),0,6); ?></a></small>
                     <p>Last updated by <?php echo $tag->getCommit()->getCommitterName(); ?> on <?php echo $tag->getCommit()->getCommitterDate()->format('d/m/Y H:i:s'); ?></p>
                     <small class="commit-txt"><?php echo htmlentities($tag->getCommit()->getShortMessage(), ENT_QUOTES, 'utf-8'); ?></small>
                 </li>
@@ -30,7 +30,7 @@
             <ul class="tags-list">
                 <?php foreach($this->tags as $tag): ?>
                 <li>
-                    <strong><a href="<?php echo $this->_helper->url('Repository', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>"><?php echo $tag->getName(); ?></a></strong> <small>@ <a href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $tag->getCommit()->getHash()), true); ?>"><?php echo substr($tag->getCommit()->getHash(),0,6); ?></a></small>
+                    <strong><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>"><?php echo $tag->getName(); ?></a></strong> <small>@ <a href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $tag->getCommit()->getHash()), true); ?>"><?php echo substr($tag->getCommit()->getHash(),0,6); ?></a></small>
                     <p>Created by <?php echo $tag->getCommit()->getCommitterName(); ?> on <?php echo $tag->getCommit()->getCommitterDate()->format('d/m/Y H:i:s'); ?></p>
                     <a href="#" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-download"></i> Download <strong>.zip</strong></a> <a href="#" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-download"></i> Download <strong>.tar.gz</strong></a>
                 </li>

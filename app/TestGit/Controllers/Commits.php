@@ -34,32 +34,32 @@ class Commits extends Repository
     {
         try {
             $this->loadRepository('read');
+            $refs = $this->repository->getReferences();
+            if ($refs->hasBranch($this->branch)) {
+                $revision = $refs->getBranch($this->branch);
+            } else {
+                $revision = $this->repository->getRevision($this->branch);
+            }
+
+            $commit = $revision->getCommit();
+            $tree = $commit->getTree();
+
+            if (null !== $this->path) {
+                $tree = $tree->resolvePath($this->path);
+            }
+
+            $finalCommits = array();
+            $commits = $this->repository->getLog(
+                $revision, ltrim($this->path,'/'), $this->offset, $this->limit
+            )->getCommits();
         } catch(EmptyRepositoryException $exp) {
             return Result::SUCCESS;
         } catch(\Exception $exp) {
-            $this->errorMsg = $exp->getMessage();
+            $this->errorMsg = $exp;
             return Result::ERROR;
         }
         
-        $refs = $this->repository->getReferences();
-        if ($refs->hasBranch($this->branch)) {
-            $revision = $refs->getBranch($this->branch);
-        } else {
-            $revision = $this->repository->getRevision($this->branch);
-        }
-        
-        $commit = $revision->getCommit();
-        $tree = $commit->getTree();
-        
-        if (null !== $this->path) {
-            $tree = $tree->resolvePath($this->path);
-        }
-        
-        $finalCommits = array();
-        $commits = $this->repository->getLog(
-            $revision, ltrim($this->path,'/'), $this->offset, $this->limit
-        )->getCommits();
-        
+
         foreach ($commits as $commit) {
             $finalCommits[$commit->getHash()] = array(
                 'author'    => $commit->getAuthorName(),
@@ -84,14 +84,12 @@ class Commits extends Repository
     {
         try {
             $this->loadRepository('read');
+            $revision = $this->repository->getRevision($this->hash);
+            $commit = $this->commit = $revision->getCommit();
         } catch(\Exception $exp) {
-            $this->errorMsg = $exp->getMessage();
+            $this->errorMsg = $exp;
             return Result::ERROR;
         }
-        
-        $revision = $this->repository->getRevision($this->hash);
-        
-        $commit = $this->commit = $revision->getCommit();
         
         $this->commits = array($commit);
         $this->currentCommit = $commit;
@@ -109,25 +107,6 @@ class Commits extends Repository
         $diff = $this->diff = $commit->getDiff();
         $this->repoAction = 'Commit';
         
-        return Result::SUCCESS;
-    }
-    
-    public function compareAction()
-    {
-        try {
-            $this->loadRepository('read');
-        } catch(\Exception $exp) {
-            $this->errorMsg = $exp->getMessage();
-            return Result::ERROR;
-        }
-
-        if (empty($this->compare)) {
-            return Result::SUCCESS;
-        }
-
-        $this->diff = $this->repository->getDiff($this->compare);
-        $this->repoAction = 'Compare';
-            
         return Result::SUCCESS;
     }
     
