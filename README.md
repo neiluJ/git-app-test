@@ -115,3 +115,7 @@ IMPORTANT: Permissions and ownership of this file must be 0700 git:git !
 App Configuration
 -----------------
 
+Credits
+=======
+
+* Icon by Stephen Hutchings - http://typicons.com/

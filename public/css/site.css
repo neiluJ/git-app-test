@@ -163,10 +163,18 @@ table.blob td.ln span {
 }
 
 div.markdown {
-    word-break:break-all;
+    word-break:keep-all;
     margin-bottom:40px;
 }
-
+div.markdown pre {
+    margin: 10px 0 20px 0;
+    background-color: #eee;
+    border:solid 1px #ccc;
+    padding: 5px;
+}
+div.markdown h1 {
+    margin: 10px 0 20px 0;
+}
 div.repo-title {
     display:block;
 }
