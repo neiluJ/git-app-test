@@ -28,6 +28,7 @@
 
     <?php if($this->_helper->isAllowed($this->entity, 'read')): ?>
     <hr />
+    <?php if(!$this->emptyRepo): ?>
     <!-- Split button -->
     <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><b class="octicon octicon-git-branch"></b> <?php echo $this->_helper->escape((strlen($this->branch) > 12 ? substr($this->branch, 0, 9) .'...' : $this->branch)); ?> <b class="caret"></b></button>
@@ -42,6 +43,7 @@
     </div>
 
     <hr />
+    <?php endif; ?>
     <ul class="nav nav-pills nav-stacked" style="margin-top: 20px; text-align: left;">
         <li<?php if ($repoMenuActive == "code"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>"><b class="octicon octicon-code"></b> Browse</a></li>
         <?php if(!$this->emptyRepo): ?>

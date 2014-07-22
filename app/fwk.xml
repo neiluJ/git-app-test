@@ -220,6 +220,7 @@
                 <param name="actionName">RepoError</param>
                 <param name="errorMsg">This repository is empty.</param>
                 <param name="entity">:entity</param>
+                <param name="emptyRepo">:emptyRepo</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">RepoError</param>
@@ -527,6 +528,7 @@
                 <param name="actionName">RepoError</param>
                 <param name="errorMsg">You can't fork an empty repository.</param>
                 <param name="entity">:entity</param>
+                <param name="emptyRepo">:emptyRepo</param>
             </result>
             <result name="error" type="chain">
                 <param name="actionName">RepoError</param>

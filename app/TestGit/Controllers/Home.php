@@ -14,6 +14,8 @@ class Home implements ServicesAware
     protected $user;
 
     public $entity;
+    public $emptyRepo = false;
+
     protected $debug = false;
 
     public function show()
