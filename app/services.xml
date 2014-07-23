@@ -177,7 +177,7 @@
         <param key="host">:db.hostname</param>
     </array-definition>
     
-    <class-definition name="db" class="Fwk\Db\Connection" shared="true">
+    <class-definition name="db" class="Fwk\Db\Connection" shared="true" lazy="true">
         <argument>@db.config</argument>
     </class-definition>
     
@@ -247,7 +247,7 @@
     </class-definition>
     
     <class-definition name="security.listener.loaduseracl" class="Fwk\Security\Acl\LoadUserAclListener" />
-    <class-definition name="security" class="Fwk\Security\Service" shared="true">
+    <class-definition name="security" class="Fwk\Security\Service" shared="true" lazy="true">
         <argument>@authManager</argument>
         <argument>@usersDao</argument>
         <argument>@aclsManager</argument>
@@ -256,7 +256,7 @@
         </call>
     </class-definition>
     
-    <class-definition name="authFilter" class="TestGit\Form\AuthenticationFilter">
+    <class-definition name="authFilter" class="TestGit\Form\AuthenticationFilter" lazy="true">
         <argument>@usersDao</argument>
         <argument>@security</argument>
     </class-definition>
@@ -279,7 +279,7 @@
         <argument>:log.file</argument>
         <argument>:log.level</argument>
     </class-definition>
-    <class-definition name="logger" class="Monolog\Logger" shared="true">
+    <class-definition name="logger" class="Monolog\Logger" shared="true" lazy="true">
         <argument>forgery</argument>
         <call method="pushHandler">
             <argument>@monolog.handler</argument>
@@ -303,7 +303,7 @@
         <argument>@self</argument>
     </class-definition>
 
-    <class-definition name="comments" class="Nitronet\Comments\CommentsService" shared="true">
+    <class-definition name="comments" class="Nitronet\Comments\CommentsService" shared="true" lazy="true">
         <argument>@db</argument>
         <argument>@comments.config</argument>
         <call method="addListener">

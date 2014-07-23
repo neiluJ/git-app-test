@@ -24,7 +24,8 @@
         "monolog/monolog": "dev-master",
         "nitronet/fwk-twig": "dev-master",
         "nitronet/fwk-assetic": "dev-master",
-        "michelf/php-markdown": "1.4.*@dev"
+        "michelf/php-markdown": "1.4.*@dev",
+        "ocramius/proxy-manager": "0.5.1"
     },
     "require-dev": {
         "filp/whoops": "dev-master"
