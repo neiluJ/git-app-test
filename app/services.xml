@@ -247,7 +247,7 @@
     </class-definition>
     
     <class-definition name="security.listener.loaduseracl" class="Fwk\Security\Acl\LoadUserAclListener" />
-    <class-definition name="security" class="Fwk\Security\Service" shared="true" lazy="true">
+    <class-definition name="security" class="Fwk\Security\Service" shared="true">
         <argument>@authManager</argument>
         <argument>@usersDao</argument>
         <argument>@aclsManager</argument>
@@ -256,7 +256,7 @@
         </call>
     </class-definition>
     
-    <class-definition name="authFilter" class="TestGit\Form\AuthenticationFilter" lazy="true">
+    <class-definition name="authFilter" class="TestGit\Form\AuthenticationFilter">
         <argument>@usersDao</argument>
         <argument>@security</argument>
     </class-definition>
@@ -303,7 +303,7 @@
         <argument>@self</argument>
     </class-definition>
 
-    <class-definition name="comments" class="Nitronet\Comments\CommentsService" shared="true" lazy="true">
+    <class-definition name="comments" class="Nitronet\Comments\CommentsService" shared="true">
         <argument>@db</argument>
         <argument>@comments.config</argument>
         <call method="addListener">
