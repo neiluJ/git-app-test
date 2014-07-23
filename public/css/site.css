@@ -635,5 +635,9 @@ pre#mergeOutput {
 }
 
 div.avatar {
+    word-break: keep-all;
+}
+
+div.avatar h1 {
     word-break: break-all;
 }
