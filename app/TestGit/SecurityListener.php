@@ -56,7 +56,11 @@ class SecurityListener
         $acl        = $service->getAclManager();
         $proxy      = $event->getActionProxy();
         $resource   = 'action:'. $actionName;
-        
+
+        if (strpos($actionName, 'DT') === 0) {
+            return;
+        }
+
         if (!$acl->hasResource($resource)) {
             $acl->addResource(new GenericResource($resource));
         }
@@ -84,18 +88,20 @@ class SecurityListener
         if ($allowed) {
             return;
         }
-        
+
         if (!$service->getAuthenticationManager()->hasIdentity()) {
-            throw new AuthenticationRequired();
+            $request = $event->getContext()->getRequest();
+            $response = new RedirectResponse($event->getContext()->getRequest()->getBaseUrl() . $this->calculateRedirectUri($this->loginAction, $event->getApplication()->getServices(), array(
+                $this->redirectParam => $request->getRequestUri()
+            )));
         } else {
             if (!$event->getContext()->hasParent()) {
                 $response = new Response("<html><head><title>403 Forbidden</title></head><body><h1>Forbidden</h1><p>You are not allowed to see this page</p></body></html>", "403");
             } else {
                 $response = new Response();
             }
-            
-            $event->getContext()->setResponse($response);
-        } 
+        }
+        $event->getContext()->setResponse($response);
     }
     
     protected function calculateAclsForAction($actionName)
@@ -170,22 +176,5 @@ class SecurityListener
         );
 
         return $map;
-    }
-    
-    public function onError(ErrorEvent $event)
-    {
-        $exception = $event->getException();
-        if (!$exception instanceof AuthenticationRequired) {
-            return;
-        }
-        
-        $event->stop();
-        
-        $request = $event->getContext()->getRequest();
-        $response = new RedirectResponse($event->getContext()->getRequest()->getBaseUrl() . $this->calculateRedirectUri($this->loginAction, $event->getApplication()->getServices(), array(
-            $this->redirectParam => $request->getRequestUri()
-        )));
-        
-        $event->getContext()->setResponse($response);
     }
 }

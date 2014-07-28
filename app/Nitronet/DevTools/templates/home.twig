@@ -1,0 +1,11 @@
+<h1><a href="{{ _helper.url('DevTools') }}">DevTools</a></h1>
+
+<p>Welcome to DevTools! Available plugins:</p>
+<ul>
+{% for plugin in plugins %}
+    <li>
+        <a href="{{ _helper.url('DTPlugin', {plugin: plugin.name|lower}) }}">{{ plugin.name }}</a>
+        <p>{{ plugin.description }}</p>
+    </li>
+{% endfor %}
+</ul>

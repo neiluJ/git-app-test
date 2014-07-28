@@ -3,7 +3,8 @@
     <ini>:baseDir/config.ini</ini>
     
     <services xml=":baseDir/services.xml" />
-    
+
+    <listener service="devtools" />
     <listener class="Fwk\Core\Components\RequestMatcher\RequestMatcherListener">
         <param>:requestMatcherService</param>
     </listener>
@@ -55,6 +56,11 @@
             class="Fwk\Core\Components\ResultType\RedirectResultType">
             <param name="requestMatcher">:requestMatcherService</param>
             <param name="urlRewriter">:urlRewriterService</param>
+        </result-type>
+        <result-type
+                name="dt.twig"
+                class="FwkTwig\TwigResultType">
+            <param name="twigService">twig</param>
         </result-type>
     </result-types>
     
@@ -612,6 +618,19 @@
             </result>
             <result name="success" type="redirect">
                 <param name="uri">:back</param>
+            </result>
+        </action>
+
+        <action name="DevTools" shortcut="Nitronet\DevTools\Controllers\Home:show">
+            <acl type="allow" role="" />
+            <result name="success" type="dt.twig">
+                <param name="file">home.twig</param>
+            </result>
+        </action>
+        <action name="DTPlugin" shortcut="Nitronet\DevTools\Controllers\Plugin:show">
+            <acl type="allow" role="" />
+            <result name="success" type="dt.twig">
+                <param name="file">plugin.twig</param>
             </result>
         </action>
     </actions>

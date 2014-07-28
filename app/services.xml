@@ -70,7 +70,7 @@
     
     <!-- Twig_Loader definition -->
     <array-definition name="twig.paths">
-        <param>:packageDir/templates</param>
+        <param>:packageDir/Nitronet/DevTools/templates</param>
     </array-definition>
     
     <class-definition name="twig.loader" class="\Twig_Loader_Filesystem" shared="true">
@@ -177,7 +177,7 @@
         <param key="host">:db.hostname</param>
     </array-definition>
     
-    <class-definition name="db" class="Fwk\Db\Connection" shared="true" lazy="true">
+    <class-definition name="db" class="Fwk\Db\Connection" shared="true">
         <argument>@db.config</argument>
     </class-definition>
     
@@ -279,7 +279,7 @@
         <argument>:log.file</argument>
         <argument>:log.level</argument>
     </class-definition>
-    <class-definition name="logger" class="Monolog\Logger" shared="true" lazy="true">
+    <class-definition name="logger" class="Monolog\Logger" shared="true">
         <argument>forgery</argument>
         <call method="pushHandler">
             <argument>@monolog.handler</argument>
@@ -310,5 +310,19 @@
             <argument>@comments.listener</argument>
         </call>
     </class-definition>
-    
+
+    <!--
+        DEVTOOLS
+    -->
+    <array-definition name="devtools.plugins">
+        <param>@dt.plugin.debugger</param>
+        <param>@dt.plugin.phpinfo</param>
+    </array-definition>
+
+    <class-definition name="dt.plugin.phpinfo" class="Nitronet\DevTools\Plugins\PhpInfo\PhpInfoPlugin" shared="true" />
+    <class-definition name="dt.plugin.debugger" class="Nitronet\DevTools\Plugins\Debug\DebugPlugin" shared="true" />
+
+    <class-definition name="devtools" class="Nitronet\DevTools\DevToolsManager" shared="true">
+        <argument>@devtools.plugins</argument>
+    </class-definition>
 </dependency-injection>
