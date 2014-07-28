@@ -478,11 +478,11 @@ class GitDao extends DaoBase
                 ->select('COUNT(*) as count')
                 ->from($this->getOption('commitsTable'))
                 ->where('committerId = ?')
-                ->setFetchMode(Query::FETCH_OPT)
+                ->setFetchMode(\PDO::FETCH_CLASS)
                 ;
         
         $res = $this->getDb()->execute($query, array($user->getId()));
-        
+
         return $res[0]->count;
     }
     
