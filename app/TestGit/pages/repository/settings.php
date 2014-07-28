@@ -24,5 +24,4 @@
           </div>
       </div>
   </div>
-  </body>
 <?php include __DIR__ . '/../_footer.php'; ?>

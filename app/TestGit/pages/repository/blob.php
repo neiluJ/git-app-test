@@ -92,5 +92,4 @@ include __DIR__ . '/../_header.php';
             });
         });
     </script>
-</body>
 <?php include __DIR__ . '/../_footer.php'; ?>
