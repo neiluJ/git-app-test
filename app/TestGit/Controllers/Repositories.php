@@ -95,7 +95,7 @@ class Repositories implements ServicesAware
             $date = new \DateTime($repo->getLast_commit_date());
             $infos = array(
                 'name'  => $repo->getName(),
-                'ownerName' => $repo->getOwner()->getUsername(),
+                'ownerName' => ($repo->getOwner_id() === null ? null : $repo->getOwner()->getUsername()),
                 'fullname'  => $repo->getFullname(),
                 'private'   => $repo->isPrivate(),
                 'fork'      => ($repo->getParent_id() === null ? false : true), 
@@ -110,7 +110,7 @@ class Repositories implements ServicesAware
 
             array_push($result, $infos);
         }
-        
+
         $this->jsonRepositories = $result;
     }
     
