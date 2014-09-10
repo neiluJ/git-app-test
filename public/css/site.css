@@ -641,3 +641,50 @@ div.avatar {
 div.avatar h1 {
     word-break: break-all;
 }
+
+div.calendar {
+    padding:0;
+}
+
+div.calendar ul {
+    list-style: none;
+    list-style-type: none;
+    margin:0;
+    padding:0;
+}
+
+div.calendar ul li {
+    display:inline;
+}
+div.calendar ul li a {
+    display:block;
+    width:25%;
+    float:left;
+    text-align: center;
+    border-bottom: solid 1px #ccc;
+    color: #999;
+}
+div.calendar ul li a:hover, div.calendar ul li a:active, div.calendar ul li a:focus {
+    text-decoration: none !important;
+}
+
+div.calendar ul li.mid-l a {
+    border-left:solid 1px #ccc;
+}
+div.calendar ul li.mid-r a {
+    border-left:solid 1px #ccc;
+    border-right:solid 1px #ccc;
+}
+div.calendar ul li a span.counter {
+    display:block;
+    font-weight: bold;
+    margin: 5px 0;
+}
+div.calendar ul li a span.cal-month {
+    display: block;
+    background: #eee;
+    text-transform: uppercase;
+    padding: 1px 0;
+    font-weight: bold;
+    font-size: 12px;
+}

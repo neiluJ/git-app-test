@@ -9,6 +9,8 @@
 
     <title><?php if(isset($page_title)): ?><?php echo $vh->escape($page_title); ?> &bullet; <?php endif; ?><?php echo $vh->escape($vh->appTitle()); ?></title>
 
+      <link rel="dns-prefetch" href="//fonts.googleapis.com">
+
       <link rel="apple-touch-icon" sizes="57x57" href="<?php echo str_replace('/index.php', '/', $vh->url()); ?>apple-touch-icon-57x57.png">
       <link rel="apple-touch-icon" sizes="114x114" href="<?php echo str_replace('/index.php', '/', $vh->url()); ?>apple-touch-icon-114x114.png">
       <link rel="apple-touch-icon" sizes="72x72" href="<?php echo str_replace('/index.php', '/', $vh->url()); ?>apple-touch-icon-72x72.png">

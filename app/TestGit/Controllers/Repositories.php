@@ -78,7 +78,7 @@ class Repositories implements ServicesAware
                 'fork'      => $repo->getParent_id() === null ? false : true,
                 'private'   => $repo->isPrivate(),
                 'value'  => $repo->getFullname(),
-                'tokens'  => array($repo->getFullname(), $repo->getOwner()->getUsername(), $repo->getName()),
+                'tokens'  => array($repo->getFullname(), ($repo->getOwner_id() === null ? null : $repo->getOwner()->getUsername()), $repo->getName()),
                 'url'   => $this->getServices()->get('viewHelper')->url('RepositoryNEW', array('name' => $repo->getFullname()))
             );
 
