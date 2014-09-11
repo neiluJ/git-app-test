@@ -725,6 +725,12 @@
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" required="false" />
         </url>
+        <url route="/:name/commits/:branch/:year/:month" action="CommitsNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="true" />
+            <param name="year" required="true" regex="[0-9]{4}" />
+            <param name="month" required="true" regex="[0-9]{2}" />
+        </url>
         <url route="/:name/commit/:hash$" action="CommitNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="hash" required="true" regex=".*" />

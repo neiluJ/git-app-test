@@ -485,7 +485,59 @@ class GitDao extends DaoBase
 
         return $res[0]->count;
     }
-    
+
+    public function getCommitsMonthlyCount(Repository $repository)
+    {
+        $query = Query::factory()
+            ->select('COUNT(*) as count, YEAR(committerDate) as year, MONTH(committerDate) as month')
+            ->from($this->getOption('commitsTable'))
+            ->where('repositoryId = ?')
+            ->groupBy('YEAR(committerDate), MONTH(committerDate) DESC')
+            ->setFetchMode(\PDO::FETCH_ASSOC)
+        ;
+
+        $res = $this->getDb()->execute($query, array($repository->getId()));
+
+        $final = array();
+        foreach ($res as $data) {
+            if (!isset($final[$data['year']])) {
+                $final[$data['year']] = array();
+            }
+            $final[$data['year']][$data['month']] = $data['count'];
+        }
+
+        return $final;
+    }
+
+    public function getTotalCommitsCount(Repository $repository)
+    {
+        $query = Query::factory()
+            ->select('COUNT(*) as count')
+            ->from($this->getOption('commitsTable'))
+            ->where('repositoryId = ?')
+            ->setFetchMode(\PDO::FETCH_CLASS)
+        ;
+
+        $res = $this->getDb()->execute($query, array($repository->getId()));
+
+        return $res[0]->count;
+    }
+
+    public function getMonthCommits(Repository $repository, $year, $month)
+    {
+        $query = Query::factory()
+            ->select()
+            ->from($this->getOption('commitsTable'))
+            ->entity(self::ENTITY_COMMIT)
+            ->where('repositoryId = ?')
+            ->andWhere('committerDate > ? AND committerDate < ?');
+        ;
+
+        $res = $this->getDb()->execute($query, array($repository->getId(), $year . '-'. $month . '-01 00:00:00', $year . '-'. $month . '-31 23:59:59'));
+
+        return $res;
+    }
+
     public function getActivity(array $repositories, User $user = null, $limit = 20)
     {
         $params = array();

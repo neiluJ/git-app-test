@@ -19,19 +19,20 @@
         <div class="col-md-7">
             <div id="main">
                <h3 style="margin-top:0"><span class="mega-octicon octicon-git-commit"></span> Commits History
-                   <span style="color: #ccc;">January, 2014</span></h3>
+                   <span style="color: #ccc;"><?php echo date('F, Y', strtotime($this->year ."-". $this->month ."-01")); ?></span></h3>
 
                 <p>There was <strong><?php echo count($this->commits); ?> commits</strong> in <span
                         class="octicon
                 octicon-git-branch"></span> <strong><?php echo $vh->escape($this->branch); ?></strong> on
-                    <strong>January 2014</strong> (1 year ago) by <strong>3 contributors</strong>.</p>
+                    <strong><?php echo date('F Y', strtotime($this->year ."-". $this->month ."-01")); ?></strong>.</p>
 
                 <?php if (count($this->commits)): ?>
                     <div class="tab-pane" id="commits">
                         <?php
                         $finalCommits = array();
                         foreach ($this->commits as $commit) {
-                            $day = $commit->getCommitterDate()->format('Ymd');
+                            $date = new DateTime($commit->getCommitterDate());
+                            $day = $date->format('Ymd');
 
                             if (!isset($finalCommits[$day])) {
                                 $finalCommits[$day] = array();
@@ -43,7 +44,7 @@
                         <ul class="commits-history">
                             <?php foreach ($finalCommits as $day => $commits): ?>
                                 <li class="date">
-                                    <p><b class="octicon octicon-calendar"></b> <?php $commit = $commits[0]; echo $commit->getCommitterDate()->format('l F d Y'); ?></p>
+                                    <p><b class="octicon octicon-calendar"></b> <?php $commit = $commits[0]; $date = new DateTime($commit->getCommitterDate()); echo $date->format('l d'); ?></p>
                                     <table>
                                         <tbody>
                                         <?php foreach ($commits as $commit): ?>
@@ -66,131 +67,73 @@
                         </ul>
                     </div>
                 <?php else: ?>
-                    <p>They are no commits to show.</p>
+                    <div class="alert alert-info" style="margin-top: 20px;">
+                        They are no commits to show.
+                    </div>
                 <?php endif; ?>
             </div>
         </div>
         <div class="col-md-3">
-            <p class="user-stat"><span class="big-counter"><?php echo count
-                    ($this->commits); ?></span> total
-                commits</p>
+            <p class="user-stat"><span class="big-counter"><?php echo $this->totalCommits; ?></span> total commits</p>
 
             <div class="panel-group" id="accordion" style="margin-top: 20px;">
+                <?php $year = date('Y'); $month = date('m'); ?>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                2014
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse<?php echo $year; ?>">
+                                <?php echo $year; ?>
                             </a>
                         </h4>
                     </div>
-                    <div id="collapseOne" class="panel-collapse collapse in">
+                    <div id="collapse<?php echo $year; ?>" class="panel-collapse collapse<?php if($year == $this->year): ?> in<?php endif; ?>">
                         <div class="panel-body calendar">
                             <ul>
-                                <li>
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Jan</span>
+                                <?php for($x = 1; $x <= 12; $x++): ?>
+                                <li class="<?php if($x == $this->month && $year == $this->year): ?>active<?php endif; ?><?php if(in_array($x, array(2,6,10))): ?> mid-l<?php elseif(in_array($x, array(3,7,11))): ?> mid-r<?php endif; ?>">
+                                    <a href="<?php echo $vh->url('CommitsNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch, 'year' => $year, 'month' => str_pad($x, 2, '0', STR_PAD_LEFT))); ?>"<?php if(!isset($this->monthlyCount[$year][$x])): ?> class="empty"<?php endif; ?>>
+                                        <span class="counter">
+                                            <?php echo (isset($this->monthlyCount[$year][$x]) ? $this->monthlyCount[$year][$x] : 0); ?>
+                                        </span>
+                                        <span class="cal-month">
+                                            <?php echo date('M', strtotime("2014-". $x ."-01")); ?>
+                                        </span>
                                     </a>
                                 </li>
-                                <li class="mid-l">
-                                    <a href="#">
-                                        <span class="counter">202</span>
-                                        <span class="cal-month">Feb</span>
-                                    </a>
-                                </li>
-                                <li class="mid-r">
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Mar</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="counter">2000</span>
-                                        <span class="cal-month">Apr</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">May</span>
-                                    </a>
-                                </li>
-                                <li class="mid-l">
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Jun</span>
-                                    </a>
-                                </li>
-                                <li class="mid-r">
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Jul</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Aug</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Sep</span>
-                                    </a>
-                                </li>
-                                <li class="mid-l">
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Oct</span>
-                                    </a>
-                                </li>
-                                <li class="mid-r">
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Nov</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="counter">2</span>
-                                        <span class="cal-month">Dec</span>
-                                    </a>
-                                </li>
+                                <?php endfor; ?>
                             </ul>
                         </div>
                     </div>
                 </div>
+                <?php foreach ($this->monthlyCount as $y => $data): if($year == $y) { continue; } ?>
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                                2013
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapse<?php echo $y; ?>">
+                                <?php echo $y; ?>
                             </a>
                         </h4>
                     </div>
-                    <div id="collapseTwo" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            pwet
+                    <div id="collapse<?php echo $y; ?>" class="panel-collapse collapse<?php if($y == $this->year): ?> in<?php endif; ?>"">
+                        <div class="panel-body calendar">
+                            <ul>
+                                <?php for($x = 1; $x <= 12; $x++): ?>
+                                    <li class="<?php if($x == $this->month && $y == $this->year): ?>active<?php endif; ?><?php if(in_array($x, array(2,6,10))): ?> mid-l<?php elseif(in_array($x, array(3,7,11))): ?> mid-r<?php endif; ?>">
+                                        <a href="<?php echo $vh->url('CommitsNEW', array('name' => $this->entity->getFullname(), 'branch' => $this->branch, 'year' => $y, 'month' => str_pad($x, 2, '0', STR_PAD_LEFT))); ?>"<?php if(!isset($data[$x])): ?> class="empty"<?php endif; ?>>
+                                    <span class="counter">
+                                        <?php echo (isset($data[$x]) ? $data[$x] : 0); ?>
+                                    </span>
+                                    <span class="cal-month">
+                                        <?php echo date('M', strtotime("2014-". $x ."-01")); ?>
+                                    </span>
+                                        </a>
+                                    </li>
+                                <?php endfor; ?>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h4 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-                                2012
-                            </a>
-                        </h4>
-                    </div>
-                    <div id="collapseThree" class="panel-collapse collapse">
-                        <div class="panel-body">
-                            pwet
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
 </div>

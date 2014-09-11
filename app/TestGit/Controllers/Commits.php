@@ -13,6 +13,9 @@ class Commits extends Repository
     public $hash;
     public $compare;
     public $q;
+
+    public $year;
+    public $month;
     
     protected $commits      = array();
     protected $jsonCommits  = array();
@@ -20,6 +23,9 @@ class Commits extends Repository
     protected $jsonCurrentCommit;
     protected $diff;
     protected $searchResults = array();
+
+    protected $totalCommits = 0;
+    protected $monthlyCount = array();
     
     public function prepare()
     {
@@ -28,6 +34,17 @@ class Commits extends Repository
         $this->limit    = (int)$this->limit;
         $this->offset   = (int)$this->offset;
         $this->q        = trim((string)$this->q);
+
+        $this->year     = (int)$this->year;
+        $this->month    = (int)$this->month;
+
+        if (empty($this->year)) {
+            $this->year = (int)date('Y');
+        }
+
+        if (empty($this->month)) {
+            $this->month = (int)date('m');
+        }
     }
     
     public function listAction()
@@ -41,17 +58,14 @@ class Commits extends Repository
                 $revision = $this->repository->getRevision($this->branch);
             }
 
-            $commit = $revision->getCommit();
-            $tree = $commit->getTree();
-
-            if (null !== $this->path) {
-                $tree = $tree->resolvePath($this->path);
-            }
+            // tests the reference
+            $revision->getCommit();
 
             $finalCommits = array();
-            $commits = $this->repository->getLog(
-                $revision, ltrim($this->path,'/'), $this->offset, $this->limit
-            )->getCommits();
+            $this->totalCommits = $this->getGitDao()->getTotalCommitsCount($this->entity);
+            $this->monthlyCount = $this->getGitDao()->getCommitsMonthlyCount($this->entity);
+            $commits = $this->getGitDao()->getMonthCommits($this->entity, $this->year, $this->month);
+
         } catch(EmptyRepositoryException $exp) {
             return Result::SUCCESS;
         } catch(\Exception $exp) {
@@ -59,13 +73,13 @@ class Commits extends Repository
             return Result::ERROR;
         }
         
-
         foreach ($commits as $commit) {
+            $date = new \DateTime($commit->getCommitterDate());
             $finalCommits[$commit->getHash()] = array(
                 'author'    => $commit->getAuthorName(),
-                'date'      => $commit->getAuthorDate()->format('d/m/Y H:i:s'),
-                'ts'        => $commit->getAuthorDate()->format('U'),
-                'date_obj'  => $commit->getAuthorDate(),
+                'date'      => $date->format('d/m/Y H:i:s'),
+                'ts'        => $date->format('U'),
+                'date_obj'  => $date,
                 'hash'      => $commit->getHash(),
                 'message'   => $commit->getMessage(),
                 'comments'  => $this->getServices()->get('comments')->getCommentsCount('commit-'. $this->getEntity()->getId() .'-'. $commit->getHash())
@@ -74,9 +88,7 @@ class Commits extends Repository
         
         $this->commits = $commits;
         $this->jsonCommits = $finalCommits;
-        $this->currentCommit = array_shift($commits);
-        $this->jsonCurrentCommit = $this->jsonCommits[$this->currentCommit->getHash()];
-        
+
         return Result::SUCCESS;
     }
     
@@ -183,5 +195,21 @@ class Commits extends Repository
     public function getSearchResults()
     {
         return $this->searchResults;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMonthlyCount()
+    {
+        return $this->monthlyCount;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTotalCommits()
+    {
+        return $this->totalCommits;
     }
 }

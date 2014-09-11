@@ -682,9 +682,19 @@ div.calendar ul li a span.counter {
 }
 div.calendar ul li a span.cal-month {
     display: block;
-    background: #eee;
+    background-color: #eee;
     text-transform: uppercase;
     padding: 1px 0;
     font-weight: bold;
     font-size: 12px;
+}
+div.calendar ul li a.empty {
+    cursor: default;
+}
+div.calendar ul li a.empty span.counter {
+    text-indent: -5000px;
+}
+div.calendar ul li.active a span.cal-month {
+    color: #fff;
+    background-color: #b94a48;
 }
