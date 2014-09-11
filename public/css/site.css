@@ -570,6 +570,7 @@ h1.profile {
 }
 p.profile-info {
     font-weight: 300;
+    word-break: break-all;
 }
 
 #editor {

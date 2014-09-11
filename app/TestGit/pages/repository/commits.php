@@ -6,7 +6,7 @@
         $page_title = $this->entity->getName() . "/" . $this->path;
     }
 
-    $page_title .= " - Commits History";
+    $page_title .= " - Commits History (". date('F Y', strtotime($this->year ."-". $this->month ."-01")) .")";
 
     include __DIR__ . '/../_header.php';
 ?>
