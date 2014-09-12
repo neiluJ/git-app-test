@@ -699,3 +699,7 @@ div.calendar ul li.active a span.cal-month {
     color: #fff;
     background-color: #b94a48;
 }
+
+div.calendar ul li a:active {
+    background-color: #eee;
+}
