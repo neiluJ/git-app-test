@@ -2,6 +2,7 @@
 namespace TestGit\Controllers;
 
 use Fwk\Core\Action\Result;
+use Symfony\Component\HttpFoundation\Session\Session;
 use TestGit\Form\LoginForm;
 use TestGit\Form\AuthenticationFilter;
 use Fwk\Core\Preparable;
@@ -56,13 +57,22 @@ class Login extends Controller implements Preparable
     {
         $security   = $this->getServices()->get('security');
         $request    = $this->getContext()->getRequest();
-        
-        if (false === $security->deauthenticate($request)) {
-            /**
-             * @todo Log Logout errors
-             */
+
+        try {
+            if (false === $security->deauthenticate($request)) {
+                /**
+                 * @todo Log Logout errors
+                 */
+            }
+        } catch(\Exception $e) {
+
         }
-        
+
+        $session = $this->getServices()->get('session');
+        if ($session instanceof Session) {
+            $session->clear();
+        }
+
         $ref = $request->headers->get('Referer');
         if (!empty($ref)) {
             $this->back = $ref;

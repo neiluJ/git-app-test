@@ -3,6 +3,7 @@ namespace TestGit;
 
 use Fwk\Core\Events\BeforeActionEvent;
 use Fwk\Security\Exceptions\AuthenticationRequired;
+use Fwk\Security\Exceptions\UserNotFound;
 use Fwk\Xml\Map, Fwk\Xml\Path;
 use Fwk\Core\Components\Descriptor\DescriptorLoadedEvent;
 use Fwk\Core\Events\ErrorEvent;
@@ -64,12 +65,17 @@ class SecurityListener
         if (!$acl->hasResource($resource)) {
             $acl->addResource(new GenericResource($resource));
         }
-        
-        $role = (
-           $service->getAuthenticationManager()->hasIdentity() ?
-           $service->getUser($event->getContext()->getRequest()) :
-           $this->guestRole
-        );
+
+        try {
+            $role = (
+            $service->getAuthenticationManager()->hasIdentity() ?
+                $service->getUser($event->getContext()->getRequest()) :
+                $this->guestRole
+            );
+        } catch(UserNotFound $e) {
+            $event->getApplication()->getServices()->get('session')->clear();
+            $role = 'guest';
+        }
         
         if (!empty($role) && !$acl->hasRole($role)) {
             $acl->addRole($role);
