@@ -5,18 +5,11 @@
     <services xml=":baseDir/services.xml" />
 
     <listener service="devtools" />
-    <listener class="Fwk\Core\Components\RequestMatcher\RequestMatcherListener">
-        <param>:requestMatcherService</param>
-    </listener>
-    <listener class="Fwk\Core\Components\ResultType\ResultTypeListener">
-        <param>:resultTypeService</param>
-    </listener>
+
     <listener class="Fwk\Core\Components\ViewHelper\ViewHelperListener">
         <param>:viewHelperService</param>
     </listener>
-    <listener class="Fwk\Core\Components\UrlRewriter\UrlRewriterListener">
-        <param>:urlRewriterService</param>
-    </listener>
+
     <listener class="Fwk\Core\Components\ConsoleListener">
         <param>:consoleService</param>
     </listener>
@@ -25,8 +18,8 @@
     </listener>
     <listener class="TestGit\SecurityListener">
         <param name="securityService">security</param>
-        <param name="requestMatcher">:requestMatcherService</param>
-        <param name="urlRewriter">:urlRewriterService</param>
+        <param name="requestMatcher">requestMatcher</param>
+        <param name="urlRewriter">urlRewriter</param>
         <param name="guestRole">guest</param>
         <param name="loginAction">Login</param>
         <param name="redirectParam">back</param>
@@ -42,25 +35,6 @@
                 name="php.comments"
                 class="Fwk\Core\Components\ResultType\PhpTemplateResultType">
             <param name="templatesDir">:packageDir/Nitronet/Comments/templates</param>
-        </result-type>
-        <result-type
-            name="json"
-            class="Fwk\Core\Components\ResultType\JsonResultType"
-        />
-        <result-type
-            name="chain"
-            class="Fwk\Core\Components\ResultType\ChainResultType"
-        />
-        <result-type
-            name="redirect"
-            class="Fwk\Core\Components\ResultType\RedirectResultType">
-            <param name="requestMatcher">:requestMatcherService</param>
-            <param name="urlRewriter">:urlRewriterService</param>
-        </result-type>
-        <result-type
-                name="dt.twig"
-                class="FwkTwig\TwigResultType">
-            <param name="twigService">twig</param>
         </result-type>
     </result-types>
     

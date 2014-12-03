@@ -28,8 +28,11 @@ class DevToolsManager
                 throw new \InvalidArgumentException('A plugin must be an instance of Nitronet\DevTools\Plugin');
             }
 
-            array_walk($plugin->getListeners(), function($listener) use ($app) { $app->addListener($listener); });
-            array_walk($plugin->getActions(), function($proxy, $action) use ($app) {
+            $listeners = $plugin->getListeners();
+            array_walk($listeners, function($listener) use ($app) { $app->addListener($listener); });
+
+            $actions = $plugin->getActions();
+            array_walk($actions, function($proxy, $action) use ($app) {
                 $app->register($action, $proxy);
             });
         }

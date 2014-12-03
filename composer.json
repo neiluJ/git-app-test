@@ -19,11 +19,9 @@
         "fwk/db": "dev-master",
         "fwk/security": "dev-master",
         "symfony/console": "dev-master",
-        "symfony/process": "dev-master",
+        "symfony/process": "2.4.*@dev",
         "fwk/form": "dev-master",
         "monolog/monolog": "dev-master",
-        "nitronet/fwk-twig": "dev-master",
-        "nitronet/fwk-assetic": "dev-master",
         "michelf/php-markdown": "1.4.*@dev",
         "ocramius/proxy-manager": "0.5.1"
     },

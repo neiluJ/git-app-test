@@ -2,16 +2,13 @@
 <dependency-injection>
     <ini category="services">:baseDir/config.ini</ini>
     
-    <class-definition name="requestMatcher" class="Fwk\Core\Components\RequestMatcher\RequestMatcher" shared="true" />
-    <class-definition name="urlRewriter" class="Fwk\Core\Components\UrlRewriter\UrlRewriterService" shared="true" />
-    <class-definition name="resultTypeService" class="Fwk\Core\Components\ResultType\ResultTypeService" shared="true" />
     <class-definition name="_vh.embed" class="Fwk\Core\Components\ViewHelper\EmbedViewHelper" shared="true" />
     <class-definition name="_vh.url" class="Fwk\Core\Components\UrlRewriter\UrlViewHelper" shared="true">
         <argument>requestMatcher</argument>
         <argument>urlRewriter</argument>
     </class-definition>
     <class-definition name="_vh.escape" class="Fwk\Core\Components\ViewHelper\EscapeViewHelper" shared="true" />
-    
+
     <!-- GIT APP Specific ViewHelpers -->
     <class-definition name="_vh.form" class="TestGit\Form\RendererViewHelper" shared="true">
         <argument>formRenderer</argument>
@@ -39,10 +36,6 @@
             <argument>@_vh.escape</argument>
         </call>
         <call method="add">
-            <argument>asset</argument>
-            <argument>@_vh.AsseticViewHelper</argument>
-        </call>
-        <call method="add">
             <argument>form</argument>
             <argument>@_vh.form</argument>
         </call>
@@ -59,83 +52,7 @@
             <argument>@_vh.appTitle</argument>
         </call>
     </class-definition>
-    
-    <!--
-        TWIG (fwk-twig)
-    -->
-    <array-definition name="twig.config">
-        <param key="debug">true</param>
-        <param key="cache">:packageDir/../cache</param>
-    </array-definition>
-    
-    <!-- Twig_Loader definition -->
-    <array-definition name="twig.paths">
-        <param>:packageDir/Nitronet/DevTools/templates</param>
-    </array-definition>
-    
-    <class-definition name="twig.loader" class="\Twig_Loader_Filesystem" shared="true">
-        <argument>@twig.paths</argument>
-    </class-definition>
 
-    <!-- Twig_Environment definition -->
-    <class-definition name="twigDebugExt" class="\Twig_Extension_Debug" />
-    <class-definition name="twig" class="\Twig_Environment" shared="true">
-        <argument>@twig.loader</argument>
-        <argument>@twig.config</argument>
-        <call method="addExtension">
-            <argument>@twigDebugExt</argument>
-        </call>
-    </class-definition>
-    
-    <!--
-        ASSETIC (fwk-assetic)
-    -->
-    <class-definition name="assetic.CssRewriteFilter" class="FwkAssetic\Filters\CssRewriteFilter" shared="true">
-        <argument>@_vh.AsseticViewHelper</argument>
-    </class-definition>
-    <class-definition name="assetic.FilterManager" class="Assetic\FilterManager" shared="true">
-        <call method="set">
-            <argument>cssrewrite</argument>
-            <argument>@assetic.CssRewriteFilter</argument>
-        </call>
-    </class-definition>
-    <class-definition name="assetic.FilesystemCache" class="Assetic\Cache\FilesystemCache" shared="true">
-        <argument>:assetic.cache.directory</argument>
-    </class-definition>
-    <class-definition name="assetic.CacheBustingWorker" class="Assetic\Factory\Worker\CacheBustingWorker" shared="true">
-        <argument>:assetic.cache.strategy</argument>
-    </class-definition>
-    <class-definition name="assetic.AssetFactory" class="Assetic\Factory\AssetFactory" shared="true">
-        <argument>:assetic.assets.directory</argument>
-        <argument>:assetic.debug</argument>
-        <call method="setFilterManager">
-            <argument>@assetic.FilterManager</argument>
-        </call>
-        <!-- enable assetic cache -->
-        <call method="addWorker">
-            <argument>@assetic.CacheBustingWorker</argument>
-        </call>
-    </class-definition>
-    
-    <array-definition name="assetic.Shortcuts">
-        <param key="theme">:twig.templates.dir/assets</param>
-    </array-definition>
-    
-    <class-definition name="assetic" class="FwkAssetic\AssetsService" shared="true">
-        <argument>@assetic.AssetFactory</argument>
-        <argument>@assetic.FilesystemCache</argument>
-        <call method="addShortcuts">
-            <argument>@assetic.Shortcuts</argument>
-        </call>
-    </class-definition>
-    
-    <class-definition name="_vh.AsseticViewHelper" class="\FwkAssetic\AssetViewHelper" shared="true">
-        <argument>assetic</argument>
-        <argument>url</argument>
-        <argument>:assetic.debug</argument>
-        <argument>:assetic.action.name</argument>
-    </class-definition>
-    
     <!--
         CONSOLE
     -->

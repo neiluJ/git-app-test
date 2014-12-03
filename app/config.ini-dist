@@ -32,9 +32,9 @@ db.database = forgery
 ;                       : (usually /home/git/workdir)
 ; - repos.basePath      : Should be @repos.dir 
 ; --------------------------
-repos.dir = /home/git/repositories
-repos.working.dir = /home/git/workdir
-repos.basePath = /home/git/repositories
+repos.dir = /home/neiluj/tmp/testgit/repositories
+repos.working.dir = /home/neiluj/tmp/testgit/workdir
+repos.basePath = /home/neiluj/tmp/testgit/repositories
 
 ; ---------------------
 ; Cloning Configuration
@@ -113,7 +113,7 @@ apache.htpasswd.file = /home/git/htpasswd.git
 ; - log.level   : 100 = debug, 200 = info, 250 = notice, 300 = warning, 
 ;               : 400 = error, 500 = critical
 ; ---------------------
-log.file = /home/git/www/logs/forgery.log
+log.file = /home/neiluj/tmp/testgit/forgery.log
 log.level = 100
 
 ; --------------------
@@ -142,9 +142,6 @@ acls.table.resources = acls_resources
 acls.table.permissions = acls_permissions
 
 [fwk]
-requestMatcherService = requestMatcher
-resultTypeService = resultTypeService
 viewHelperService = viewHelper
-urlRewriterService = urlRewriter
 consoleService = consoleApp
 sessionService = session
