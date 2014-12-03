@@ -220,13 +220,7 @@
         <argument>@self</argument>
     </class-definition>
 
-    <class-definition name="comments" class="Nitronet\Comments\CommentsService" shared="true">
-        <argument>@db</argument>
-        <argument>@comments.config</argument>
-        <call method="addListener">
-            <argument>@comments.listener</argument>
-        </call>
-    </class-definition>
+    <!-- @todo add commentsListener -->
 
     <!--
         DEVTOOLS

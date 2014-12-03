@@ -3,8 +3,8 @@ namespace TestGit\Listeners;
 
 
 use Fwk\Di\Container;
-use Nitronet\Comments\Events\CommentAddedEvent;
-use Nitronet\Comments\Events\CommentPostedEvent;
+use Nitronet\Fwk\Comments\Events\CommentAddedEvent;
+use Nitronet\Fwk\Comments\Events\CommentPostedEvent;
 use TestGit\Form\CommentForm;
 use TestGit\Model\Comment\Comment;
 use TestGit\Model\Git\Repository;

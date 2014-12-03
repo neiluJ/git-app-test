@@ -4,8 +4,6 @@
     
     <services xml=":baseDir/services.xml" />
 
-    <listener service="devtools" />
-
     <listener class="Fwk\Core\Components\ViewHelper\ViewHelperListener">
         <param>:viewHelperService</param>
     </listener>
@@ -579,7 +577,7 @@
             </result>
         </action>
 
-        <action name="CommentsThread" shortcut="Nitronet\Comments\Controllers\Thread:show">
+        <action name="CommentsThread" shortcut="Nitronet\Fwk\Comments\Controllers\Thread:show">
             <acl type="allow" role="" />
             <result name="error" type="php">
                 <param name="file">comments/thread_error.php</param>
@@ -589,11 +587,11 @@
             </result>
         </action>
 
-        <action name="CommentsCount" shortcut="Nitronet\Comments\Controllers\Thread:countComments">
+        <action name="CommentsCount" shortcut="Nitronet\Fwk\Comments\Controllers\Thread:countComments">
             <acl type="allow" role="" />
         </action>
 
-        <action name="CommentPost" shortcut="Nitronet\Comments\Controllers\Comment:post">
+        <action name="CommentPost" shortcut="Nitronet\Fwk\Comments\Controllers\Comment:post">
             <acl type="allow" role="" />
             <result name="form" type="php">
                 <param name="file">comments/post.php</param>

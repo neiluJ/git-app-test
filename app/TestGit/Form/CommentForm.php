@@ -9,7 +9,7 @@ use Fwk\Form\Sanitization\IntegerSanitizer;
 use Fwk\Form\Sanitization\StringSanitizer;
 use Fwk\Form\Validation\NotEmptyFilter;
 use Fwk\Form\Validation\RegexFilter;
-use Nitronet\Comments\CommentFormInterface;
+use Nitronet\Fwk\Comments\CommentFormInterface;
 
 class CommentForm extends Form implements CommentFormInterface
 {

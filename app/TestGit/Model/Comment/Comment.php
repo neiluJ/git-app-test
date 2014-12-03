@@ -1,7 +1,7 @@
 <?php
 namespace TestGit\Model\Comment;
 
-use Nitronet\Comments\Model\Comment as CommentBase;
+use Nitronet\Fwk\Comments\Model\Comment as CommentBase;
 use TestGit\Model\Git\GitDao;
 use TestGit\Model\Tables;
 use TestGit\Model\User\UsersDao;

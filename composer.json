@@ -23,7 +23,8 @@
         "fwk/form": "dev-master",
         "monolog/monolog": "dev-master",
         "michelf/php-markdown": "1.4.*@dev",
-        "ocramius/proxy-manager": "0.5.1"
+        "ocramius/proxy-manager": "0.5.1",
+        "nitronet/fwk-comments": "dev-master"
     },
     "require-dev": {
         "filp/whoops": "dev-master"
@@ -31,7 +32,6 @@
     "autoload": {
         "psr-0": {
             "TestGit": "app",
-            "Nitronet\\Comments": "app",
             "Nitronet\\DevTools": "app"
         }
     }

@@ -3,7 +3,7 @@
  * This dirty template is supposed to be replaced by your own!
  * PS: dirty is not a styleguide :P
  */
-use Nitronet\Comments\Controllers\Thread;
+use Nitronet\Fwk\Comments\Controllers\Thread;
 
 function findCommentById($id, $comments)
 {
