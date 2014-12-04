@@ -362,8 +362,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 
 INSERT INTO `users` (`id`, `type`, `username`, `slug`, `password`, `http_password`, `email`, `date_registration`, `date_activation`, `hash`, `active`, `fullname`) VALUES
-  (1, 'user', 'test', 'test', 0xe7d565cf687ee3ee4e5eb7dbcb7f653c2fc5cb870aedec8d3226dd0487bbee55567178d68d649d0f0bba88ef4bfb79876a354f9e3f66ca1edb0e62eddb046fbc847ecb1e47793b839ae63adfc635a3e4ee29a13388847acfa9018839fb96e68cba0d2641016893c5befb695271f37f335bce6c6d11028498590c161f96dde51eb9e368df52dac7d97c87bbdc66948053703bc0d3dc7ada2ccd47766e11baeaf95b03596673a6584c394082db14856f11f15ef9680300ff710c6ae25b2577c2e06a26b98d9f669228fe8f16cd236275cdd3ade5cd3022922328ff9222c6dba4885b7bc1797b3587ed2c4b8186daeb6cba960a2970593c8418e4f472d8b99c2003, '$apr1$yP54OaSW$njpnqmYG8oGceVMTJDxhu0', 'test@example.com', '2013-11-15 17:28:46', NULL, NULL, 1, 'Administrator');
-
+  (1, 'user', 'admin', 'admin', 0xbf3cb2cf1f7fb33fea5cd70826984f1b5bf104e713f718f0a7b98fcbc2dab3c17eb9b414cdeb4d9b004c6ae8870a9767b6b403f5cdac9e4032c6e10b5a8992e14eec1d0e626eb6aa285822b7ab5bbba28c349a33590441bc5e2f584bb5139c9aeda5ce82752ad8c9948a71cf61c5706559434af1aa7c5792c6f233ceae9575c454f8fff6b2f302c112c28eef4e1ef076a1a57b97967a7d9f5e98f21dbf86a60da27a57a339a6a212c0dc811b690c93145fe90ecf54f77b27502e83aff15e79a663077809fde3ee3400e10a1846cf91c85e23ff1b49639ef444dd5362abc617cc1d04b94e29e897ea96a4131796fd16560359c25bc84a98943eb099eab2cafb1e, '$apr1$YITubfdf$0SH.ET4t2du5yhWzarUmk.', 'admin@nitronet.org', '2014-12-04 01:22:55', NULL, NULL, 1, NULL);
 -- --------------------------------------------------------
 
 --

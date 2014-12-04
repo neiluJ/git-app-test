@@ -221,7 +221,7 @@ class Users extends Repository implements ContextAware
                 $extrasRoles[] = 'root';
             }
             
-            $roles = $aclsDao->getDefaultRoles($extrasRoles)->toArray();
+            $roles = $aclsDao->getDefaultRoles($extrasRoles);
             $u = $dao->create($form->username, $form->password, $form->email, $this->getServices()->get('users'), $roles);
             $dao->save($u, true, $this->getServices());
 
