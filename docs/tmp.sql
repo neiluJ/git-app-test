@@ -1132,9 +1132,60 @@ ALTER TABLE `users_roles`
 --
 ALTER TABLE `users_ssh_keys`
   ADD CONSTRAINT `users_ssh_keys_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `channel` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `authorId` int(11) DEFAULT NULL,
+  `authorName` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `type` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
+  `repositoryId` int(11) DEFAULT NULL,
+  `repositoryName` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `text` text COLLATE utf8_unicode_ci,
+  `target` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `createdOn` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `channel` (`channel`),
+  KEY `author` (`authorId`),
+  KEY `repositoryId` (`repositoryId`),
+  KEY `type` (`type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `notifications_users`
+--
+
+CREATE TABLE IF NOT EXISTS `notifications_users` (
+  `notificationId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `dateRead` datetime DEFAULT NULL,
+  PRIMARY KEY (`notificationId`,`userId`),
+  KEY `userId` (`userId`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- Contraintes pour les tables exportées
+--
+
+--
+-- Contraintes pour la table `notifications`
+--
+ALTER TABLE `notifications`
+ADD CONSTRAINT `notifications_ibfk_2` FOREIGN KEY (`repositoryId`) REFERENCES `repositories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`authorId`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `notifications_users`
+--
+ALTER TABLE `notifications_users`
+ADD CONSTRAINT `notifications_users_ibfk_2` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+ADD CONSTRAINT `notifications_users_ibfk_1` FOREIGN KEY (`notificationId`) REFERENCES `notifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

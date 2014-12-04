@@ -7,33 +7,18 @@ use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
 
-class Home implements ServicesAware, ContextAware
+class Notifications implements ServicesAware, ContextAware
 {
-    public $active;
     public $errorMsg;
-    
+    public $channel = "all";
+
     protected $services;
     protected $context;
 
     protected $user;
-    protected $inChat = false;
-
-    public $entity;
-    public $emptyRepo = false;
-
-    protected $debug = false;
+    protected $inNotifications = false;
 
     public function show()
-    {
-        return Result::SUCCESS;
-    }
-    
-    public function menu()
-    {
-        return Result::SUCCESS;
-    }
-    
-    public function userMenu()
     {
         try {
             $this->user = $this->getServices()
@@ -41,25 +26,19 @@ class Home implements ServicesAware, ContextAware
                 ->getUser();
         } catch(\Exception $e) {
         }
-        
-        return Result::SUCCESS;
-    }
 
-    public function chatMenu()
-    {
-        $this->userMenu();
-        $this->inChat = ($this->getContext()->hasParent() && $this->context->getParent()->getActionName() == "Chat");
 
         return Result::SUCCESS;
     }
     
-    public function error()
+    public function menu()
     {
-        $this->debug = $this->getServices()->getProperty('app.debug', false);
-
-        if ($this->errorMsg instanceof \Exception && !$this->debug) {
-            $this->errorMsg = $this->errorMsg->getMessage();
+        // probably not an embeded request
+        if (!$this->getContext()->hasParent()) {
+            return Result::SUCCESS;
         }
+
+        $this->inNotifications = ($this->getContext()->hasParent() && $this->context->getParent()->getParent()->getParent()->getParent()->getActionName() == "Notifications");
 
         return Result::SUCCESS;
     }
@@ -83,14 +62,6 @@ class Home implements ServicesAware, ContextAware
     }
 
     /**
-     * @return boolean
-     */
-    public function getDebug()
-    {
-        return $this->debug;
-    }
-
-    /**
      * @return Context
      */
     public function getContext()
@@ -101,9 +72,9 @@ class Home implements ServicesAware, ContextAware
     /**
      * @return boolean
      */
-    public function getInChat()
+    public function getInNotifications()
     {
-        return $this->inChat;
+        return $this->inNotifications;
     }
 
     /**

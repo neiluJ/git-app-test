@@ -20,6 +20,9 @@ final class Tables
     const REFERENCES    = 'refs';
     const COMMITS       = 'commits';
     const COMMITS_REFS  = 'commits_refs';
+
+    const NOTIFICATIONS = 'notifications';
+    const NOTIFICATIONS_USERS = 'notifications_users';
     
     private function __construct()
     {

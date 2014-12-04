@@ -13,10 +13,11 @@ $active = $this->active;
       <ul class="nav navbar-nav navbar-left">
         <li<?php if($active == "repositories"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Repositories', array(), true); ?>"><span class="octicon octicon-repo"></span> Repositories</a></li>
         <li<?php if($active == "users"): ?> class="active"<?php endif ?>><a href="<?php echo $vh->url('Users', array(), true); ?>"><i class="octicon octicon-organization"></i> Users</a></li>
-        <li>
+          <?php echo $vh->embed('ChatMenu'); ?>
+      <li>
 <form class="navbar-form" style="padding:0; margin-left: 10px;clear:left" method="get" action="<?php echo $this->_helper->url('Search'); ?>">
 <div class="form-group">
-  <input type="text" name="q" placeholder="Search Repositories or Commits" class="form-control git-search" style="width: 400px"> <a class="adv-search" href="<?php echo $this->_helper->url('Search'); ?>"><i class="glyphicon glyphicon-search"></i></a>
+  <input type="text" name="q" placeholder="Search Repositories or Commits" class="form-control git-search" style="width: 300px"> <a class="adv-search" href="<?php echo $this->_helper->url('Search'); ?>"><i class="glyphicon glyphicon-search"></i></a>
 </div>
 </form>
         </li>

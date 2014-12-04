@@ -703,3 +703,62 @@ div.calendar ul li.active a span.cal-month {
 div.calendar ul li a:active {
     background-color: #eee;
 }
+
+.notif-count {
+    color: #fff;
+    position:absolute;
+    margin-top: 10px;
+    margin-left: 30px;
+    padding: 1px 5px 2px 5px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+    z-index: 999;
+    background: #ff3019; /* Old browsers */
+    background: -moz-linear-gradient(top,  #ff3019 0%, #cf0404 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ff3019), color-stop(100%,#cf0404)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #ff3019 0%,#cf0404 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #ff3019 0%,#cf0404 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #ff3019 0%,#cf0404 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #ff3019 0%,#cf0404 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff3019', endColorstr='#cf0404',GradientType=0 ); /* IE6-9 */
+    box-shadow: 0px 0px 1px #000;
+    text-shadow: 0px 0px 1px #440010;
+}
+
+ol.notifs {
+    border-top: solid 1px #ccc;
+    clear:both;
+}
+ol.notifs li {
+    display: block;
+    padding: 10px 10px 10px 0;
+    border-bottom: solid 1px #ccc;
+}
+ol.notifs li p.desc {
+    color: #666;
+    margin:5px 0 0 40px;
+}
+ol.notifs li span.actions {
+    float:right;
+    visibility: hidden;
+}
+ol.notifs li:hover span.actions {
+    visibility: visible;
+}
+ol.notifs li b.octicon {
+    font-size: 24px;
+    padding: 0px 10px 0px 10px;
+    float:left;
+    color: #999;
+}
+ol.notifs li.unread {
+    background-color: #d9edf7;
+}
+
+ol.notifs li span.date {
+    float: right;
+    margin-right: 20px;
+    font-size: 14px;
+    color: #999;
+}

@@ -11,16 +11,18 @@
 
         <div class="">
 
-            <?php if ($this->_helper->isAllowed('users', 'create')): ?>
-            <button type="button" data-toggle="modal" data-target="#addModal" class="btn btn-primary pull-right">Add User</button>
-            <?php endif; ?>
-            <?php if ($this->_helper->isAllowed('organizations', 'create')): ?>
-                <button type="button" data-toggle="modal" data-target="#addOrgModal" class="btn btn-danger pull-right">Add Organization</button>
-            <?php endif; ?>
+            <div class="btn-group btn-group-sm pull-right">
+                <?php if ($this->_helper->isAllowed('users', 'create')): ?>
+                <button type="button" data-toggle="modal" data-target="#addModal" class="btn btn-default">Add User</button>
+                <?php endif; ?>
+                <?php if ($this->_helper->isAllowed('organizations', 'create')): ?>
+                    <button type="button" data-toggle="modal" data-target="#addOrgModal" class="btn btn-default">Add Organization</button>
+                <?php endif; ?>
+            </div>
 
             <form role="form" class="form-inline filter">
             <div class="form-group">
-              <input type="search" tabindex="1" ng-model="query" class="form-control" id="searchRepos" placeholder="Filter users">
+              <input type="search" tabindex="1" ng-model="query" class="form-control" id="searchUsers" placeholder="Filter users">
             </div>
           </form>
             

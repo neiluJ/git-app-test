@@ -1,5 +1,6 @@
 <?php if (null !== $this->user): ?>
 <ul class="nav navbar-nav navbar-right">
+    <?php echo $this->_helper->embed('NotificationsMenu'); ?>
     <?php if ($this->_helper->isAllowed('repository', 'create')): ?>
     <li<?php if($this->active == 'create'): ?> class="active"<?php endif; ?>><a href="<?php echo $this->_helper->url('Create'); ?>"><i class="glyphicon glyphicon-plus"></i></a></li>
     <?php endif; ?>

@@ -12,6 +12,8 @@ class ReservedRepoNamesFilter implements Filter
     protected $reservedNames = array(
         'settings',
         'activity',
+        'notifications',
+        'chat',
         'log',
         'branch',
         'branches',
