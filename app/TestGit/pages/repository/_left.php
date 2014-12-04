@@ -33,12 +33,15 @@
     <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><b class="octicon octicon-git-branch"></b> <?php echo $this->_helper->escape((strlen($this->branch) > 12 ? substr($this->branch, 0, 9) .'...' : $this->branch)); ?> <b class="caret"></b></button>
         <a href="<?php echo $this->_helper->url('CompareNEW', array('name' => $this->entity->getFullname())); ?>" class="btn btn-success"><b class="octicon octicon-git-compare"></b></a>
-        <ul class="dropdown-menu" role="menu">
+        <ul class="dropdown-menu" role="menu" style="text-align: left;">
+            <li role="presentation" class="dropdown-header" style="border-bottom: solid 1px #eee;"><u class="octicon octicon-git-branch pull-right"></u> Branches</li>
             <li><a href="#">Action</a></li>
             <li><a href="#">Another action</a></li>
             <li><a href="#">Something else here</a></li>
+            <li role="presentation" class="dropdown-header" style="border-bottom: solid 1px #eee;"><u class="octicon octicon-tag pull-right"></u> Tags</li>
             <li class="divider"></li>
-            <li><a href="#">Separated link</a></li>
+            <li><a href="#"><u class="octicon octicon-git-branch-create"></u> Create Branch</a></li>
+            <li><a href="#"><u class="octicon octicon-tag-add"></u> Create Tag</a></li>
         </ul>
     </div>
 
