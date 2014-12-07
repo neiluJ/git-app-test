@@ -6,17 +6,21 @@ use Fwk\Core\ContextAware;
 use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
+use TestGit\Model\Notifications\Notification;
+use TestGit\Model\Notifications\NotificationsDao;
 
 class Notifications implements ServicesAware, ContextAware
 {
     public $errorMsg;
-    public $channel = "all";
+    public $channel = Notification::CHANNEL_GENERAL;
 
     protected $services;
     protected $context;
 
     protected $user;
     protected $inNotifications = false;
+    protected $notifications;
+    protected $channels;
 
     public function show()
     {
@@ -25,8 +29,16 @@ class Notifications implements ServicesAware, ContextAware
                 ->get('security')
                 ->getUser();
         } catch(\Exception $e) {
+            return Result::ERROR;
         }
 
+        $this->channels = $this->notifications()->getChannelsForUser($this->user);
+
+        try {
+            $this->notifications = $this->notifications()->getForUser($this->user, array($this->channel));
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+        }
 
         return Result::SUCCESS;
     }
@@ -89,5 +101,27 @@ class Notifications implements ServicesAware, ContextAware
         $this->context = $context;
     }
 
+    /**
+     * @return NotificationsDao
+     */
+    protected function notifications()
+    {
+        return $this->getServices()->get('notifications');
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getNotifications()
+    {
+        return $this->notifications;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getChannels()
+    {
+        return $this->channels;
+    }
 }

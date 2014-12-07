@@ -326,15 +326,28 @@ class UsersDao extends Dao implements Provider
     
     public function saveUserActivity(Activity $activity)
     {
-        return $this->getDb()
+        $this->getDb()
                 ->table($this->getOption('activitiesTable'))
                 ->save($activity);
     }
 
     public function saveOrgAccess(OrgAccess $access)
     {
-        return $this->getDb()
+        $this->getDb()
             ->table($this->getOption('orgAccesses'))
             ->save($access);
+    }
+
+    public function getUserOrganizations(User $user)
+    {
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('usersTable', Tables::USERS))
+                ->entity(self::ENTITY_USER)
+                ->join($this->getOption('orgAccesses', Tables::ORG_USERS), 'id', 'organization_id', Query::JOIN_LEFT)
+                ->where('type = ? AND user_id = ?')
+                ->orderBy('username', 'asc');
+
+        return $this->getDb()->execute($query, array('organization', $user->getIdentifier()));
     }
 }

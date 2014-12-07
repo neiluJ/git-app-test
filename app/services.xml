@@ -236,4 +236,10 @@
     <class-definition name="devtools" class="Nitronet\DevTools\DevToolsManager" shared="true">
         <argument>@devtools.plugins</argument>
     </class-definition>
+
+    <!-- Notifications -->
+    <class-definition name="notifications" class="TestGit\Model\Notifications\NotificationsDao" shared="true">
+        <argument>@db</argument>
+        <argument>@usersDao</argument>
+    </class-definition>
 </dependency-injection>

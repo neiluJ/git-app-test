@@ -1,15 +1,15 @@
 <?php
 namespace TestGit\Model\Notifications;
 
-use Fwk\Db\Relation;
-use Fwk\Db\Relations\Many2Many;
+use Fwk\Db\EventSubscriber;
+use Fwk\Db\Listeners\Typable;
 use Fwk\Db\Relations\One2Many;
 use Fwk\Db\Relations\One2One;
 use TestGit\Model\Git\GitDao;
 use TestGit\Model\Tables;
 use TestGit\Model\User\UsersDao;
 
-class Notification
+class Notification implements EventSubscriber
 {
     const TYPE_MENTION          = 'mention';        // channels: chat / repository
     const TYPE_PULLREQUEST      = 'pullrequest';    // channels: repository / organization
@@ -23,8 +23,8 @@ class Notification
 
     const CHANNEL_GENERAL       = 'general';
     const CHANNEL_ADMIN         = 'admin';
-    const CHANNEL_REPOSITORY    = 'repository';
-    const CHANNEL_ORGANIZATION  = 'organization';
+    const CHANNEL_REPOSITORY    = 'repo:';
+    const CHANNEL_ORGANIZATION  = 'org:';
     const CHANNEL_CHAT          = 'chat';
 
     protected $id;
@@ -61,7 +61,8 @@ class Notification
         $this->users = new One2Many(
             'id',
             'notificationId',
-            Tables::NOTIFICATIONS_USERS
+            Tables::NOTIFICATIONS_USERS,
+            NotificationsDao::ENTITY_NOTIFICATION_USER
         );
     }
 
@@ -248,4 +249,52 @@ class Notification
     {
         return $this->repository;
     }
+
+    public function getIcon()
+    {
+        switch($this->type)
+        {
+            case self::TYPE_ACCREDITATION:
+            case self::TYPE_APPLICATION:
+            case self::TYPE_BRANCH:
+            case self::TYPE_FAILED_LOGIN:
+                return 'octicon octicon-x';
+
+            case self::TYPE_MENTION:
+                return 'octicon octicon-mention';
+
+            case self::TYPE_PULLREQUEST:
+            case self::TYPE_TAG:
+            case self::TYPE_USER_ADD:
+
+            case self::TYPE_USER_REMOVE:
+                return 'octicon octicon-mention';
+
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Returns a list of listeners.
+     * Listeners can be real objects (@see Listeners directory) or callables, using
+     * the array key as the event's name:
+     *
+     * <pre>
+     * array(
+     *      'afterSave' => array($this, 'callableFunc'),
+     *      new Listener()
+     * );
+     * </pre>
+     *
+     * @return array
+     */
+    public function getListeners()
+    {
+        return array(
+            new Typable()
+        );
+    }
+
+
 }

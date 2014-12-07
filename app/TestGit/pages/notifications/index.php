@@ -9,35 +9,43 @@
     <div class="row" style="margin-top:40px;">
         <?php $notifMenuActive = $this->channel; include __DIR__ . '/_left.php'; ?>
         <div class="col-md-9">
+            <?php if(isset($this->errorMsg) && !empty($this->errorMsg)): ?>
+<div class="alert alert-warning">
+    <?php echo $vh->escape($this->errorMsg); ?>
+</div>
+            <?php elseif (!count($this->notifications)): ?>
+<div class="alert alert-info">
+    They are no notifications to show in <strong><?php echo $vh->escape($this->channel); ?></strong>.
+</div>
+            <?php else: ?>
+<?php $hasUnread = false; foreach ($this->notifications as $notifUser) { if ($notifUser->isUnread()) { $hasUnread = true; break; }} ?>
             <div class="btn-group pull-right btn-group-sm" style="margin-top: -40px;">
-                <a href="#" class="btn btn-default btn-sm disabled"><i class="octicon octicon-eye-unwatch"></i> Mark all as read</a>
-                <a href="#" class="btn btn-default btn-sm disabled"><i class="octicon octicon-x"></i> Delete all</a>
+                <a href="#" class="btn btn-default btn-sm<?php if(!count($this->notifications) || !$hasUnread): ?> disabled<?php endif; ?>"><i class="octicon octicon-eye-unwatch"></i> Mark all as read</a>
+                <a href="#" class="btn btn-default btn-sm<?php if(!count($this->notifications)): ?> disabled<?php endif; ?>"><i class="octicon octicon-x"></i> Delete all</a>
             </div>
             <ol class="list-unstyled notifs">
-                <li class="unread">
-                    <span class="actions">
-                        <a href="#"><i class="octicon octicon-eye-unwatch"></i></a>
-                        <a href="#"><i class="octicon octicon-x"></i></a>
-                    </span>
-                    <b class="octicon octicon-mention"></b> <a href="#">Bidule</a> mentioned you in a <a href="#">commit</a> on <a href="#">ecommerce/ecommerce</a>: <span class="date">22 Apr, 13h15</span>
-                    <p class="desc">Hey @neiluj tu peux voir ça stp?</p>
-                </li>
-                <li class="unread">
-                    <span class="actions">
-                        <a href="#"><i class="octicon octicon-eye-unwatch"></i></a>
-                        <a href="#"><i class="octicon octicon-x"></i></a>
-                    </span>
-                    <b class="octicon octicon-git-pull-request"></b> <a href="#">Bidule</a> created <a href="#">pull request #12</a> on <a href="#">ecommerce/ecommerce</a>: <span class="date">22 Apr, 13h15</span>
-                </li>
-                <li class="">
-                    <span class="actions">
-                        <a href="#"><i class="octicon octicon-eye-unwatch"></i></a>
-                        <a href="#"><i class="octicon octicon-x"></i></a>
-                    </span>
-                    <b class="octicon octicon-mention"></b> <a href="#">Bidule</a> mentioned you in a <a href="#">commit</a> on <a href="#">ecommerce/ecommerce</a>: <span class="date">22 Apr, 13h15</span>
-                    <p class="desc">Hey @neiluj tu peux voir ça stp?</p>
-                </li>
+<?php foreach ($this->notifications as $notifUser): ?>
+<li<?php if($notifUser->isUnread()): ?> class="unread"<?php endif; ?>>
+    <span class="actions">
+        <?php if($notifUser->isUnread()): ?>
+            <a href="#"><i class="octicon octicon-eye-unwatch"></i></a>
+        <?php else: ?>
+            <a href="#"><i class="octicon octicon-eye-watch"></i></a>
+        <?php endif; ?>
+        <a href="#"><i class="octicon octicon-x"></i></a>
+    </span>
+    <b class="<?php echo $notifUser->getNotification()->get()->getIcon(); ?>"></b>
+    <span class="date"><?php echo $notifUser->getNotification()->getCreatedOn()->format('d M, Y H:i'); ?></span>
+<?php if ($notifUser->getNotification()->getType() == "mention"): ?>
+    <a href="#">Bidule</a> mentioned you in a <a href="#">commit</a> on <a href="#">ecommerce/ecommerce</a>:
+    <p class="desc"><?php echo $vh->escape($notifUser->getNotification()->getText()); ?></p>
+<?php elseif ($notifUser->getNotification()->getType() == "failedlogin"): ?>
+    <?php echo $vh->escape($notifUser->getNotification()->getText()); ?>
+<?php endif; ?>
+</li>
+<?php endforeach; ?>
             </ol>
+            <?php endif; ?>
         </div>
 </div>
 <?php include __DIR__ . '/../_footer.php'; ?>
