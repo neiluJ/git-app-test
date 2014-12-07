@@ -566,4 +566,17 @@ class GitDao extends DaoBase
         
         return $this->getDb()->execute($query, $params);
     }
+
+    public function getRepositoriesForUser(User $user)
+    {
+        $query = Query::factory()
+                ->select()
+                ->from($this->getOption('repositoriesTable', Tables::REPOSITORIES))
+                ->entity(self::ENTITY_REPO)
+                ->join($this->getOption('accessesTable', Tables::ACCESSES), 'id', 'repository_id', Query::JOIN_INNER)
+                ->where('user_id = ?')
+                ->orderBy('last_commit_date', 'desc');
+
+        return $this->getDb()->execute($query, array($user->getId()));
+    }
 }

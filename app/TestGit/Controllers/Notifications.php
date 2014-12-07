@@ -13,6 +13,7 @@ class Notifications implements ServicesAware, ContextAware
 {
     public $errorMsg;
     public $channel = Notification::CHANNEL_GENERAL;
+    public $nId;
 
     protected $services;
     protected $context;
@@ -21,6 +22,7 @@ class Notifications implements ServicesAware, ContextAware
     protected $inNotifications = false;
     protected $notifications;
     protected $channels;
+    protected $counters;
 
     public function show()
     {
@@ -33,6 +35,7 @@ class Notifications implements ServicesAware, ContextAware
         }
 
         $this->channels = $this->notifications()->getChannelsForUser($this->user);
+        $this->counters = $this->notifications()->getNotificationsCount($this->user, array_keys($this->channels));
 
         try {
             $this->notifications = $this->notifications()->getForUser($this->user, array($this->channel));
@@ -51,6 +54,110 @@ class Notifications implements ServicesAware, ContextAware
         }
 
         $this->inNotifications = ($this->getContext()->hasParent() && $this->context->getParent()->getParent()->getParent()->getParent()->getActionName() == "Notifications");
+
+        try {
+            $this->user = $this->getServices()
+                ->get('security')
+                ->getUser();
+
+            $this->counters = $this->notifications()->getNotificationsCount($this->user);
+        } catch(\Exception $e) {
+            return Result::ERROR;
+        }
+
+        return Result::SUCCESS;
+    }
+
+    public function read()
+    {
+        try {
+            $this->user = $this->getServices()
+                ->get('security')
+                ->getUser();
+        } catch(\Exception $e) {
+            $this->errorMsg = $e->getMessage();
+            return Result::ERROR;
+        }
+
+        try {
+            $this->notifications()->read($this->user, (int)$this->nId);
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::ERROR;
+        }
+
+        return Result::SUCCESS;
+    }
+
+    public function readAll()
+    {
+        try {
+            $this->user = $this->getServices()
+                ->get('security')
+                ->getUser();
+        } catch(\Exception $e) {
+            $this->errorMsg = $e->getMessage();
+            return Result::ERROR;
+        }
+
+        if (empty($this->channel)) {
+            $this->errorMsg = 'Empty channel';
+            return Result::ERROR;
+        }
+
+        try {
+            $this->notifications()->readAll($this->user, $this->channel);
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::ERROR;
+        }
+
+        return Result::SUCCESS;
+    }
+
+    public function delete()
+    {
+        try {
+            $this->user = $this->getServices()
+                ->get('security')
+                ->getUser();
+        } catch(\Exception $e) {
+            $this->errorMsg = $e->getMessage();
+            return Result::ERROR;
+        }
+
+        try {
+            $this->notifications()->delete($this->user, (int)$this->nId);
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::ERROR;
+        }
+
+        return Result::SUCCESS;
+    }
+
+    public function deleteAll()
+    {
+        try {
+            $this->user = $this->getServices()
+                ->get('security')
+                ->getUser();
+        } catch(\Exception $e) {
+            $this->errorMsg = $e->getMessage();
+            return Result::ERROR;
+        }
+
+        if (empty($this->channel)) {
+            $this->errorMsg = 'Empty channel';
+            return Result::ERROR;
+        }
+
+        try {
+            $this->notifications()->deleteAll($this->user, $this->channel);
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::ERROR;
+        }
 
         return Result::SUCCESS;
     }
@@ -123,5 +230,13 @@ class Notifications implements ServicesAware, ContextAware
     public function getChannels()
     {
         return $this->channels;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCounters()
+    {
+        return $this->counters;
     }
 }

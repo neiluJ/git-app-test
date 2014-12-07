@@ -5,6 +5,7 @@ use Fwk\Security\User as UserInterface;
 use Fwk\Security\User\PasswordAware;
 use Fwk\Security\User\AclAware;
 use Fwk\Db\Relations\Many2Many;
+use TestGit\Model\Git\GitDao;
 use TestGit\Model\Tables;
 use Fwk\Db\Relation;
 use Fwk\Db\Relations\One2Many;
@@ -38,7 +39,8 @@ class User implements UserInterface, PasswordAware,
 
     protected $orgAccesses;
     protected $members;
-    
+    protected $repositories;
+
     public function __construct()
     {
         $this->rolesRelation = new Many2Many(
@@ -66,10 +68,8 @@ class User implements UserInterface, PasswordAware,
         $this->members->setFetchMode(Relation::FETCH_LAZY);
         $this->members->setReference('user_id');
         
-        /*
-        $this->repositories = new One2Many('id', 'owner_id', Tables::REPOSITORIES);
+        $this->repositories = new One2Many('id', 'owner_id', Tables::REPOSITORIES, GitDao::ENTITY_REPO);
         $this->repositories->setFetchMode(Relation::FETCH_LAZY);
-         */
     }
     
     public function getIdentifier()

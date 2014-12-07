@@ -344,7 +344,7 @@ class UsersDao extends Dao implements Provider
                 ->select()
                 ->from($this->getOption('usersTable', Tables::USERS))
                 ->entity(self::ENTITY_USER)
-                ->join($this->getOption('orgAccesses', Tables::ORG_USERS), 'id', 'organization_id', Query::JOIN_LEFT)
+                ->join($this->getOption('orgAccesses', Tables::ORG_USERS), 'id', 'organization_id', Query::JOIN_INNER)
                 ->where('type = ? AND user_id = ?')
                 ->orderBy('username', 'asc');
 

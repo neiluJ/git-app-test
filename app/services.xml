@@ -241,5 +241,6 @@
     <class-definition name="notifications" class="TestGit\Model\Notifications\NotificationsDao" shared="true">
         <argument>@db</argument>
         <argument>@usersDao</argument>
+        <argument>@gitDao</argument>
     </class-definition>
 </dependency-injection>

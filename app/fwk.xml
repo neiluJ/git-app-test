@@ -94,6 +94,50 @@
                 <param name="file">notifications/index.php</param>
             </result>
         </action>
+        <action name="NotificationRead" shortcut="TestGit\Controllers\Notifications:read">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="channel">:channel</param>
+            </result>
+            <result name="error" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="NotificationsReadAll" shortcut="TestGit\Controllers\Notifications:readAll">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="channel">:channel</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Notifications</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="NotificationsDeleteAll" shortcut="TestGit\Controllers\Notifications:deleteAll">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="channel">:channel</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Notifications</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="NotificationDelete" shortcut="TestGit\Controllers\Notifications:delete">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="channel">:channel</param>
+            </result>
+            <result name="error" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
 
         <action name="Error" shortcut="TestGit\Controllers\Home:error">
             <acl type="allow" role="" />
@@ -653,6 +697,18 @@
         <url route="/logout" action="Logout" />
         <url route="/create" action="Create" />
         <url route="/notifications" action="Notifications" />
+        <url route="/notifications/read/:channel" action="NotificationsReadAll">
+            <param name="channel" required="true" regex=".*" />
+        </url>
+        <url route="/notifications/delete/:channel" action="NotificationsDeleteAll">
+            <param name="channel" required="true" regex=".*" />
+        </url>
+        <url route="/notifications/:nId/read" action="NotificationRead">
+            <param name="nId" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/notifications/:nId/delete" action="NotificationDelete">
+            <param name="nId" required="true" regex="[0-9]+" />
+        </url>
         <url route="/notifications/:channel" action="Notifications">
             <param name="channel" required="true" regex=".*" />
         </url>
