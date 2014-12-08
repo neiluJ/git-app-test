@@ -30,6 +30,5 @@
         <li><a href="<?php echo $this->_helper->url('Profile', array('username' => $org->getUsername())); ?>"  style="padding: 5px 15px;"><b class="octicon octicon-organization"></b> <?php echo $this->_helper->escape($org->getUsername()); ?></a></li>
         <?php endforeach; ?>
     </ul>
-
     <?php endif; ?>
 </div>
