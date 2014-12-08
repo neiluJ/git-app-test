@@ -412,6 +412,24 @@ class GitService
         
         file_put_contents($lockFile, 'workdir locked at '. date('Y-m-d H:i:s'));
     }
+
+    public function unlockWorkdir(RepositoryEntity $repository)
+    {
+        $workDirPath = $this->getWorkDirPath($repository);
+        $this->logger->addDebug('[lockWorkdir:'. $repository->getFullname() .'] unlocking directory '. $workDirPath);
+
+        if (!is_dir($workDirPath)) {
+            throw new \Exception(sprintf("Workdir '%s' is not a directory", $workDirPath));
+        }
+
+        $lockFile = rtrim($workDirPath, DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . self::UPDATE_LOCK_FILE;
+
+        if (is_file($lockFile)) {
+            unlink($lockFile);
+        }
+    }
     
     public function createWorkdir(RepositoryEntity $repository)
     {

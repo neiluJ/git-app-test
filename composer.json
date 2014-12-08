@@ -26,7 +26,8 @@
         "nitronet/fwk-comments": "dev-master"
     },
     "require-dev": {
-        "filp/whoops": "dev-master"
+        "filp/whoops": "dev-master",
+        "phpunit/phpunit": "dev-master"
     },
     "autoload": {
         "psr-0": {

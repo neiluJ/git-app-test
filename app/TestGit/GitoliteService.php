@@ -8,6 +8,8 @@ use TestGit\Events\UserChangePasswordEvent;
 use TestGit\Events\RepositoryCreateEvent;
 use TestGit\Events\RepositoryForkEvent;
 use TestGit\Events\RepositoryDeleteEvent;
+use TestGit\Transactional\Transaction;
+use TestGit\Transactional\TransactionException;
 
 class GitoliteService
 {
@@ -34,6 +36,10 @@ class GitoliteService
         
         $contents = "";
         foreach ($users as $usr) {
+            if ($usr->isOrganization()) {
+                continue;
+            }
+
             $passwd = $usr->getHttp_password();
             
             // prevent having users without http password
@@ -92,16 +98,46 @@ class GitoliteService
             } 
         }
 
-        file_put_contents($file, $key->contents, LOCK_EX);
-        if (!is_file($file) || file_get_contents($file) !== $key->contents) {
-            $logger->addCritical(sprintf('[onUserSshKeyAdd:%s] Unable to write ssh-key "%s" to gitolite (verification failed)', $repo->getFullname(), $file));
-            throw new \RuntimeException('unable to write ssh-key to gitolite');
+        $tr = new Transaction($logger);
+        $tr->add(function() use ($file, $key, $repo, $logger) {
+            file_put_contents($file, $key->contents, LOCK_EX);
+            if (!is_file($file) || file_get_contents($file) !== $key->contents) {
+                $logger->addCritical(sprintf('[onUserSshKeyAdd:%s] Unable to write ssh-key "%s" to gitolite (verification failed)', $repo->getFullname(), $file));
+                throw new \RuntimeException('unable to write ssh-key to gitolite');
+            }
+        }, function() use ($file, $logger) {
+           if (is_file($file)) {
+               unlink($file);
+           }
+        }, 'file_put_contents()', 'Creating the SSHKey file');
+
+        $tr->add(function() use ($git, $repo) {
+            $git->lockWorkdir($repo);
+        }, function() use ($git, $repo) {
+            $git->unlockWorkdir($repo);
+        }, 'LockWorkdir', 'Locking working directory');
+
+        $tr->add(function() use ($git, $repo, $file) {
+            $git->add($repo, array($file));
+        }, function() use ($git, $repo, $file) {
+            $git->rm($repo, array($file));
+        }, 'git-add', 'Adding file to git');
+
+        // @todo Find git-undo
+        $tr->add(function() use ($git, $repo, $event) {
+            $git->commit($repo, $event->getUser(), 'added new ssh-key');
+        }, null, 'git-commit', 'Committing');
+
+        // @todo Find git-undo
+        $tr->add(function() use ($git, $repo) {
+            $git->push($repo);
+        }, null, 'git-push', 'Pushing changes');
+
+        try {
+            $tr->start();
+        } catch(TransactionException $exp) {
+            $tr->rollback();
         }
-        
-        $git->lockWorkdir($repo);
-        $git->add($repo, array($file));
-        $git->commit($repo, $event->getUser(), 'added new ssh-key');
-        $git->push($repo);
     }
     
     public function onUserSshKeyRemove(UserSshKeyRemoveEvent $event)
@@ -131,10 +167,35 @@ class GitoliteService
            throw new \RuntimeException('ssh-key not found in gitolite');
         }
 
-        $git->lockWorkdir($repo);
-        $git->rm($repo, array($file));
-        $git->commit($repo, $event->getUser(), 'removed ssh-key');
-        $git->push($repo);
+        $tr = new Transaction($logger);
+
+        $tr->add(function() use ($git, $repo) {
+            $git->lockWorkdir($repo);
+        }, function() use ($git, $repo) {
+            $git->unlockWorkdir($repo);
+        }, 'LockWorkdir', 'Locking working directory');
+
+        $tr->add(function() use ($git, $repo, $file) {
+            $git->rm($repo, array($file));
+        }, function() use ($git, $repo, $file) {
+            // @todo Find git-undo
+        }, 'git-rm', 'Removing file from git');
+
+        // @todo Find git-undo
+        $tr->add(function() use ($git, $repo, $event) {
+            $git->commit($repo, $event->getUser(), 'removed ssh-key');
+        }, null, 'git-commit', 'Committing');
+
+        // @todo Find git-undo
+        $tr->add(function() use ($git, $repo) {
+            $git->push($repo);
+        }, null, 'git-push', 'Pushing changes');
+
+        try {
+            $tr->start();
+        } catch(TransactionException $exp) {
+            $tr->rollback();
+        }
     }
     
     public function onRepositoryEdit(RepositoryEditEvent $event)
