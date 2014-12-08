@@ -23,7 +23,6 @@
         "fwk/form": "dev-master",
         "monolog/monolog": "dev-master",
         "michelf/php-markdown": "1.4.*@dev",
-        "ocramius/proxy-manager": "0.5.1",
         "nitronet/fwk-comments": "dev-master"
     },
     "require-dev": {
