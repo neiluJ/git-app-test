@@ -29,6 +29,7 @@ class Profile extends Repositories implements Preparable, ContextAware
     protected $errorMsg;
     protected $totalCommits;
     protected $activityRepositories = array();
+    protected $organizations = array();
 
     public function prepare()
     {
@@ -169,6 +170,8 @@ class Profile extends Repositories implements Preparable, ContextAware
         if (null !== $permission && !$acl->isAllowed($user, $this->profile, $permission)) {
             throw new \RuntimeException('You\'re not allowed to view this page');
         }
+
+        $this->organizations = $this->getUsersDao()->getUserOrganizations($this->profile);
     }
 
 
@@ -270,5 +273,13 @@ class Profile extends Repositories implements Preparable, ContextAware
     public function getActivityRepositories()
     {
         return $this->activityRepositories;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrganizations()
+    {
+        return $this->organizations;
     }
 }

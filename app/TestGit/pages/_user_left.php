@@ -21,4 +21,15 @@
             <li<?php if ($userMenuActive == "settings"): ?> class="active"<?php endif; ?>><a style="padding: 5px 15px;" href="<?php echo $this->_helper->url('UserSettings', array('username' => $this->profile->getUsername())); ?>"><b class="octicon octicon-tools"></b> Settings</a></li>
         <?php endif; ?>
     </ul>
+
+    <?php if(count($this->organizations)): ?>
+    <hr />
+        <h6 style="margin-bottom: 5px;font-weight: bold;">Organizations</h6>
+    <ul class="nav nav-pills nav-stacked" style=" text-align: left;">
+        <?php foreach($this->organizations as $org): ?>
+        <li><a href="<?php echo $this->_helper->url('Profile', array('username' => $org->getUsername())); ?>"  style="padding: 5px 15px;"><b class="octicon octicon-organization"></b> <?php echo $this->_helper->escape($org->getUsername()); ?></a></li>
+        <?php endforeach; ?>
+    </ul>
+
+    <?php endif; ?>
 </div>
