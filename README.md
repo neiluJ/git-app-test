@@ -65,7 +65,7 @@ Here is my final VirtualHost file:
 
 ``` apache
 <VirtualHost *:80>
-    ServerName        git.localhost
+    ServerName        gitmachine
     ServerAdmin       julien@nitronet.org
 
     SetEnv GIT_PROJECT_ROOT /home/git/repositories
@@ -73,7 +73,7 @@ Here is my final VirtualHost file:
     ScriptAlias /git/ /var/www/bin/gitolite-suexec-wrapper.sh/
     ScriptAlias /gitmob/ /var/www/bin/gitolite-suexec-wrapper.sh/
     SetEnv GITOLITE_HTTP_HOME /home/git
-    SetEnv GIT_HTTP_EXPORT_ALL	
+    SetEnv GIT_HTTP_EXPORT_ALL
 
     DocumentRoot /home/git/www/public
     <Directory /home/git/www/public>
@@ -81,6 +81,7 @@ Here is my final VirtualHost file:
         AllowOverride All
         Order         allow,deny
         Allow         from all
+	Require all granted
     </Directory>
 
     <Location /git>

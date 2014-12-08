@@ -329,7 +329,7 @@ class GitoliteService
         
         $repos  = $gitDao->findAll();
         foreach ($repos as $repository) {
-            $str .= "repo ". $repository->getFullname() ."\n"; 
+            $str .= "repo ". $repository->getGitName() ."\n";
             
             $accesses = $repository->getAccesses();
             foreach ($accesses as $access) {

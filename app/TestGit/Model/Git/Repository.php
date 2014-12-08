@@ -345,4 +345,13 @@ class Repository implements ResourceInterface
             $acl->allow($user, $this, 'owner');
         }
     }
+
+    public function getGitName()
+    {
+        if (strpos($this->path, '.git', strlen($this->path)-4) !== false) {
+            return substr($this->path, 0, strlen($this->path)-4);
+        }
+
+        return $this->path;
+    }
 }
