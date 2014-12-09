@@ -1,7 +1,9 @@
 <?php
 namespace TestGit;
 
+use Fwk\Events\Event;
 use TestGit\Events\RepositoryEditEvent;
+use TestGit\Events\UserAddEvent;
 use TestGit\Events\UserSshKeyAddEvent;
 use TestGit\Events\UserSshKeyRemoveEvent;
 use TestGit\Events\UserChangePasswordEvent;
@@ -19,21 +21,43 @@ class GitoliteService
     
     public function onUserChangePassword(UserChangePasswordEvent $event)
     {
+        if ($event->getUser()->isOrganization()) {
+            return;
+        }
+
         // update .htpasswd file
-        $logger = $event->getServices()->get('logger');
-        $dao    = $event->getServices()->get('usersDao');
+        $this->generateHtpasswdFile($event);
+    }
+
+    public function onUserAdd(UserAddEvent $event)
+    {
+        if ($event->getUser()->isOrganization()) {
+            return;
+        }
+
+        // update .htpasswd file
+        $this->generateHtpasswdFile($event);
+    }
+
+    private function generateHtpasswdFile(Event $event)
+    {
+        // update .htpasswd file
+        $services = $event->getServices();
+        $user   = $event->getUser();
+        $logger = $services->get('logger');
+        $dao    = $services->get('usersDao');
         $users  = $dao->findAll(true);
-        $file   = $event->getServices()->getProperty('apache.htpasswd.file');
-        
-        $logger->addInfo(sprintf('[onUserChangePassword] User "%s" changed password. Generating Apache htpasswd file (%s)', $event->getUser()->getUsername(), $file));
-        
+        $file   = $services->getProperty('apache.htpasswd.file');
+
+        $logger->addInfo(sprintf('[%s/%s] Generating Apache htpasswd file (%s)', $event->getName(), $user->getUsername(), $file));
+
         if (is_file($file)) {
             if (!is_writable($file)) {
-                $logger->addCritical('[onUserChangePassword] Apache htpasswd file is not writable');
+                $logger->addCritical('['. $event->getName() .'] Apache htpasswd file is not writable');
                 throw new \RuntimeException('Apache htpasswd file is not writable');
             }
         }
-        
+
         $contents = "";
         foreach ($users as $usr) {
             if ($usr->isOrganization()) {
@@ -41,28 +65,22 @@ class GitoliteService
             }
 
             $passwd = $usr->getHttp_password();
-            
+
             // prevent having users without http password
             if (empty($passwd)) {
                 continue;
             }
-            
-            /**
-             * @todo ---
-             * 
-             * Add user role "HTTP_GIT" to allow/disallow http access at
-             * user level
-             */
+
             $contents .= sprintf("%s:%s\n", $usr->getUsername(), $passwd);
         }
-        
+
         if (empty($contents)) {
             return;
         }
-        
+
         file_put_contents($file, $contents, LOCK_EX);
         if (!is_file($file) || file_get_contents($file) !== $contents) {
-            $logger->addCritical('[onUserChangePassword] Unable to write Apache htpasswd file (verification failed)');
+            $logger->addCritical('['. $event->getName() .'] Unable to write Apache htpasswd file (verification failed)');
             throw new \RuntimeException('unable to write apache htpasswd file');
         }
     }
