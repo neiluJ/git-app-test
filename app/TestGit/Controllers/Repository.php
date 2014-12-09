@@ -33,7 +33,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     
     protected $files;
     
-    protected $repoAction = 'Repository';
+    protected $repoAction = 'RepositoryNEW';
     
     protected $cloneSshUrl;
     protected $cloneHttpUrl;

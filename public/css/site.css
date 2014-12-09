@@ -108,7 +108,7 @@ p.commit-infos.collapsed {
 }
 .commit-txt {
     font-family: Inconsolata, "Courier New", Courier, monospace;
-    font-size:14px;
+    font-size:12px;
     white-space: pre-wrap;
 }
 pre {

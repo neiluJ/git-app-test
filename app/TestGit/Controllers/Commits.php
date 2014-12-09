@@ -45,6 +45,8 @@ class Commits extends Repository
         if (empty($this->month)) {
             $this->month = (int)date('m');
         }
+
+        $this->repoAction = 'CommitsNEW';
     }
     
     public function listAction()
