@@ -14,6 +14,7 @@ use TestGit\Form\EmailAlreadyExistsFilter;
 use TestGit\Events\RepositoryEditEvent;
 use TestGit\EmptyRepositoryException;
 use TestGit\Model\User\OrgAccess;
+use TestGit\Model\User\UsersDao;
 
 class Users extends Repository implements ContextAware
 {
@@ -290,7 +291,7 @@ class Users extends Repository implements ContextAware
         $this->getGitDao()->getDb()->beginTransaction();
         try {
             $this->getGitDao()
-                ->addRepositoryAccess($repoId, $userId, $read, $write, $special, $admin);
+                ->addRepositoryAccess($this->entity, $this->getUsersDao()->findOne($userId, UsersDao::FIND_ID, true), $read, $write, $special, $admin);
             
             $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()->get('security')->getUser(), "added access", $this->getServices()));
             $this->getGitDao()->getDb()->commit();
@@ -314,7 +315,6 @@ class Users extends Repository implements ContextAware
             return Result::ERROR;
         }
         
-        $repoId = $this->getEntity()->getId();
         $userId = (int)$this->userId;
         
         if (0 === $userId) {
@@ -329,7 +329,7 @@ class Users extends Repository implements ContextAware
         $this->getGitDao()->getDb()->beginTransaction();
         try {
             $this->getGitDao()
-                ->removeRepositoryAccess($repoId, $userId);
+                ->removeRepositoryAccess($this->entity, $userId);
             $this->getGitDao()->notify(new RepositoryEditEvent($this->entity, $this->getServices()->get('security')->getUser(), "removed access", $this->getServices()));
             $this->getGitDao()->getDb()->commit();
         } catch(\Exception $exp) {

@@ -326,30 +326,36 @@ class GitDao extends DaoBase
         return $this->getDb()->execute($query, array($repoId));
     }
     
-    public function addRepositoryAccess($repoId, $userId, $read = true, 
+    public function addRepositoryAccess(Repository $repo, User $user, $read = true,
         $write = true, $special = false, $admin = false)
     {
+
         $access = new Access();
-        $access->setRepository_id($repoId);
-        $access->setUser_id($userId);
+        $access->getUser()->add($user);
         $access->setReadAccess((int)$read);
         $access->setWriteAccess((int)$write);
         $access->setSpecialAccess((int)$special);
         $access->setAdminAccess((int)$admin);
-        
+
+        $repo->getAccesses()->add($access);
+
         return $this->getDb()
-                    ->table($this->getOption('accessesTable'))
-                    ->save($access);
+                    ->table($this->getOption('repositoriesTable'))
+                    ->save($repo);
     }
     
-    public function removeRepositoryAccess($repoId, $userId)
+    public function removeRepositoryAccess(Repository $repo, $userId)
     {
-        $query = Query::factory()
-                ->delete($this->getOption('accessesTable'))
-                ->where('user_id = ? AND repository_id = ?')
-                ->limit(1);
-        
-        return $this->getDb()->execute($query, array($userId, $repoId));
+        foreach ($repo->getAccesses() as $access) {
+            if ($access->getUser_id() == $userId) {
+                $repo->getAccesses()->remove($access);
+                break;
+            }
+        }
+
+        return $this->getDb()
+            ->table($this->getOption('repositoriesTable'))
+            ->save($repo);
     }
     
     /**
