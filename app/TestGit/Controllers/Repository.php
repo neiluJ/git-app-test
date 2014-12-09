@@ -287,7 +287,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
         } catch(\Exception $exp) {
             return Result::ERROR;
         }
-        
+
         $sc = $this->getServices();
         
         $this->cloneSshUrl = sprintf(

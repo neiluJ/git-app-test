@@ -240,4 +240,6 @@
         <argument>@usersDao</argument>
         <argument>@gitDao</argument>
     </class-definition>
+
+    <class-definition name="repositoryController" class="TestGit\Controllers\Repository" shared="true" />
 </dependency-injection>

@@ -65,7 +65,6 @@ class Repository implements ResourceInterface
             Tables::ACCESSES, 
             GitDao::ENTITY_ACCESS
         );
-
         $this->accesses->setReference('user_id');
 
         $this->commits = new One2Many(
@@ -320,22 +319,23 @@ class Repository implements ResourceInterface
             return;
         }
 
-        foreach ($this->getAccesses() as $access) {
-            if ($access->getUser_id() === $user->getId()) {
-                if ($access->getReadAccess()) {
-                    $acl->allow($user, $this, 'read');
-                }
-                if ($access->getWriteAccess()) {
-                    $acl->allow($user, $this, 'write');
-                }
-                if ($access->getSpecialAccess()) {
-                    $acl->allow($user, $this, 'special');
-                }
-                if ($access->getAdminAccess()) {
-                    $acl->allow($user, $this, 'admin');
-                }
+        $accesses = $this->accesses;
+        if (isset($accesses[$user->getId()])) {
+            $access = $accesses[$user->getId()];
+            if ($access->getReadAccess()) {
+                $acl->allow($user, $this, 'read');
+            }
+            if ($access->getWriteAccess()) {
+                $acl->allow($user, $this, 'write');
+            }
+            if ($access->getSpecialAccess()) {
+                $acl->allow($user, $this, 'special');
+            }
+            if ($access->getAdminAccess()) {
+                $acl->allow($user, $this, 'admin');
             }
         }
+
         if ($user->getId() == $this->getOwner_id()) {
             $acl->allow($user, $this, 'owner');
         }
