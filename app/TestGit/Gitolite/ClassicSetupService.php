@@ -1,5 +1,5 @@
 <?php
-namespace TestGit;
+namespace TestGit\Gitolite;
 
 use Fwk\Events\Event;
 use TestGit\Events\RepositoryEditEvent;
@@ -13,7 +13,14 @@ use TestGit\Events\RepositoryDeleteEvent;
 use TestGit\Transactional\Transaction;
 use TestGit\Transactional\TransactionException;
 
-class GitoliteService
+/**
+ * Class ClassicSetupService
+ * This Service is used when gitolite is installed normally (or remotely?).
+ * It performs git / ssh actions (ie: VERY SLOW)
+ *
+ * @package TestGit
+ */
+class ClassicSetupService
 {
     const GITOLITE_ADMIN_REPO   = 'gitolite-admin';
     const GITOLITE_KEYS_DIR     = 'keydir';
