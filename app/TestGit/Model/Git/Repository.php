@@ -59,33 +59,28 @@ class Repository implements ResourceInterface
             get_class($this)
         );
         
-        $this->parent->setFetchMode(Relation::FETCH_LAZY);
-        
         $this->accesses = new One2Many(
             'id', 
             'repository_id', 
             Tables::ACCESSES, 
             GitDao::ENTITY_ACCESS
         );
-        
-        $this->accesses->setFetchMode(Relation::FETCH_LAZY);
-        
+
+        $this->accesses->setReference('user_id');
+
         $this->commits = new One2Many(
             'id',
             'repositoryId',
             Tables::COMMITS,
             GitDao::ENTITY_COMMIT
         );
-        $this->commits->setFetchMode(Relation::FETCH_LAZY);
-        
-        
+
         $this->references = new One2Many(
             'id',
             'repositoryId',
             Tables::REFERENCES,
             GitDao::ENTITY_REFERENCE
         );
-        $this->references->setFetchMode(Relation::FETCH_LAZY);
     }
     
     public function getId() {

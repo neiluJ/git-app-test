@@ -27,14 +27,12 @@ class OrgAccess
             Tables::USERS, 
             UsersDao::ENTITY_USER
         );
-        $this->user->setFetchMode(Relation::FETCH_LAZY);
         $this->organization = new One2One(
             'organization_id',
             'id',
             Tables::USERS,
             UsersDao::ENTITY_USER
         );
-        $this->organization->setFetchMode(Relation::FETCH_LAZY);
     }
     
     public function getUser_id()

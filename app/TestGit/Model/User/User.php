@@ -56,20 +56,11 @@ class User implements UserInterface, PasswordAware,
         $this->rolesRelation->setFetchMode(Relation::FETCH_LAZY);
         
         $this->sshKeys = new One2Many('id', 'user_id', Tables::SSH_KEYS);
-        $this->sshKeys->setFetchMode(Relation::FETCH_LAZY);
-        
         $this->accesses = new One2Many('id', 'user_id', Tables::ACCESSES, 'TestGit\\Model\\Git\\Access');
-        $this->accesses->setFetchMode(Relation::FETCH_LAZY);
-
         $this->orgAccesses = new One2Many('id', 'user_id', Tables::ORG_USERS, 'TestGit\\Model\\User\\OrgAccess');
-        $this->orgAccesses->setFetchMode(Relation::FETCH_LAZY);
-
         $this->members = new One2Many('id', 'organization_id', Tables::ORG_USERS, 'TestGit\\Model\\User\\OrgAccess');
-        $this->members->setFetchMode(Relation::FETCH_LAZY);
         $this->members->setReference('user_id');
-        
         $this->repositories = new One2Many('id', 'owner_id', Tables::REPOSITORIES, GitDao::ENTITY_REPO);
-        $this->repositories->setFetchMode(Relation::FETCH_LAZY);
     }
     
     public function getIdentifier()

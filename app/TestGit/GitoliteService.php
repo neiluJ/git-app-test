@@ -412,8 +412,45 @@ class GitoliteService
             
             $accesses = $repository->getAccesses();
             foreach ($accesses as $access) {
-                $str .= "\t" . $access->getGitoliteAccessString() 
-                    . "\t=\t". $access->getUser()->getUsername() ."\n";
+                $user = $access->getUser()->fetch();
+
+                // is this an organization ?
+                if (!$user->isOrganization()) {
+                    $str .= "\t" . $access->getGitoliteAccessString()
+                        . "\t=\t" . $access->getUser()->getUsername() . "\n";
+                    continue;
+                }
+
+                // it's an organization, list members and compute (git) access rights
+                foreach ($user->getMembers() as $member) {
+                    // if the user has a dedicated access to the repo, use it.
+                    if (isset($accesses[$member->getUser_id()])) {
+                        continue;
+                    }
+
+                    $gitoliteAccessStr = '';
+
+                    // members of the organization can read repository
+                    if (true === (bool)$access->getReadAccess()) {
+                        $gitoliteAccessStr .= "R";
+                    }
+
+                    // member has write access to repo ?
+                    if (true === (bool)$member->getReposWriteAccess()) {
+                        // does the access says so?
+                        if (true === (bool)$access->getWriteAccess()) {
+                            $gitoliteAccessStr .= "W";
+                        }
+
+                        // does the access say W+ ?
+                        if (true === (bool)$access->getSpecialAccess()) {
+                            $gitoliteAccessStr .= "+";
+                        }
+                    }
+
+                    $str .= "\t" . $gitoliteAccessStr
+                        . "\t=\t" . $member->getUser()->getUsername() . "\n";
+                }
             }
             
             if (!$repository->isPrivate()) {
