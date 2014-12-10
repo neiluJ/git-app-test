@@ -1,6 +1,7 @@
 <?php
 namespace TestGit\Controllers;
 
+use Fwk\Core\Accessor;
 use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
 use Fwk\Core\Action\Result;
@@ -379,16 +380,18 @@ class Repository implements ContextAware, ServicesAware, Preparable
      */
     protected function loadRepository($permission = null)
     {
+        if ($this->services->exists('__repo_entity')) {
+            $db = $this->services->get('__repo_entity');
+            $this->entity = $db['entity'];
+            $this->repository = $db['repo'];
+            $this->branch = $db['branch'];
+        }
+
         if (isset($this->entity)) {
             return;
         }
-        
         $this->entity = $this->getGitDao()
-                ->findOne($this->name, \TestGit\Model\Git\GitDao::FIND_FULLNAME);
-    
-        if (!$this->entity instanceof RepositoryEntity) {
-            throw new \Exception('repository not found');
-        }
+                ->findOne($this->name, GitDao::FIND_FULLNAME);
 
         // load repo acls
         $security = $this->getServices()->get('security');
@@ -416,7 +419,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
             if ($this->entity->getOwner()->isOrgMember($user)) {
                 $acl->allow($user, $this->entity, 'read');
 
-                $members = $this->entity->getOwner()->getMembers()->fetch();
+                $members = $this->entity->getOwner()->getMembers();
                 $access = $members[$user->getId()];
                 if ((bool)$access->getReposAdminAccess()) {
                     $acl->allow($user, $this->entity, 'owner');
@@ -444,6 +447,13 @@ class Repository implements ContextAware, ServicesAware, Preparable
         }
         
         $this->repository = $this->getGitService()->transform($this->entity);
+
+        // caching values for embeded actions (ie: README)
+        $this->services->set('__repo_entity', array(
+            'entity' => $this->entity,
+            'repo'  => $this->repository,
+            'branch' => $this->branch
+        ), true);
     }
     
     /**
