@@ -536,7 +536,8 @@ class GitDao extends DaoBase
             ->from($this->getOption('commitsTable'))
             ->entity(self::ENTITY_COMMIT)
             ->where('repositoryId = ?')
-            ->andWhere('committerDate > ? AND committerDate < ?');
+            ->andWhere('committerDate > ? AND committerDate < ?')
+            ->orderBy('committerDate', 'DESC');
         ;
 
         $res = $this->getDb()->execute($query, array($repository->getId(), $year . '-'. $month . '-01 00:00:00', $year . '-'. $month . '-31 23:59:59'));

@@ -66,6 +66,7 @@ class Commits extends Repository
             $finalCommits = array();
             $this->totalCommits = $this->getGitDao()->getTotalCommitsCount($this->entity);
             $this->monthlyCount = $this->getGitDao()->getCommitsMonthlyCount($this->entity);
+            krsort($this->monthlyCount);
             $commits = $this->getGitDao()->getMonthCommits($this->entity, $this->year, $this->month);
 
         } catch(EmptyRepositoryException $exp) {

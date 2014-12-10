@@ -49,8 +49,9 @@
                                         <tbody>
                                         <?php foreach ($commits as $commit): ?>
                                             <tr>
-                                                <td style="width:120px;">
-                                                    <i class="octicon octicon-git-commit"></i> <a href="<?php echo $vh->url('CommitNEW', array('name' => $this->entity->getFullname(), 'hash' => $commit->getHash())); ?>"><?php echo substr($commit->getHash(), 0, 6); ?></a>
+                                                <td style="width:125px;">
+                                                    <span style="font-size: 12px; color: #bbb;display:block"><?php $dt = new DateTime($commit->getCommitterDate()); echo $dt->format('H:i'); ?></span>
+                                                    <a href="<?php echo $vh->url('CommitNEW', array('name' => $this->entity->getFullname(), 'hash' => $commit->getHash())); ?>"><?php echo substr($commit->getHash(), 0, 8); ?></a>
                                                     <?php $thId = 'commit-'. $this->entity->getId() .'-'. $commit->getHash(); $comments = $this->_helper->embed('CommentsCount', array('id' => $thId)); if ($comments > 0): ?>
                                                         <?php echo $comments; ?> <b class="octicon octicon-comment"></b>
                                                     <?php endif; ?>
