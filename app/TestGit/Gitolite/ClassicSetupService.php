@@ -10,6 +10,9 @@ use TestGit\Events\UserChangePasswordEvent;
 use TestGit\Events\RepositoryCreateEvent;
 use TestGit\Events\RepositoryForkEvent;
 use TestGit\Events\RepositoryDeleteEvent;
+use TestGit\Model\Git\GitDao;
+use TestGit\Model\Git\Repository;
+use TestGit\Model\User\UsersDao;
 use TestGit\Transactional\Transaction;
 use TestGit\Transactional\TransactionException;
 
@@ -99,11 +102,11 @@ class ClassicSetupService
         $key        = $event->getSshKey();
         $filename   = $userName ."@". $key->title . ".pub";
         $repo       = $event->getServices()->get('gitDao')
-                      ->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
+                      ->findOne(self::GITOLITE_ADMIN_REPO, GitDao::FIND_NAME);
         
         $logger->addInfo(sprintf('[onUserSshKeyAdd:%s] User "%s" added a new ssh-key (%s)', $repo->getFullname(), $event->getUser()->getUsername(), $key->title));
         
-        if (!$repo instanceof Model\Git\Repository) {
+        if (!$repo instanceof Repository) {
             $logger->addCritical(sprintf('[onUserSshKeyAdd:%s] gitolite-admin repository not found (?)', $repo->getFullname()));
             throw new \RuntimeException('gitolite-admin repository not found (?)');
         }
@@ -172,11 +175,11 @@ class ClassicSetupService
         $key        = $event->getSshKey();
         $filename   = $userName ."@". $key->title . ".pub";
         $repo       = $event->getServices()->get('gitDao')
-                      ->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
+                      ->findOne(self::GITOLITE_ADMIN_REPO, GitDao::FIND_NAME);
         
         $logger->addInfo(sprintf('[onUserSshKeyRemove:%s] User "%s" removed a ssh-key (%s)', $repo->getFullname(), $event->getUser()->getUsername(), $key->title));
         
-        if (!$repo instanceof Model\Git\Repository) {
+        if (!$repo instanceof Repository) {
             $logger->addCritical(sprintf('[onUserSshKeyRemove:%s] gitolite-admin repository not found (?)', $repo->getFullname()));
             throw new \RuntimeException('gitolite-admin repository not found (?)');
         }
@@ -233,9 +236,9 @@ class ClassicSetupService
         $logger->addInfo(sprintf('[RepositoryEditEvent:%s] Repository edited by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $committer->getFullname()));
         
         $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
-        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
+        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, GitDao::FIND_NAME);
         
-        if (!$gitoliteRepo instanceof Model\Git\Repository) {
+        if (!$gitoliteRepo instanceof Repository) {
             $logger->addCritical(sprintf('[RepositoryEditEvent:%s] gitolite-admin repository not found (?)', $repo->getFullname()));
             throw new \RuntimeException('gitolite-admin repository not found (?)');
         }
@@ -272,14 +275,14 @@ class ClassicSetupService
         $repo       = $event->getRepository();
         $gitDao     = $event->getServices()->get('gitDao');
         /** @todo Fix Fwk/Db */
-        $owner      = $event->getServices()->get('usersDao')->findOne($repo->getOwner_id(), Model\User\UsersDao::FIND_ID);
+        $owner      = $event->getServices()->get('usersDao')->findOne($repo->getOwner_id(), UsersDao::FIND_ID);
         
         $logger->addInfo(sprintf('[onRepositoryCreate:%s] Repository created by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $owner->getFullname()));
         
         $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
-        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
+        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, GitDao::FIND_NAME);
         
-        if (!$gitoliteRepo instanceof Model\Git\Repository) {
+        if (!$gitoliteRepo instanceof Repository) {
             $logger->addCritical(sprintf('[onRepositoryCreate:%s] gitolite-admin repository not found (?)', $repo->getFullname()));
             throw new \RuntimeException('gitolite-admin repository not found (?)');
         }
@@ -319,14 +322,14 @@ class ClassicSetupService
         $fork       = $event->getFork();
         $gitDao     = $event->getServices()->get('gitDao');
         /** @todo Fix Fwk/Db */
-        $owner      = $event->getServices()->get('usersDao')->findOne($fork->getOwner_id(), Model\User\UsersDao::FIND_ID);
+        $owner      = $event->getServices()->get('usersDao')->findOne($fork->getOwner_id(), UsersDao::FIND_ID);
         
         $logger->addInfo(sprintf('[RepositoryForkEvent:%s] Repository created (forked from "%s") by "%s". Generating new gitolite.conf ...', $fork->getFullname(), $repo->getFullname(), $owner->getFullname()));
         
         $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
-        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
+        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, GitDao::FIND_NAME);
         
-        if (!$gitoliteRepo instanceof Model\Git\Repository) {
+        if (!$gitoliteRepo instanceof Repository) {
             $logger->addCritical(sprintf('[RepositoryForkEvent:%s] gitolite-admin repository not found (?)', $fork->getFullname()));
             throw new \RuntimeException('gitolite-admin repository not found (?)');
         }
@@ -369,14 +372,14 @@ class ClassicSetupService
         $repo       = $event->getRepository();
         $gitDao     = $event->getServices()->get('gitDao');
         /** @todo Fix Fwk/Db */
-        $owner      = $event->getServices()->get('usersDao')->findOne($repo->getOwner_id(), Model\User\UsersDao::FIND_ID);
+        $owner      = $event->getServices()->get('usersDao')->findOne($repo->getOwner_id(), UsersDao::FIND_ID);
         
         $logger->addInfo(sprintf('[RepositoryDeleteEvent:%s] Repository deleted by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $owner->getFullname()));
         
         $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
-        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, Model\Git\GitDao::FIND_NAME);
+        $gitoliteRepo   = $gitDao->findOne(self::GITOLITE_ADMIN_REPO, GitDao::FIND_NAME);
         
-        if (!$gitoliteRepo instanceof Model\Git\Repository) {
+        if (!$gitoliteRepo instanceof Repository) {
             $logger->addCritical(sprintf('[RepositoryDeleteEvent:%s] gitolite-admin repository not found (?)', $repo->getFullname()));
             throw new \RuntimeException('gitolite-admin repository not found (?)');
         }
@@ -408,7 +411,7 @@ class ClassicSetupService
         $git->delete($repo);
     }
     
-    protected function getGitoliteConfigAsString(Model\Git\GitDao $gitDao, $forgeryUser)
+    protected function getGitoliteConfigAsString(GitDao $gitDao, $forgeryUser)
     {
         $str    = "# This file has been generated by Forgery on ". date('Y-m-d H:i:s') ."\n";
         $str    .= "# It is recommended that you don't edit it manually\n\n";

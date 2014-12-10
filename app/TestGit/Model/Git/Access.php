@@ -27,14 +27,12 @@ class Access
             Tables::USERS, 
             UsersDao::ENTITY_USER
         );
-        $this->user->setFetchMode(Relation::FETCH_LAZY);
         $this->repository = new One2One(
             'repository_id', 
             'id', 
             Tables::REPOSITORIES, 
             GitDao::ENTITY_REPO
         );
-        $this->repository->setFetchMode(Relation::FETCH_LAZY);
     }
     
     public function getUser_id()

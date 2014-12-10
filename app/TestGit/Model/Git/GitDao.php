@@ -339,21 +339,17 @@ class GitDao extends DaoBase
 
         $repo->getAccesses()->add($access);
 
-        return $this->getDb()
-                    ->table($this->getOption('repositoriesTable'))
-                    ->save($repo);
+        $this->getDb()
+            ->table($this->getOption('repositoriesTable'))
+            ->save($repo);
     }
     
     public function removeRepositoryAccess(Repository $repo, $userId)
     {
-        foreach ($repo->getAccesses() as $access) {
-            if ($access->getUser_id() == $userId) {
-                $repo->getAccesses()->remove($access);
-                break;
-            }
-        }
+        $accesses = $repo->getAccesses();
+        unset($accesses[$userId]);
 
-        return $this->getDb()
+        $this->getDb()
             ->table($this->getOption('repositoriesTable'))
             ->save($repo);
     }
@@ -366,9 +362,9 @@ class GitDao extends DaoBase
      */
     public function saveAccess(Access $access)
     {
-        return $this->getDb()
-                    ->table($this->getOption('accessesTable'))
-                    ->save($access);
+        $this->getDb()
+            ->table($this->getOption('accessesTable'))
+            ->save($access);
     }
     
     /**
