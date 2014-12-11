@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dependency-injection>
+    <ini category="services">:baseDir/config-test.ini</ini>
+    
+    <class-definition name="_vh.embed" class="Fwk\Core\Components\ViewHelper\EmbedViewHelper" shared="true" />
+    <class-definition name="_vh.url" class="Fwk\Core\Components\UrlRewriter\UrlViewHelper" shared="true">
+        <argument>requestMatcher</argument>
+        <argument>urlRewriter</argument>
+    </class-definition>
+    <class-definition name="_vh.escape" class="Fwk\Core\Components\ViewHelper\EscapeViewHelper" shared="true" />
+
+    <!-- GIT APP Specific ViewHelpers -->
+    <class-definition name="_vh.form" class="TestGit\Form\RendererViewHelper" shared="true">
+        <argument>formRenderer</argument>
+    </class-definition>
+    <class-definition name="_vh.formElement" class="TestGit\Form\RendererElementViewHelper" shared="true">
+        <argument>formRenderer</argument>
+    </class-definition>
+    <class-definition name="_vh.allowed" class="TestGit\SecurityViewHelper" shared="true">
+        <argument>security</argument>
+        <argument>guest</argument>
+    </class-definition>
+    <class-definition name="_vh.appTitle" class="TestGit\AppTitleViewHelper" shared="true" />
+
+    <class-definition name="viewHelper" class="Fwk\Core\Components\ViewHelper\ViewHelperService" shared="true">
+        <call method="add">
+            <argument>embed</argument>
+            <argument>@_vh.embed</argument>
+        </call>
+        <call method="add">
+            <argument>url</argument>
+            <argument>@_vh.url</argument>
+        </call>
+        <call method="add">
+            <argument>escape</argument>
+            <argument>@_vh.escape</argument>
+        </call>
+        <call method="add">
+            <argument>form</argument>
+            <argument>@_vh.form</argument>
+        </call>
+        <call method="add">
+            <argument>formElement</argument>
+            <argument>@_vh.formElement</argument>
+        </call>
+        <call method="add">
+            <argument>isAllowed</argument>
+            <argument>@_vh.allowed</argument>
+        </call>
+        <call method="add">
+            <argument>appTitle</argument>
+            <argument>@_vh.appTitle</argument>
+        </call>
+    </class-definition>
+
+    <!--
+        CONSOLE
+    -->
+    <class-definition name="consoleApp" class="Symfony\Component\Console\Application" shared="true">
+        <argument>TestGit</argument>
+        <argument>1.0</argument>
+    </class-definition>
+    
+    <!--
+        GIT APP
+    -->
+    <class-definition name="git" class="TestGit\GitService" shared="true">
+        <argument>:repos.dir</argument>
+        <argument>:repos.working.dir</argument>
+        <argument>:git.executable</argument>
+        <argument>:git.date.format</argument>
+        <argument>:forgery.user.name</argument>
+        <argument>:forgery.user.email</argument>
+        <argument>:forgery.user.fullname</argument>
+        <argument>:git.user.name</argument>
+        <argument>:git.clone.hostname.ssh.local</argument>
+        <argument>@logger</argument>
+    </class-definition>
+    
+    <class-definition name="users" class="TestGit\UsersService" shared="true">
+        <argument>:apache.htpasswd.bin</argument>
+    </class-definition>
+    
+    <class-definition name="gitolite" class="TestGit\Gitolite\ClassicSetupService" shared="true" />
+    
+    <!--
+        DATABASE & DAOs
+    -->
+    <array-definition name="db.config">
+        <param key="dbname">:db.database</param>
+        <param key="user">:db.user</param>
+        <param key="password">:db.password</param>
+        <param key="driver">:db.driver</param>
+        <param key="host">:db.hostname</param>
+    </array-definition>
+    
+    <class-definition name="db" class="Fwk\Db\Connection" shared="true">
+        <argument>@db.config</argument>
+    </class-definition>
+    
+    <array-definition name="dao.config.users">
+        <param key="usersTable">:users.table</param>
+        <param key="sshKeysTable">:users.ssh_keys.table</param>
+    </array-definition>
+    
+    <class-definition name="usersDao" class="TestGit\Model\User\UsersDao" shared="true">
+        <argument>@db</argument>
+        <argument>@dao.config.users</argument>
+        <call method="addListener">
+            <argument>@gitolite</argument>
+        </call>
+    </class-definition>
+    
+    <array-definition name="dao.config.acls">
+        <param key="rolesTable">:acls.table.roles</param>
+        <param key="resourcesTable">:acls.table.resources</param>
+        <param key="permissionsTable">:acls.table.permissions</param>
+    </array-definition>
+    
+    <class-definition name="aclsDao" class="TestGit\Model\User\AclDao" shared="true">
+        <argument>@db</argument>
+        <argument>@dao.config.acls</argument>
+    </class-definition>
+    
+    <array-definition name="dao.config.git">
+        <param key="repositoriesTable">:repos.table</param>
+        <param key="accessesTable">:repos.accesses.table</param>
+        <param key="repositoriesBasePath">:repos.basePath</param>
+    </array-definition>
+    
+    <class-definition name="gitdao.listener.commits" class="TestGit\Listeners\CommitsListener" />
+    <class-definition name="gitdao.listener.activity" class="TestGit\Listeners\StaticActivityListener" />
+    
+    <class-definition name="gitDao" class="TestGit\Model\Git\GitDao" shared="true">
+        <argument>@db</argument>
+        <argument>@dao.config.git</argument>
+        <call method="addListener">
+            <argument>@gitolite</argument>
+        </call>
+        <call method="addListener">
+            <argument>@gitdao.listener.commits</argument>
+        </call>
+        <call method="addListener">
+            <argument>@gitdao.listener.activity</argument>
+        </call>
+    </class-definition>
+    
+    <!--
+        SECURITY
+    -->
+    <class-definition name="securitySessionStorage" class="Fwk\Security\Http\SessionStorage" shared="true">
+        <argument>@session</argument>
+    </class-definition>
+    
+    <class-definition name="authManager" class="Fwk\Security\Authentication\Manager" shared="true">
+        <argument>@securitySessionStorage</argument>
+    </class-definition>
+    
+    <class-definition name="aclsManager" class="Fwk\Security\Acl\Manager" shared="true">
+        <argument>@aclsDao</argument>
+    </class-definition>
+    
+    <class-definition name="security.listener.loaduseracl" class="Fwk\Security\Acl\LoadUserAclListener" />
+    <class-definition name="security" class="Fwk\Security\Service" shared="true">
+        <argument>@authManager</argument>
+        <argument>@usersDao</argument>
+        <argument>@aclsManager</argument>
+        <call method="addListener">
+            <argument>@security.listener.loaduseracl</argument>
+        </call>
+    </class-definition>
+    
+    <class-definition name="authFilter" class="TestGit\Form\AuthenticationFilter">
+        <argument>@usersDao</argument>
+        <argument>@security</argument>
+    </class-definition>
+    
+    <!--
+        FORM
+    -->
+    <array-definition name="form.renderer.config">
+        <param key="resourcesDir">:packageDir/../pages/form</param>
+    </array-definition>
+    
+    <class-definition name="formRenderer" class="Fwk\Form\Renderer">
+        <argument>@form.renderer.config</argument>
+    </class-definition>
+    
+    <!--
+        MONOLOG
+    -->
+    <class-definition name="monolog.handler" class="Monolog\Handler\StreamHandler">
+        <argument>:log.file</argument>
+        <argument>:log.level</argument>
+    </class-definition>
+    <class-definition name="logger" class="Monolog\Logger" shared="true">
+        <argument>forgery</argument>
+        <call method="pushHandler">
+            <argument>@monolog.handler</argument>
+        </call>
+    </class-definition>
+
+    <!--
+        COMMENTS
+
+    -->
+    <array-definition name="comments.config">
+        <param key="autoThread">:comments.thread.auto</param>
+        <param key="threadsTable">comments_threads</param>
+        <param key="threadEntity">:comments.entity.thread</param>
+        <param key="commentsTable">comments</param>
+        <param key="commentEntity">:comments.entity.comment</param>
+        <param key="autoApprove">true</param>
+    </array-definition>
+
+    <class-definition name="comments.listener" class="TestGit\Listeners\CommentsListener">
+        <argument>@self</argument>
+    </class-definition>
+
+    <!-- @todo add commentsListener -->
+
+    <!--
+        DEVTOOLS
+    -->
+    <array-definition name="devtools.plugins">
+        <param>@dt.plugin.debugger</param>
+        <param>@dt.plugin.phpinfo</param>
+    </array-definition>
+
+    <class-definition name="dt.plugin.phpinfo" class="Nitronet\DevTools\Plugins\PhpInfo\PhpInfoPlugin" shared="true" />
+    <class-definition name="dt.plugin.debugger" class="Nitronet\DevTools\Plugins\Debug\DebugPlugin" shared="true" />
+
+    <class-definition name="devtools" class="Nitronet\DevTools\DevToolsManager" shared="true">
+        <argument>@devtools.plugins</argument>
+    </class-definition>
+
+    <!-- Notifications -->
+    <class-definition name="notifications" class="TestGit\Model\Notifications\NotificationsDao" shared="true">
+        <argument>@db</argument>
+        <argument>@usersDao</argument>
+        <argument>@gitDao</argument>
+    </class-definition>
+
+    <class-definition name="repositoryController" class="TestGit\Controllers\Repository" shared="true" />
+
+    <class-definition name="sessionListener" class="Fwk\Core\Components\SessionListener" shared="true">
+        <argument>session</argument>
+        <argument>sessionStorage</argument>
+    </class-definition>
+    <class-definition name="sessionStorage" class="Symfony\Component\HttpFoundation\Session\Storage\MockFileSessionStorage">
+        <argument>:packageDir</argument>
+    </class-definition>
+</dependency-injection>

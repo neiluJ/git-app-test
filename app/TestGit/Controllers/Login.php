@@ -38,7 +38,7 @@ class Login extends Controller implements Preparable
         
         $form = $this->getLoginForm();
         if ($this->isPOST()) {
-            $form->submit($_POST);
+            $form->submit($this->getContext()->getRequest()->request->all());
             
             if(!$form->validate()) {
                 return Result::FORM;

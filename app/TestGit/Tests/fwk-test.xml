@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fwk id="TestApp" version="1.0-dev">
+    <ini>:baseDir/config-test.ini</ini>
+    
+    <services xml=":baseDir/services-test.xml" />
+
+    <listener class="Fwk\Core\Components\ViewHelper\ViewHelperListener">
+        <param>:viewHelperService</param>
+    </listener>
+
+    <listener service="sessionListener" />
+    <listener class="TestGit\SecurityListener">
+        <param name="securityService">security</param>
+        <param name="requestMatcher">requestMatcher</param>
+        <param name="urlRewriter">urlRewriter</param>
+        <param name="guestRole">guest</param>
+        <param name="loginAction">Login</param>
+        <param name="redirectParam">back</param>
+    </listener>
+    
+    <result-types>
+        <result-type
+            name="php"
+            class="Fwk\Core\Components\ResultType\PhpTemplateResultType">
+            <param name="templatesDir">:packageDir/../pages</param>
+        </result-type>
+        <result-type
+                name="php.comments"
+                class="Fwk\Core\Components\ResultType\PhpTemplateResultType">
+            <param name="templatesDir">:packageDir/Nitronet/Comments/templates</param>
+        </result-type>
+    </result-types>
+    
+    <commands>
+        <command name="gitolite:show" class="TestGit\Commands\Gitolite" />
+        <command name="gitolite:configure" class="TestGit\Commands\GitoliteAdmin" />
+        <command name="repository:update" class="TestGit\Commands\RepoUpdate" />
+        <command name="repository:hooks" class="TestGit\Commands\RepoInstallHooks" />
+    </commands>
+    
+    <actions>
+        <action name="Home" shortcut="TestGit\Controllers\Home:show">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">homepage.php</param>
+            </result>
+        </action>
+        <action name="Menu" shortcut="TestGit\Controllers\Home:menu">
+            <acl type="allow" role="" />
+            <result name="embed:success" type="php">
+                <param name="file">menu.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Home</param>
+            </result>
+        </action>
+        <action name="UserMenu" shortcut="TestGit\Controllers\Home:userMenu">
+            <acl type="allow" role="" />
+            <result name="embed:success" type="php">
+                <param name="file">menu_user.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Home</param>
+            </result>
+        </action>
+        <action name="ChatMenu" shortcut="TestGit\Controllers\Home:chatMenu">
+            <acl type="allow" role="" />
+            <result name="embed:success" type="php">
+                <param name="file">menu_chat.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Home</param>
+            </result>
+        </action>
+
+        <action name="NotificationsMenu" shortcut="TestGit\Controllers\Notifications:menu">
+            <acl type="allow" role="user" />
+            <result name="embed:success" type="php">
+                <param name="file">notifications/menu.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+            </result>
+        </action>
+
+        <action name="Notifications" shortcut="TestGit\Controllers\Notifications:show">
+            <acl type="allow" role="user" />
+            <result name="success" type="php">
+                <param name="file">notifications/index.php</param>
+            </result>
+        </action>
+        <action name="NotificationRead" shortcut="TestGit\Controllers\Notifications:read">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="channel">:channel</param>
+            </result>
+            <result name="error" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="NotificationsReadAll" shortcut="TestGit\Controllers\Notifications:readAll">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="channel">:channel</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Notifications</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="NotificationsDeleteAll" shortcut="TestGit\Controllers\Notifications:deleteAll">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="channel">:channel</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Notifications</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="NotificationDelete" shortcut="TestGit\Controllers\Notifications:delete">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="channel">:channel</param>
+            </result>
+            <result name="error" type="redirect">
+                <param name="actionName">Notifications</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+
+        <action name="Error" shortcut="TestGit\Controllers\Home:error">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">error.php</param>
+            </result>
+        </action>
+        <action name="RepoError" shortcut="TestGit\Controllers\Home:error">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/error.php</param>
+            </result>
+        </action>
+        <action name="Repositories" shortcut="TestGit\Controllers\Repositories:show">
+            <acl type="allow" role="" />
+            <result name="success" type="redirect">
+                <param name="actionName">Home</param>
+            </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">jsonRepositories</param>
+            </result>
+        </action>
+        <action name="SearchRepositories" shortcut="TestGit\Controllers\Repositories:search">
+            <acl type="allow" role="" />
+            <result name="success" type="redirect">
+                <param name="actionName">Home</param>
+            </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">searchResults</param>
+            </result>
+        </action>
+
+        <action name="RepositoryNEW" shortcut="@repositoryController:show">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/index.php</param>
+            </result>
+            <result name="empty_repository" type="php">
+                <param name="file">repository/empty.php</param>
+            </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">files,path</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="entity">:entity</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="CloneUrl" shortcut="@repositoryController:cloneUrlAction">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">clone_url.php</param>
+            </result>
+        </action>
+        <action name="BlobNEW" shortcut="TestGit\Controllers\Blob:showNew">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/blob.php</param>
+            </result>
+
+            <result name="embed:success" type="php">
+                <param name="file">repository/blob_embed.php</param>
+            </result>
+
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
+
+        <action name="BlobRaw" shortcut="TestGit\Controllers\Blob:raw">
+            <acl type="allow" role="" />    
+        </action>
+        <action name="Commits" shortcut="TestGit\Controllers\Commits:listAction">
+            <acl type="allow" role="" />
+            <result name="success" type="json">
+                <param name="properties">path, jsonCommits, jsonCurrentCommit, offset, limit</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Problem occured while loading commits.</param>
+            </result>
+        </action>
+        <action name="CommitsNEW" shortcut="TestGit\Controllers\Commits:listAction">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/commits.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="entity">:entity</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="SearchCommits" shortcut="TestGit\Controllers\Commits:search">
+            <acl type="allow" role="" />
+            <result name="success" type="json">
+                <param name="properties">searchResults</param>
+            </result>
+        </action>
+        <action name="CommitNEW" shortcut="TestGit\Controllers\Commits:commitAction">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/commit.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="entity">:entity</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="CompareNEW" shortcut="TestGit\Controllers\Compare:compareAction">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/compare.php</param>
+            </result>
+            <result name="redirect" type="redirect">
+                <param name="actionName">CompareNEW</param>
+                <param name="name">:name</param>
+                <param name="compare">:compare</param>
+            </result>
+            <result name="empty_repo" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">This repository is empty.</param>
+                <param name="entity">:entity</param>
+                <param name="emptyRepo">:emptyRepo</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="entity">:entity</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="Merge" shortcut="TestGit\Controllers\Compare:mergeAction">
+            <acl type="allow" role="" />
+            <result name="success" type="redirect">
+                <param name="actionName">RepositoryNEW</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">mergeMsg, mergeSuccess</param>
+            </result>
+            <result name="ajax:merge_error" type="json">
+                <param name="properties">mergeMsg, mergeSuccess</param>
+            </result>
+            <result name="merge_error" type="redirect">
+                <param name="actionName">CompareNEW</param>
+                <param name="name">:name</param>
+                <param name="compare">:compare</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
+        <action name="Diff" shortcut="TestGit\Controllers\Commits:diffAction">
+            <acl type="allow" role="" />
+        </action>
+
+        <action name="BranchesNEW" shortcut="TestGit\Controllers\Branches:show">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/branches.php</param>
+            </result>
+            <result name="empty_repository" type="php">
+                <param name="file">repository/empty.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
+        <action name="Users" shortcut="TestGit\Controllers\Users:show">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">users.php</param>
+            </result>
+            <result name="ajax:success" type="json">
+                <param name="properties">jsonUsers</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">Problem occured while loading users</param>
+            </result>
+        </action>
+        <action name="SearchUsers" shortcut="TestGit\Controllers\Users:search">
+            <acl type="allow" role="" />
+            <result name="success" type="redirect">
+                <param name="actionName">Users</param>
+            </result>
+            <result name="success" type="json">
+                <param name="properties">searchResults</param>
+            </result>
+        </action>
+
+        <action name="AccessesNEW" shortcut="TestGit\Controllers\Users:repositoryUsers">
+            <acl type="allow" role="user" />
+            <result name="success" type="php">
+                <param name="file">repository/accesses.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="AddAccess" shortcut="TestGit\Controllers\Users:addAccess">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">AccessesNEW</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="RemoveAccess" shortcut="TestGit\Controllers\Users:removeAccess">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">AccessesNEW</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        
+        <action name="Login" shortcut="TestGit\Controllers\Login:show">
+            <acl type="allow" role="" />
+            <result name="form" type="php">
+                <param name="file">login.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="uri">:back</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="Logout" shortcut="TestGit\Controllers\Login:logout">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="uri">:back</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="AddUser" shortcut="TestGit\Controllers\Users:addUser">
+            <acl type="allow" role="" />
+            <result name="form" type="php">
+                <param name="file">adduser.php</param>
+            </result>
+            <result name="ajax:form" type="php">
+                <param name="file">adduser_embed.php</param>
+            </result>
+            <result name="ajax:success" type="php">
+                <param name="file">adduser_success.php</param>
+            </result>
+            <result name="embed:form" type="php">
+                <param name="file">adduser_embed.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Users</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="addOrganization" shortcut="TestGit\Controllers\Users:addOrg">
+            <acl type="allow" role="user" />
+            <result name="form" type="php">
+                <param name="file">addorganization.php</param>
+            </result>
+            <result name="ajax:form" type="php">
+                <param name="file">addorganization_embed.php</param>
+            </result>
+            <result name="ajax:success" type="php">
+                <param name="file">addorganization_success.php</param>
+            </result>
+            <result name="embed:form" type="php">
+                <param name="file">addorganization_embed.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">Profile</param>
+                <param name="username">:username</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="Profile" shortcut="TestGit\Controllers\Profile:show">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">user_profile.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="ToggleUserRight" shortcut="TestGit\Controllers\Profile:toggleOrgUserRight">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">OrgMembers</param>
+                <param name="username">:username</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="UserSettings" shortcut="TestGit\Controllers\UserSettings:show">
+            <acl type="allow" role="user" />
+            <result name="success" type="php">
+                <param name="file">user_settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="UserActivity" shortcut="TestGit\Controllers\Profile:showActivity">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">user_activity.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="OrgMembers" shortcut="TestGit\Controllers\Profile:showMembers">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">user_members.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="EditUserInfos" shortcut="TestGit\Controllers\UserSettings:editInfos">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">UserSettings</param>
+                <param name="username">:username</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">user_settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="AddSshKey" shortcut="TestGit\Controllers\UserSettings:addSshKey">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">UserSettings</param>
+                <param name="username">:username</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">user_settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="RevokeSshKey" shortcut="TestGit\Controllers\UserSettings:revokeSshKey">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">UserSettings</param>
+                <param name="username">:username</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="ChangePassword" shortcut="TestGit\Controllers\UserSettings:chpasswd">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">UserSettings</param>
+                <param name="username">:username</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">user_settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="Create" shortcut="TestGit\Controllers\Repository:create">
+            <acl type="allow" role="repo_create" />
+            <result name="success" type="redirect">
+                <param name="actionName">RepositoryNEW</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">create.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="ForkNEW" shortcut="TestGit\Controllers\Repository:fork">
+            <acl type="allow" role="repo_create" />
+            <result name="success" type="redirect">
+                <param name="actionName">RepositoryNEW</param>
+                <param name="name">:name</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">repository/fork.php</param>
+            </result>
+            <result name="empty_repo" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">You can't fork an empty repository.</param>
+                <param name="entity">:entity</param>
+                <param name="emptyRepo">:emptyRepo</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
+        <action name="DeleteNEW" shortcut="TestGit\Controllers\Repository:delete">
+            <acl type="allow" role="repo_create" />
+            <result name="success" type="redirect">
+                <param name="actionName">Repositories</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">repository/delete.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
+        <action name="SettingsNEW" shortcut="TestGit\Controllers\Settings:show">
+            <acl type="allow" role="user" />
+            <result name="success" type="redirect">
+                <param name="actionName">SettingsNEW</param>
+                <param name="name">:name</param>
+                <param name="updated">1</param>
+            </result>
+            <result name="form" type="php">
+                <param name="file">repository/settings.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
+        <action name="Activity" shortcut="TestGit\Controllers\Activity:show">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">activity.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
+        <action name="ActivityNEW" shortcut="TestGit\Controllers\Repository:activity">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/activity.php</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
+
+        <action name="CommentsThread" shortcut="Nitronet\Fwk\Comments\Controllers\Thread:show">
+            <acl type="allow" role="" />
+            <result name="error" type="php">
+                <param name="file">comments/thread_error.php</param>
+            </result>
+            <result name="success" type="php">
+                <param name="file">comments/thread.php</param>
+            </result>
+        </action>
+
+        <action name="CommentsCount" shortcut="Nitronet\Fwk\Comments\Controllers\Thread:countComments">
+            <acl type="allow" role="" />
+        </action>
+
+        <action name="CommentPost" shortcut="Nitronet\Fwk\Comments\Controllers\Comment:post">
+            <acl type="allow" role="" />
+            <result name="form" type="php">
+                <param name="file">comments/post.php</param>
+            </result>
+            <result name="form_error" type="redirect">
+                <param name="uri">:back</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="uri">:back</param>
+            </result>
+        </action>
+
+        <action name="DevTools" shortcut="Nitronet\DevTools\Controllers\Home:show">
+            <acl type="allow" role="" />
+            <result name="success" type="dt.twig">
+                <param name="file">home.twig</param>
+            </result>
+        </action>
+        <action name="DTPlugin" shortcut="Nitronet\DevTools\Controllers\Plugin:show">
+            <acl type="allow" role="" />
+            <result name="success" type="dt.twig">
+                <param name="file">plugin.twig</param>
+            </result>
+        </action>
+    </actions>
+    
+    <url-rewrite>
+        <url route="/" action="Home" />
+        <url route="/repositories" action="Repositories" />
+        <url route="/users" action="Users" />
+        <url route="/login" action="Login" />
+        <url route="/logout" action="Logout" />
+        <url route="/create" action="Create" />
+        <url route="/notifications" action="Notifications" />
+        <url route="/notifications/read/:channel" action="NotificationsReadAll">
+            <param name="channel" required="true" regex=".*" />
+        </url>
+        <url route="/notifications/delete/:channel" action="NotificationsDeleteAll">
+            <param name="channel" required="true" regex=".*" />
+        </url>
+        <url route="/notifications/:nId/read" action="NotificationRead">
+            <param name="nId" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/notifications/:nId/delete" action="NotificationDelete">
+            <param name="nId" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/notifications/:channel" action="Notifications">
+            <param name="channel" required="true" regex=".*" />
+        </url>
+        <url route="/users/add$" action="AddUser" />
+        <url route="/search$" action="Search" />
+        <url route="/search/repositories$" action="SearchRepositories" />
+        <url route="/search/users$" action="SearchUsers" />
+        <url route="/search/commits$" action="SearchCommits" />
+        <url route="/:username$" action="Profile">
+            <param name="username" required="true" regex=".[^/]+" />
+        </url>
+        <url route="/:username/t/:target/:right$" action="ToggleUserRight">
+            <param name="username" required="true" regex=".[^/]+" />
+            <param name="target" required="true" regex="[0-9]+" />
+            <param name="right" required="true" regex="[a-z]+" />
+        </url>
+
+        <url route="/:username/activity$" action="UserActivity">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/members" action="OrgMembers">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/settings$" action="UserSettings">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/settings/edit$" action="EditUserInfos">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/settings/add-ssh-key$" action="AddSshKey">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:username/settings/revoke-ssh-key/:id$" action="RevokeSshKey">
+            <param name="username" required="true" />
+            <param name="id" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/:username/settings/chpasswd$" action="ChangePassword">
+            <param name="username" required="true" />
+        </url>
+        <url route="/:name$" action="RepositoryNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+        </url>
+        <url route="/:name/tree/:branch$" action="RepositoryNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="true" />
+        </url>
+        <url route="/:name/tree/:branch/:path$" action="RepositoryNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="true" />
+            <param name="path" required="true" regex=".*" />
+        </url>
+        <url route="/:name/blob/:branch/:path$" action="BlobNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="true" />
+            <param name="path" required="true" regex=".*" />
+        </url>
+        <url route="/:name/raw/:branch/:path$" action="BlobRaw">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="true" />
+            <param name="path" required="true" regex=".*" />
+        </url>
+        <url route="/:name/branches/:branch$" action="BranchesNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="false" />
+        </url>
+        <url route="/:name/log$" action="ActivityNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+        </url>
+        <url route="/:name/accesses$" action="AccessesNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+        </url>
+        <url route="/:name/commits/:branch" action="CommitsNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="false" />
+        </url>
+        <url route="/:name/commits/:branch/:year/:month" action="CommitsNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="true" />
+            <param name="year" required="true" regex="[0-9]{4}" />
+            <param name="month" required="true" regex="[0-9]{2}" />
+        </url>
+        <url route="/:name/commit/:hash$" action="CommitNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="hash" required="true" regex=".*" />
+        </url>
+        <url route="/:name/compare/:compare" action="CompareNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="compare" required="false" regex=".*" />
+        </url>
+        <url route="/:name/merge/:compare" action="Merge">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="compare" required="false" regex=".*" />
+        </url>
+        <url route="/:name/accesses/remove/:userId$" action="RemoveAccess">
+            <param name="name" required="true" regex=".+" />
+            <param name="userId" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/:name/accesses/add$" action="AddAccess">
+            <param name="name" required="true" regex=".+" />
+            <param name="userId" required="true" regex="[0-9]+" />
+        </url>
+        <url route="/:name/settings$" action="SettingsNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+        </url>
+        <url route="/:name/fork$" action="ForkNEW">
+            <param name="name" required="true" regex=".+" />
+        </url>
+        <url route="/:name/delete$" action="DeleteNEW">
+            <param name="name" required="true" regex=".+" />
+        </url>
+
+        <url route="/comment/post/:thread" action="CommentPost">
+            <param name="thread" required="true" regex=".+" />
+        </url>
+    </url-rewrite>
+</fwk>
