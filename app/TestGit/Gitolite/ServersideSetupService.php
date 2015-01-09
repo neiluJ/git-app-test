@@ -97,7 +97,7 @@ class ServersideSetupService extends ClassicSetupService
             $tr->start();
         } catch(TransactionException $exp) {
             $tr->rollback();
-            throw new \RuntimeException('transaction failed');
+            throw $exp;
         }
     }
 
@@ -143,27 +143,125 @@ class ServersideSetupService extends ClassicSetupService
             $tr->start();
         } catch(TransactionException $exp) {
             $tr->rollback();
-            throw new \RuntimeException('transaction failed');
+            throw $exp;
         }
     }
 
     public function onRepositoryEdit(RepositoryEditEvent $event)
     {
+        $logger     = $event->getServices()->get('logger');
+        $repo       = $event->getRepository();
+        $gitDao     = $event->getServices()->get('gitDao');
+        $committer  = $event->getCommitter();
 
+        $logger->addInfo(sprintf('[onRepositoryEdit:%s] Repository edited by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $committer->getFullname()));
+
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
+
+        $file       = rtrim($this->gitolitePath, DIRECTORY_SEPARATOR)  .
+            DIRECTORY_SEPARATOR . ClassicSetupService::GITOLITE_CONFIG_FILE;
+
+        if (!is_file($file)) {
+            $logger->addCritical(sprintf('[onRepositoryEdit:%s] "%s" not found in gitolite path "%s" (?)', $repo->getFullname(), ClassicSetupService::GITOLITE_CONFIG_FILE, $this->gitolitePath));
+            throw new \RuntimeException('config file not found in gitolite');
+        } elseif (is_file($file) && !is_writable($file)) {
+            $logger->addCritical(sprintf('[onRepositoryEdit:%s] "%s" is not writable', $repo->getFullname(), $file));
+            throw new \RuntimeException('config file not writable');
+        }
+
+        $backup = file_get_contents($file);
+
+        $tr = new Transaction($logger);
+        $tr->add(function() use ($file, $logger, $gitoliteConfig, $repo) {
+            file_put_contents($file, $gitoliteConfig, LOCK_EX);
+            if (!is_file($file) || file_get_contents($file) !== $gitoliteConfig) {
+                $logger->addCritical(sprintf('[onRepositoryEdit:%s] Unable to write config to "%s" (write failed)', $repo->getFullname(), $file));
+                throw new \RuntimeException('config file not written (write failed)');
+            }
+        }, function() use ($file, $backup, $logger) {
+            file_put_contents($file, $backup, LOCK_EX);
+        }, 'write-config', 'Writing gitolite.conf');
+
+        $tr->add(function() use ($logger) {
+            $this->runGitolite(sprintf("compile; %s trigger POST_COMPILE", $this->gitoliteBin), $logger);
+        }, null, 'gitolite-trigger', 'Refreshing gitolite');
+
+        try {
+            $tr->start();
+        } catch(TransactionException $exp) {
+            $tr->rollback();
+            throw $exp;
+        }
     }
 
     public function onRepositoryCreate(RepositoryCreateEvent $event)
     {
-        //
+        $logger     = $event->getServices()->get('logger');
+        $repo       = $event->getRepository();
+        $gitDao     = $event->getServices()->get('gitDao');
+        $owner      = $event->getServices()->get('usersDao')->findOne($repo->getOwner_id(), UsersDao::FIND_ID);
+        $git        = $event->getServices()->get('git');
+
+        $logger->addInfo(sprintf('[onRepositoryCreate:%s] Repository created by "%s". Generating new gitolite.conf ...', $repo->getFullname(), $owner->getFullname()));
+
+        $gitoliteConfig = $this->getGitoliteConfigAsString($gitDao, $event->getServices()->getProperty('forgery.user.name'));
+
+        $file       = rtrim($this->gitolitePath, DIRECTORY_SEPARATOR)  .
+            DIRECTORY_SEPARATOR . ClassicSetupService::GITOLITE_CONFIG_FILE;
+
+        if (!is_file($file)) {
+            $logger->addCritical(sprintf('[RepositoryCreateEvent:%s] "%s" not found in gitolite path "%s" (?)', $repo->getFullname(), ClassicSetupService::GITOLITE_CONFIG_FILE, $this->gitolitePath));
+            throw new \RuntimeException('config file not found in gitolite');
+        } elseif (is_file($file) && !is_writable($file)) {
+            $logger->addCritical(sprintf('[RepositoryCreateEvent:%s] "%s" is not writable', $repo->getFullname(), $file));
+            throw new \RuntimeException('config file not writable');
+        }
+
+        $backup = file_get_contents($file);
+
+        $tr = new Transaction($logger);
+        $tr->add(function() use ($file, $logger, $gitoliteConfig, $repo) {
+            file_put_contents($file, $gitoliteConfig, LOCK_EX);
+            if (!is_file($file) || file_get_contents($file) !== $gitoliteConfig) {
+                $logger->addCritical(sprintf('[RepositoryCreateEvent:%s] Unable to write config to "%s" (write failed)', $repo->getFullname(), $file));
+                throw new \RuntimeException('config file not written (write failed)');
+            }
+        }, function() use ($file, $backup, $logger) {
+            file_put_contents($file, $backup, LOCK_EX);
+        }, 'write-config', 'Writing gitolite.conf');
+
+        $tr->add(function() use ($logger) {
+            $this->runGitolite(sprintf("compile; %s trigger POST_COMPILE", $this->gitoliteBin), $logger);
+        }, null, 'gitolite-trigger', 'Refreshing gitolite');
+
+        $tr->add(function() use ($repo, $git) {
+            $git->createWorkdir($repo);
+        }, function() use ($repo, $git) {
+            if (is_dir($git->getWorkDirPath($repo))) {
+                rmdir($git->getWorkDirPath($repo));
+            }
+        }, 'create-workdir', 'Creating work directory');
+
+        $tr->add(function() use ($repo, $git, $event) {
+            $git->installPostReceiveHook($repo, $event->getServices()->getProperty('php.executable'));
+        }, null, 'install-hooks', 'Installing post-receive hooks');
+
+        try {
+            $tr->start();
+        } catch(TransactionException $exp) {
+            $tr->rollback();
+            throw $exp;
+        }
     }
 
     public function onRepositoryFork(RepositoryForkEvent $event)
     {
-
+        //
     }
 
     public function onRepositoryDelete(RepositoryDeleteEvent $event)
     {
+        //
     }
 
     protected function runGitolite($command = "", LoggerInterface $logger)
