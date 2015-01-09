@@ -81,8 +81,12 @@
         <argument>:apache.htpasswd.bin</argument>
     </class-definition>
     
-    <class-definition name="gitolite" class="TestGit\Gitolite\ClassicSetupService" shared="true" />
-    
+    <!-- <class-definition name="gitolite" class="TestGit\Gitolite\ClassicSetupService" shared="true" /> -->
+    <class-definition name="gitolite" class="TestGit\Gitolite\ServersideSetupService" shared="true">
+            <argument>:gitolite.path</argument>
+            <argument>:gitolite.executable</argument>
+    </class-definition>
+
     <!--
         DATABASE & DAOs
     -->

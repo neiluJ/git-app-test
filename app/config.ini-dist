@@ -92,9 +92,17 @@ forgery.user.fullname = Forgery
 ;
 ; - php.executable  : /path/to/php on the system
 ; - git.executable  : /path/to/git on the system
+;
+; For server-side setup:
+; - gitolite.executable : gitolite (should be in $PATH)
+; - gitolite.path   : /path/to/.gitolite (often /home/git/.gitolite)
+; - git.home        : home of the git user (/home/git)
 ; -------------------------
 php.executable = /usr/bin/php
 git.executable = /usr/bin/git
+gitolite.executable = /home/git/bin/gitolite
+gitolite.path = /home/git/.gitolite
+git.home = /home/git
 
 ; -----------------------------
 ; Apache Htpasswd Configuration
