@@ -120,7 +120,7 @@ class Commits extends Repository
         $this->jsonCurrentCommit = $this->jsonCommits[$commit->getHash()];
         
         $diff = $this->diff = $commit->getDiff();
-        $this->repoAction = 'Commit';
+        $this->repoAction = 'CommitsNEW';
         
         return Result::SUCCESS;
     }
