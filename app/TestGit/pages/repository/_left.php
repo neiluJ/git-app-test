@@ -35,13 +35,16 @@
         <a href="<?php echo $this->_helper->url('CompareNEW', array('name' => $this->entity->getFullname(), 'compare' => $this->entity->getDefault_branch() .'..'. $this->branch)); ?>" class="btn btn-success"><b class="octicon octicon-git-compare"></b></a>
         <ul class="dropdown-menu" role="menu" style="text-align: left;">
             <li role="presentation" class="dropdown-header" style="border-bottom: solid 1px #eee;"><u class="octicon octicon-git-branch pull-right"></u> Branches</li>
-            <?php foreach ($this->entity->getReferences() as $ref): if (!$ref->isBranch()) continue; ?>
+
+            <?php $tags = 0; foreach ($this->entity->getReferences() as $ref): if (!$ref->isBranch()) { $tags++; continue; } ?>
             <li><a href="<?php echo $this->_helper->url($this->repoAction, array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php if($ref->getName() == $this->branch): ?><u class="octicon octicon-check"></u> <?php endif; ?><?php echo $this->_helper->escape($ref->getName()); ?></a></li>
             <?php endforeach; ?>
+            <?php if($tags > 0): ?>
             <li role="presentation" class="dropdown-header" style="border-bottom: solid 1px #eee;"><u class="octicon octicon-tag pull-right"></u> Tags</li>
             <?php foreach ($this->entity->getReferences() as $ref): if ($ref->isBranch()) continue; ?>
                 <li><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php echo $this->_helper->escape($ref->getName()); ?></a></li>
             <?php endforeach; ?>
+            <?php endif; ?>
             <li class="divider"></li>
             <li><a href="#"><u class="octicon octicon-git-branch-create"></u> Create Branch</a></li>
             <li><a href="#"><u class="octicon octicon-tag-add"></u> Create Tag</a></li>
