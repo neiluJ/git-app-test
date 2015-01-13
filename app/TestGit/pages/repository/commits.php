@@ -27,7 +27,9 @@
                     <strong><?php echo date('F Y', strtotime($this->year ."-". $this->month ."-01")); ?></strong>.</p>
 
                 <?php if (count($this->commits)): ?>
-                    <div class="tab-pane" id="commits">
+                    <div id="commits">
+                        <canvas id="commitsContrib" height="100"></canvas>
+
                         <?php
                         $finalCommits = array();
                         foreach ($this->commits as $commit) {
@@ -138,4 +140,67 @@
             </div>
         </div>
 </div>
+
+<script src="<?php echo str_replace('/index.php', '/', $vh->url()); ?>js/chartjs/Chart.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var ctx = document.getElementById("commitsContrib").getContext("2d");
+        var myLineChart = new Chart(ctx).Bar({
+                labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+                datasets: [
+                    {
+                        label: "My First dataset",
+                        fillColor: "rgba(220,220,220,0.5)",
+                        strokeColor: "rgba(220,220,220,0.5)",
+                        highlightFill: "rgba(220,220,220,0.75)",
+                        highlightStroke: "rgba(220,220,220,1)",
+                        data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+                    }
+                ]
+        },{
+                //Boolean - Whether the scale should start at zero, or an order of magnitude down from the lowest value
+                scaleBeginAtZero : true,
+
+                //Boolean - Whether grid lines are shown across the chart
+                scaleShowGridLines : false,
+
+                //String - Colour of the grid lines
+                scaleGridLineColor : "rgba(0,0,0,.05)",
+
+                //Number - Width of the grid lines
+                scaleGridLineWidth : 1,
+
+                //Boolean - Whether to show horizontal lines (except X axis)
+                scaleShowHorizontalLines: true,
+
+                //Boolean - Whether to show vertical lines (except Y axis)
+                scaleShowVerticalLines: false,
+
+                //Boolean - If there is a stroke on each bar
+                barShowStroke : false,
+
+                //Number - Pixel width of the bar stroke
+                barStrokeWidth : 0,
+
+                //Number - Spacing between each of the X value sets
+                barValueSpacing : 0,
+
+                //Number - Spacing between data sets within X values
+                barDatasetSpacing : 0,
+
+                //String - A legend template
+                legendTemplate : "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<datasets.length; i++){%><li><span style=\"background-color:<%=datasets[i].lineColor%>\"></span><%if(datasets[i].label){%><%=datasets[i].label%><%}%></li><%}%></ul>"
+
+            }
+        );
+    });
+
+    function resizeCanvas() {
+        var px = $('.col-md-7').width(), canvas = document.getElementById('commitsContrib');
+        canvas.width = px;
+    };
+
+    resizeCanvas();
+
+</script>
 <?php include __DIR__ . '/../_footer.php'; ?>
