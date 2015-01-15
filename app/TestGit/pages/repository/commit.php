@@ -29,7 +29,7 @@
                     <?php elseif (count($parents) == 1): ?>
                         <strong>parent</strong> <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->name, 'hash' => $parents[0]->getHash()), true); ?>"><?php echo $parents[0]->getHash(); ?></a>
                     <?php else: ?>
-                        <strong>parents</strong> <?php foreach($parents as $parent): ?><a href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $parent->getHash()), true); ?>"><?php echo substr($parent->getHash(), 0, 6); ?></a>, <?php endforeach; ?>
+                        <strong>parents</strong> <?php foreach($parents as $parent): ?><a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->name, 'hash' => $parent->getHash()), true); ?>"><?php echo substr($parent->getHash(), 0, 6); ?></a>, <?php endforeach; ?>
                     <?php endif; ?>
                 </p>
                 <p class="author"><i class="glyphicon glyphicon-user"></i> <span><?php echo $this->_helper->escape($this->currentCommit->getCommitterName()); ?></span> authored on <span class="date"> <?php echo $this->_helper->escape($this->currentCommit->getCommitterDate()->format('l F d Y H:i:s')); ?></span></p>

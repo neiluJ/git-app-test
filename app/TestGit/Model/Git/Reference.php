@@ -7,6 +7,9 @@ use TestGit\Model\Tables;
 
 class Reference
 {
+    const TYPE_BRANCH = 'branch';
+    const TYPE_TAG  = 'tag';
+
     protected $id;
     protected $name;
     protected $fullname;
@@ -18,7 +21,7 @@ class Reference
     
     protected $repository;
     protected $commit;
-    
+
     public function __construct()
     {
         $this->repository = new One2One(

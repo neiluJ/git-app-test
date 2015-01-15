@@ -240,10 +240,10 @@ table.difftable tr.infos td.ln {
     background-color: #ececec;
 }
 table.difftable tr.addition {
-    background-color: #D2FFAA;
+    background-color: #E4FFCC;
 }
 table.difftable tr.deletion {
-    background-color: #FCA9A9;
+    background-color: #F9D1D1;
 }
 table.difftable tr:hover {
     background-color: #fdf6e3 !important;

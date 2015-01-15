@@ -144,6 +144,12 @@
             <result name="success" type="php">
                 <param name="file">error.php</param>
             </result>
+            <result name="embed:success" type="php">
+                <param name="file">embed_error.php</param>
+            </result>
+            <result name="ajax:success" type="php">
+                <param name="file">embed_error.php</param>
+            </result>
         </action>
         <action name="RepoError" shortcut="TestGit\Controllers\Home:error">
             <acl type="allow" role="" />
@@ -312,6 +318,30 @@
                 <param name="actionName">RepoError</param>
                 <param name="errorMsg">:errorMsg</param>
                 <param name="entity">:entity</param>
+            </result>
+        </action>
+        <action name="AddBranch" shortcut="TestGit\Controllers\Branches:create">
+            <acl type="allow" role="user" />
+            <result name="form" type="php">
+                <param name="file">repository/branches/addbranch.php</param>
+            </result>
+            <result name="ajax:form" type="php">
+                <param name="file">repository/branches/addbranch_embed.php</param>
+            </result>
+            <result name="ajax:success" type="php">
+                <param name="file">repository/branches/addbranch_success.php</param>
+            </result>
+            <result name="embed:form" type="php">
+                <param name="file">repository/branches/addbranch_embed.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">RepositoryNEW</param>
+                <param name="name">:name</param>
+                <param name="branch">:createdBranch</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
         <action name="Users" shortcut="TestGit\Controllers\Users:show">
@@ -754,6 +784,9 @@
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" required="true" />
             <param name="path" required="true" regex=".*" />
+        </url>
+        <url route="/:name/newbranch$" action="AddBranch">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
         </url>
         <url route="/:name/branches/:branch$" action="BranchesNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />

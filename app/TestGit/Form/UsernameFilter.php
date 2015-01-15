@@ -14,7 +14,7 @@ use Fwk\Form\Filter;
  */
 class UsernameFilter implements Filter
 {
-    const USER_REGEX = '/^[^0-9|\-][a-z0-9\\\-\_\^\`\[\]\{\}\|][^\s]+$/i';
+    const USER_REGEX = '#^([^0-9|\-][a-z0-9\-\_\^\`\[\]\{\}\|][^\s/])+#i'; // possibly buggy...
     
     /**
      * Performe la validation

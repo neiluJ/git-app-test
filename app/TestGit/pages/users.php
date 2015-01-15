@@ -73,8 +73,8 @@
         <button type="submit" class="btn btn-primary">Add User</button>
       </div>
     </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
   </form>
+  </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 <script type="text/javascript">
     $(function() {

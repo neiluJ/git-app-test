@@ -633,4 +633,35 @@ EOF;
 
         return $res;
     }
+
+    public function createBranch(RepositoryEntity $repository, $branchName)
+    {
+        $repoPath = $this->getWorkDirPath($repository);
+
+        $this->logger->addDebug('[create-branch:'. $repository->getFullname() .'] creating branch '. $branchName);
+
+        // first, checkout the base
+        $proc = new Process(sprintf('%s branch %s', $this->gitExecutable, $branchName), $repoPath);
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[create-branch:'. $repository->getFullname() .'] branch: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[create-branch:'. $repository->getFullname() .'] branch: '. $line);
+                });
+            }
+        });
+
+
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[create-branch:'. $repository->getFullname() .'] branch FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+
+        $this->push($repository, 'origin', $branchName);
+    }
 }

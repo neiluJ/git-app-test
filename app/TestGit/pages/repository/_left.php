@@ -45,9 +45,11 @@
                 <li><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php echo $this->_helper->escape($ref->getName()); ?></a></li>
             <?php endforeach; ?>
             <?php endif; ?>
+            <?php if ($this->_helper->isAllowed($this->entity, 'special')): ?>
             <li class="divider"></li>
-            <li><a href="#"><u class="octicon octicon-git-branch-create"></u> Create Branch</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#addBranchModal"><u class="octicon octicon-git-branch-create"></u> Create Branch</a></li>
             <li><a href="#"><u class="octicon octicon-tag-add"></u> Create Tag</a></li>
+            <?php endif; ?>
         </ul>
     </div>
 
@@ -69,4 +71,43 @@
         <?php endif; ?>
     </ul>
     <?php endif; ?>
+
+    <?php if ($this->_helper->isAllowed($this->entity, 'special')): ?>
+        <div class="modal fade" id="addBranchModal" style="text-align: left">
+            <div class="modal-dialog">
+                <form role="form" id="addBranch" method="post" action="<?php echo $this->_helper->url('AddBranch', array('name' => $this->entity->getFullname())); ?>">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Create Branch</h4>
+                        </div>
+                        <div class="modal-body" id="addBranchContents">
+                            <?php echo $this->_helper->embed('AddBranch', array('name' => $this->entity->getFullname())); ?>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Create Branch</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </form>
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <script type="text/javascript">
+            $(function() {
+                $('#addBranch').on('submit', function(e) {
+                    e.preventDefault();
+                    var data = $(this).serializeArray(), url = $(this).attr('action');
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        success: function(data) {
+                            $('#addBranchContents').html(data);
+                        }
+                    });
+                });
+            });
+        </script>
+    <?php endif; ?>
 </div>
+
