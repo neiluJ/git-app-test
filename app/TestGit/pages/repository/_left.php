@@ -75,14 +75,14 @@
     <?php if ($this->_helper->isAllowed($this->entity, 'special')): ?>
         <div class="modal fade" id="addBranchModal" style="text-align: left">
             <div class="modal-dialog">
-                <form role="form" id="addBranch" method="post" action="<?php echo $this->_helper->url('AddBranch', array('name' => $this->entity->getFullname())); ?>">
+                <form role="form" id="addBranch" method="post" action="<?php echo $this->_helper->url('AddBranch', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>">
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                             <h4 class="modal-title">Create Branch</h4>
                         </div>
                         <div class="modal-body" id="addBranchContents">
-                            <?php echo $this->_helper->embed('AddBranch', array('name' => $this->entity->getFullname())); ?>
+                            <?php echo $this->_helper->embed('AddBranch', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>

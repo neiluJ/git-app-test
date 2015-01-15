@@ -785,8 +785,9 @@
             <param name="branch" required="true" />
             <param name="path" required="true" regex=".*" />
         </url>
-        <url route="/:name/newbranch$" action="AddBranch">
+        <url route="/:name/newbranch/:branch$" action="AddBranch">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="false" />
         </url>
         <url route="/:name/branches/:branch$" action="BranchesNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />

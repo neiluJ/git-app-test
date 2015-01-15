@@ -94,7 +94,7 @@ class Branches extends Repository
 
                 $this->getGitDao()->savePush($push);
 
-                $this->getGitService()->createBranch($this->entity, $form->branchname);
+                $this->getGitService()->createBranch($this->entity, $form->branchname, $this->branch);
 
                 $this->getGitDao()->getDb()->commit();
             } catch(\Exception $exp) {
@@ -113,7 +113,7 @@ class Branches extends Repository
     {
         if (!isset($this->addBranchForm)) {
             $this->addBranchForm = new AddBranchForm();
-            $this->addBranchForm->setAction($this->getServices()->get('viewHelper')->url('AddBranch', array('name' => $this->name)));
+            $this->addBranchForm->setAction($this->getServices()->get('viewHelper')->url('AddBranch', array('name' => $this->name, 'branch' => $this->branch)));
         }
         return $this->addBranchForm;
     }

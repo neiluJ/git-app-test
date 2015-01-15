@@ -6,7 +6,7 @@
     <div class="container">
         <div class="row" style="margin-top:40px;">
             <?php $repoMenuActive = "branches"; include __DIR__ . '/_left.php'; ?>
-            <div class="col-md-5">
+            <div class="col-md-7">
                 <h3 style="margin-top:0;">Branches <i class="mega-octicon octicon-git-branch"></i></h3>
                 <?php if (count($this->branches)): ?>
                 <ul class="tags-list">
@@ -26,7 +26,7 @@
             <?php endif; ?>
         </div>
          
-        <div class="col-md-5">
+        <div class="col-md-3">
             <h3 style="margin-top:0">Tags <i class="mega-octicon octicon-tag"></i></h3>
             <?php if (count($this->tags)): ?>
             <ul class="tags-list">

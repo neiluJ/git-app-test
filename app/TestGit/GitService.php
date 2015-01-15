@@ -634,14 +634,14 @@ EOF;
         return $res;
     }
 
-    public function createBranch(RepositoryEntity $repository, $branchName)
+    public function createBranch(RepositoryEntity $repository, $branchName, $ref = null)
     {
         $repoPath = $this->getWorkDirPath($repository);
 
         $this->logger->addDebug('[create-branch:'. $repository->getFullname() .'] creating branch '. $branchName);
 
         // first, checkout the base
-        $proc = new Process(sprintf('%s branch %s', $this->gitExecutable, $branchName), $repoPath);
+        $proc = new Process(sprintf('%s branch %s %s', $this->gitExecutable, $branchName, $ref), $repoPath);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
