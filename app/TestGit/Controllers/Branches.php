@@ -37,6 +37,7 @@ class Branches extends Repository
         
         $this->branches = $branches;
         $this->tags     = $tags;
+        $this->repoAction = "BranchesNEW";
         
         // var_dump($this->branches);
         return Result::SUCCESS;
