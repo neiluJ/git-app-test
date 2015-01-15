@@ -15,7 +15,7 @@
 
 <div class="container">
     <div class="row" style="margin-top:40px;">
-        <?php $repoMenuActive = "commits"; include __DIR__ . '/_left.php'; ?>
+        <?php $repoMenuActive = "commits"; $stats = array(); include __DIR__ . '/_left.php'; ?>
         <div class="col-md-7">
             <div id="main">
                <h3 style="margin-top:0"><span class="mega-octicon octicon-git-commit"></span> Commits History
@@ -46,7 +46,6 @@
                         <ul class="commits-history">
                             <?php
                                 $lastDayInMonth = cal_days_in_month(CAL_GREGORIAN, $this->month, $this->year);
-                                $stats = array();
                                 for ($x = 1; $x <= $lastDayInMonth; $x++) {
                                     $key = $this->year . str_pad($this->month, 2, "0", STR_PAD_LEFT) . str_pad($x, 2, "0", STR_PAD_LEFT);
                                     if (isset($finalCommits[$key])) {

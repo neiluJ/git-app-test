@@ -132,8 +132,8 @@ comments.service = comments
 comments.thread.auto = true
 comments.form.default = TestGit\Form\CommentForm
 comments.session.service = session
-comments.entity.thread = Nitronet\Comments\Model\Thread
-comments.entity.comment = TestGit\Model\Comment\Comment
+comments.entities.thread = Nitronet\Fwk\Comments\Model\Thread
+comments.entities.comment = TestGit\Model\Comment\Comment
 comments.form.renderer.service = formRenderer
 
 ; --------------------

@@ -428,6 +428,10 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 if ((bool)$access->getReposWriteAccess()) {
                     $acl->allow($user, $this->entity, 'write');
                 }
+
+                if ((bool)$access->getReposAdminAccess()) {
+                    $acl->allow($user, $this->entity, 'special');
+                }
             }
         } else {
             $user = new \Zend\Permissions\Acl\Role\GenericRole('guest');
