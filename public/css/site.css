@@ -762,3 +762,7 @@ ol.notifs li span.date {
     font-size: 14px;
     color: #999;
 }
+
+#commitsContrib {
+    margin-top: 10px;
+}
