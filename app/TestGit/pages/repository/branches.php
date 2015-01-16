@@ -32,9 +32,13 @@
             <ul class="tags-list">
                 <?php foreach($this->tags as $tag): ?>
                 <li>
-                    <strong><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>"><?php echo $tag->getName(); ?></a></strong> <small>@ <a href="<?php echo $this->_helper->url('Commit', array('name' => $this->name, 'hash' => $tag->getCommit()->getHash()), true); ?>"><?php echo substr($tag->getCommit()->getHash(),0,6); ?></a></small>
-                    <p>Created by <?php echo $tag->getCommit()->getCommitterName(); ?> on <?php echo $tag->getCommit()->getCommitterDate()->format('d/m/Y H:i:s'); ?></p>
-                    <a href="#" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-download"></i> Download <strong>.zip</strong></a> <a href="#" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-download"></i> Download <strong>.tar.gz</strong></a>
+                    <strong><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>"><?php echo $tag->getName(); ?></a></strong> <small>@ <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->name, 'hash' => $tag->getCommit()->getHash()), true); ?>"><?php echo substr($tag->getCommit()->getHash(),0,6); ?></a></small>
+                    <p>Created by <?php echo $tag->getCommit()->getCommitterName(); ?> on <?php echo $tag->getCommit()->getAuthorDate()->format('d/m/Y H:i:s'); ?></p>
+
+                    <div class="btn-group btn-group-xs">
+                        <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-download"></i> Download <strong>.zip</strong></a>
+                        <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-download"></i> Download <strong>.tar.gz</strong></a>
+                    </div>
                 </li>
                 <?php endforeach; ?>
             </ul>

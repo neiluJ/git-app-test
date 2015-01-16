@@ -344,6 +344,30 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="AddTag" shortcut="TestGit\Controllers\Branches:createTag">
+            <acl type="allow" role="user" />
+            <result name="form" type="php">
+                <param name="file">repository/branches/addtag.php</param>
+            </result>
+            <result name="ajax:form" type="php">
+                <param name="file">repository/branches/addtag_embed.php</param>
+            </result>
+            <result name="ajax:success" type="php">
+                <param name="file">repository/branches/addtag_success.php</param>
+            </result>
+            <result name="embed:form" type="php">
+                <param name="file">repository/branches/addtag_embed.php</param>
+            </result>
+            <result name="success" type="redirect">
+                <param name="actionName">RepositoryNEW</param>
+                <param name="name">:name</param>
+                <param name="branch">:createdBranch</param>
+            </result>
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
         <action name="Users" shortcut="TestGit\Controllers\Users:show">
             <acl type="allow" role="" />
             <result name="success" type="php">
@@ -768,30 +792,34 @@
         </url>
         <url route="/:name/tree/:branch$" action="RepositoryNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
-            <param name="branch" required="true" />
+            <param name="branch" regex=".[^/]+" required="true" />
         </url>
         <url route="/:name/tree/:branch/:path$" action="RepositoryNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
-            <param name="branch" required="true" />
+            <param name="branch" required="true" regex=".[^/]+" />
             <param name="path" required="true" regex=".*" />
         </url>
         <url route="/:name/blob/:branch/:path$" action="BlobNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
-            <param name="branch" required="true" />
+            <param name="branch" required="true" regex=".[^/]+" />
             <param name="path" required="true" regex=".*" />
         </url>
         <url route="/:name/raw/:branch/:path$" action="BlobRaw">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
-            <param name="branch" required="true" />
+            <param name="branch" required="true" regex=".[^/]+" />
             <param name="path" required="true" regex=".*" />
         </url>
         <url route="/:name/newbranch/:branch$" action="AddBranch">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
-            <param name="branch" required="false" />
+            <param name="branch" regex=".[^/]+" required="false" />
+        </url>
+        <url route="/:name/newtag/:branch$" action="AddTag">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" regex=".[^/]+" required="false" />
         </url>
         <url route="/:name/branches/:branch$" action="BranchesNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
-            <param name="branch" required="false" />
+            <param name="branch" regex=".[^/]+" required="false" />
         </url>
         <url route="/:name/log$" action="ActivityNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
@@ -801,11 +829,11 @@
         </url>
         <url route="/:name/commits/:branch" action="CommitsNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
-            <param name="branch" required="false" />
+            <param name="branch"  regex=".[^/]+" required="false" />
         </url>
         <url route="/:name/commits/:branch/:year/:month" action="CommitsNEW">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
-            <param name="branch" required="true" />
+            <param name="branch"  regex=".[^/]+" required="true" />
             <param name="year" required="true" regex="[0-9]{4}" />
             <param name="month" required="true" regex="[0-9]{2}" />
         </url>

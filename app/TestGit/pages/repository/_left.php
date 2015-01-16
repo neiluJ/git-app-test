@@ -42,13 +42,13 @@
             <?php if($tags > 0): ?>
             <li role="presentation" class="dropdown-header" style="border-bottom: solid 1px #eee;"><u class="octicon octicon-tag pull-right"></u> Tags</li>
             <?php foreach ($this->entity->getReferences() as $ref): if ($ref->isBranch()) continue; ?>
-                <li><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php echo $this->_helper->escape($ref->getName()); ?></a></li>
+                <li><a href="<?php echo $this->_helper->url($this->repoAction, array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php echo $this->_helper->escape($ref->getName()); ?></a></li>
             <?php endforeach; ?>
             <?php endif; ?>
             <?php if ($this->_helper->isAllowed($this->entity, 'special')): ?>
             <li class="divider"></li>
             <li><a href="#" data-toggle="modal" data-target="#addBranchModal"><u class="octicon octicon-git-branch-create"></u> Create Branch</a></li>
-            <li><a href="#"><u class="octicon octicon-tag-add"></u> Create Tag</a></li>
+            <li><a href="#" data-toggle="modal" data-target="#addTagModal"><u class="octicon octicon-tag-add"></u> Create Tag</a></li>
             <?php endif; ?>
         </ul>
     </div>
@@ -92,6 +92,25 @@
                 </form>
             </div><!-- /.modal-dialog -->
         </div><!-- /.modal -->
+        <div class="modal fade" id="addTagModal" style="text-align: left">
+            <div class="modal-dialog">
+                <form role="form" id="addTag" method="post" action="<?php echo $this->_helper->url('AddTag', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title">Create Tag</h4>
+                        </div>
+                        <div class="modal-body" id="addTagContents">
+                            <?php echo $this->_helper->embed('AddTag', array('name' => $this->entity->getFullname(), 'branch' => $this->branch)); ?>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Create Tag</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </form>
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
         <script type="text/javascript">
             $(function() {
                 $('#addBranch').on('submit', function(e) {
@@ -103,6 +122,18 @@
                         data: data,
                         success: function(data) {
                             $('#addBranchContents').html(data);
+                        }
+                    });
+                });
+                $('#addTag').on('submit', function(e) {
+                    e.preventDefault();
+                    var data = $(this).serializeArray(), url = $(this).attr('action');
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data: data,
+                        success: function(data) {
+                            $('#addTagContents').html(data);
                         }
                     });
                 });

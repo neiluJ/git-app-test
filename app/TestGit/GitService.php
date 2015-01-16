@@ -634,14 +634,14 @@ EOF;
         return $res;
     }
 
-    public function createBranch(RepositoryEntity $repository, $branchName, $ref = null)
+    public function createBranch(RepositoryEntity $repository, User $user, $branchName, $ref = null)
     {
         $repoPath = $this->getWorkDirPath($repository);
 
         $this->logger->addDebug('[create-branch:'. $repository->getFullname() .'] creating branch '. $branchName);
 
         // first, checkout the base
-        $proc = new Process(sprintf('%s branch %s %s', $this->gitExecutable, $branchName, $ref), $repoPath);
+        $proc = new Process(sprintf('%s && %s branch %s %s && %s', $this->impersonateString($user), $this->gitExecutable, escapeshellarg($branchName), escapeshellarg($ref), $this->impersonationRemove()), $repoPath);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
             $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
@@ -663,5 +663,42 @@ EOF;
         }
 
         $this->push($repository, 'origin', $branchName);
+    }
+
+    public function createTag(RepositoryEntity $repository, User $user, $tagName, $ref = null, $annotation = null)
+    {
+        $repoPath = $this->getWorkDirPath($repository);
+
+        $this->logger->addDebug('[create-tag:'. $repository->getFullname() .'] creating tag '. $tagName);
+
+        if (null === $annotation || empty($annotation)) {
+            $procStr = sprintf('%s && %s tag %s %s && %s', $this->impersonateString($user), $this->gitExecutable, escapeshellarg($tagName), escapeshellarg($ref), $this->impersonationRemove());
+        } else {
+            $procStr = sprintf('%s && %s tag -a %s -m \'%s\' %s && %s', $this->impersonateString($user), $this->gitExecutable, escapeshellarg($tagName), $annotation, escapeshellarg($ref), $this->impersonationRemove());
+        }
+
+        // first, checkout the base
+        $proc = new Process($procStr, $repoPath);
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[create-tag:'. $repository->getFullname() .'] tag: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[create-tag:'. $repository->getFullname() .'] tag: '. $line);
+                });
+            }
+        });
+
+
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[create-tag:'. $repository->getFullname() .'] tag FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+
+        $this->push($repository, 'origin', $tagName);
     }
 }
