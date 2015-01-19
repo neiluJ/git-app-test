@@ -228,6 +228,15 @@
                 <param name="entity">:entity</param>
             </result>
         </action>
+        <action name="Archive" shortcut="TestGit\Controllers\Archive:download">
+            <acl type="allow" role="" />
+
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
 
         <action name="BlobRaw" shortcut="TestGit\Controllers\Blob:raw">
             <acl type="allow" role="" />    
@@ -908,6 +917,12 @@
         </url>
         <url route="/:name/delete$" action="DeleteNEW">
             <param name="name" required="true" regex=".+" />
+        </url>
+
+        <url route="/:name/archive/:branch.:format$" action="Archive">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" regex=".[^/]+" required="false" />
+            <param name="format" required="true" regex="(zip|tar\.gz)" />
         </url>
 
         <url route="/comment/post/:thread" action="CommentPost">

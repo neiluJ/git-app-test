@@ -44,8 +44,8 @@
                     <p>Created by <?php echo $tag->getCommit()->getCommitterName(); ?> on <?php echo $tag->getCommit()->getAuthorDate()->format('d/m/Y H:i:s'); ?></p>
 
                     <div class="btn-group btn-group-xs">
-                        <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-download"></i> Download <strong>.zip</strong></a>
-                        <a href="#" class="btn btn-default"><i class="glyphicon glyphicon-download"></i> Download <strong>.tar.gz</strong></a>
+                        <a href="<?php echo $vh->url('Archive', array('name' => $this->entity->getFullname(), 'branch' => $this->branch, 'format' => 'zip'), true); ?>" class="btn btn-default"><i class="glyphicon glyphicon-download"></i> Download <strong>.zip</strong></a>
+                        <a href="<?php echo $vh->url('Archive', array('name' => $this->entity->getFullname(), 'branch' => $this->branch, 'format' => 'tar.gz'), true); ?>" class="btn btn-default"><i class="glyphicon glyphicon-download"></i> Download <strong>.tar.gz</strong></a>
                     </div>
                 </li>
                 <?php endforeach; ?>
