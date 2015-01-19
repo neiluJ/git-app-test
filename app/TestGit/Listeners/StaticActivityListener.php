@@ -1,9 +1,11 @@
 <?php
 namespace TestGit\Listeners;
 
+use TestGit\Events\RepositoryBranchDeleteEvent;
 use TestGit\Events\RepositoryCreateEvent;
 use TestGit\Events\RepositoryDeleteEvent;
 use TestGit\Events\RepositoryForkEvent;
+use TestGit\Events\RepositoryTagDeleteEvent;
 use TestGit\Model\User\Activity;
 
 class StaticActivityListener
@@ -54,6 +56,38 @@ class StaticActivityListener
         $activity->setCreatedOn(date('Y-m-d H:i:s'));
         $activity->setRepositoryId(null);
         $activity->setRepositoryName($repo->getFullname());
+
+        $usersDao->saveUserActivity($activity);
+    }
+
+    public function onRepositoryBranchDelete(RepositoryBranchDeleteEvent $event)
+    {
+        $usersDao   = $event->getServices()->get('usersDao');
+        $activity   = new Activity();
+        $repo       = $event->getRepository();
+
+        $activity->setType(Activity::REPO_BRANCH_DELETE);
+        $activity->setUserId($event->getSender()->getId());
+        $activity->setCreatedOn(date('Y-m-d H:i:s'));
+        $activity->setRepositoryId($repo->getId());
+        $activity->setRepositoryName($repo->getFullname());
+        $activity->setMessage($event->getReference()->getName());
+
+        $usersDao->saveUserActivity($activity);
+    }
+
+    public function onRepositoryTagDelete(RepositoryTagDeleteEvent $event)
+    {
+        $usersDao   = $event->getServices()->get('usersDao');
+        $activity   = new Activity();
+        $repo       = $event->getRepository();
+
+        $activity->setType(Activity::REPO_TAG_DELETE);
+        $activity->setUserId($event->getSender()->getId());
+        $activity->setCreatedOn(date('Y-m-d H:i:s'));
+        $activity->setRepositoryId($repo->getId());
+        $activity->setRepositoryName($repo->getFullname());
+        $activity->setMessage($event->getReference()->getName());
 
         $usersDao->saveUserActivity($activity);
     }

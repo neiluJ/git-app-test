@@ -37,12 +37,12 @@
             <li role="presentation" class="dropdown-header" style="border-bottom: solid 1px #eee;"><u class="octicon octicon-git-branch pull-right"></u> Branches</li>
 
             <?php $tags = 0; foreach ($this->entity->getReferences() as $ref): if (!$ref->isBranch()) { $tags++; continue; } ?>
-            <li><a href="<?php echo $this->_helper->url($this->repoAction, array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php if($ref->getName() == $this->branch): ?><u class="octicon octicon-check"></u> <?php endif; ?><?php echo $this->_helper->escape($ref->getName()); ?></a></li>
+            <li><a href="<?php echo $this->_helper->url($this->repoAction, array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php if($ref->getName() == $this->branch): ?><u class="octicon octicon-check"></u> <?php endif; ?> <?php echo $this->_helper->escape($ref->getName()); ?></a></li>
             <?php endforeach; ?>
             <?php if($tags > 0): ?>
             <li role="presentation" class="dropdown-header" style="border-bottom: solid 1px #eee;"><u class="octicon octicon-tag pull-right"></u> Tags</li>
             <?php foreach ($this->entity->getReferences() as $ref): if ($ref->isBranch()) continue; ?>
-                <li><a href="<?php echo $this->_helper->url($this->repoAction, array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php echo $this->_helper->escape($ref->getName()); ?></a></li>
+                <li><a href="<?php echo $this->_helper->url($this->repoAction, array('name' => $this->entity->getFullname(), 'branch' => $ref->getName())); ?>"><?php if($ref->getName() == $this->branch): ?><u class="octicon octicon-check"></u> <?php endif; ?> <?php echo $this->_helper->escape($ref->getName()); ?></a></li>
             <?php endforeach; ?>
             <?php endif; ?>
             <?php if ($this->_helper->isAllowed($this->entity, 'special')): ?>

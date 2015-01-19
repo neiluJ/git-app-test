@@ -582,4 +582,61 @@ class GitDao extends DaoBase
 
         return $this->getDb()->execute($query, array($user->getId()));
     }
+
+    /**
+     *
+     * @param Repository $repository
+     * @param string $refName
+     *
+     * @return Reference
+     *
+     * @throws \TestGit\Model\DaoException
+     */
+    public function findReference(Repository $repository, $refName)
+    {
+        $params = array($refName, $repository->getId());
+        $query = Query::factory()
+            ->select()
+            ->from($this->getOption('referencesTable', Tables::REFERENCES))
+            ->entity(self::ENTITY_REFERENCE)
+            ->where('name = ? AND repositoryId = ?');
+
+        $res = $this->getDb()->execute($query, $params);
+
+        if (!count($res)) {
+            throw new \RuntimeException(sprintf('Reference "%s" not found', $refName));
+        }
+
+        return $res[0];
+    }
+
+    /**
+     *
+     * @param Repository $repository
+     * @param string $refName
+     *
+     * @return Reference
+     *
+     * @throws \TestGit\Model\DaoException
+     */
+    public function deleteReference(Repository $repository, $ref)
+    {
+        $query = Query::factory()
+            ->delete($this->getOption('referencesTable', Tables::REFERENCES))
+            ->where('name = ? AND repositoryId = ?');
+
+        if ($ref instanceof Reference) {
+            $params = array($ref->getName());
+        } else {
+            $params = array($ref);
+        }
+
+        $params[] = $repository->getId();
+
+        /**
+         * @todo delete unreferenced commits
+         */
+
+        return $this->getDb()->execute($query, $params);
+    }
 }

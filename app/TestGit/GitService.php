@@ -640,7 +640,6 @@ EOF;
 
         $this->logger->addDebug('[create-branch:'. $repository->getFullname() .'] creating branch '. $branchName);
 
-        // first, checkout the base
         $proc = new Process(sprintf('%s && %s branch %s %s && %s', $this->impersonateString($user), $this->gitExecutable, escapeshellarg($branchName), escapeshellarg($ref), $this->impersonationRemove()), $repoPath);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
@@ -677,7 +676,6 @@ EOF;
             $procStr = sprintf('%s && %s tag -a %s -m \'%s\' %s && %s', $this->impersonateString($user), $this->gitExecutable, escapeshellarg($tagName), $annotation, escapeshellarg($ref), $this->impersonationRemove());
         }
 
-        // first, checkout the base
         $proc = new Process($procStr, $repoPath);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository) {
@@ -700,5 +698,65 @@ EOF;
         }
 
         $this->push($repository, 'origin', $tagName);
+    }
+
+    public function deleteBranch(RepositoryEntity $repository, User $user, $branchName)
+    {
+        $repoPath = $this->getWorkDirPath($repository);
+
+        $this->logger->addDebug('[delete-branch:'. $repository->getFullname() .'] deleting branch '. $branchName);
+
+        $proc = new Process(sprintf('%s && %s branch -d %s && %s', $this->impersonateString($user), $this->gitExecutable, escapeshellarg($branchName), $this->impersonationRemove()), $repoPath);
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[delete-branch:'. $repository->getFullname() .'] branch: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[delete-branch:'. $repository->getFullname() .'] branch: '. $line);
+                });
+            }
+        });
+
+
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[delete-branch:'. $repository->getFullname() .'] delete-branch FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+
+        $this->push($repository, 'origin', ':'. $branchName);
+    }
+
+    public function deleteTag(RepositoryEntity $repository, User $user, $tagName)
+    {
+        $repoPath = $this->getWorkDirPath($repository);
+
+        $this->logger->addDebug('[delete-tag:'. $repository->getFullname() .'] deleting tag '. $tagName);
+
+        $proc = new Process(sprintf('%s && %s tag -d %s && %s', $this->impersonateString($user), $this->gitExecutable, escapeshellarg($tagName), $this->impersonationRemove()), $repoPath);
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[delete-tag:'. $repository->getFullname() .'] tag: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[delete-tag:'. $repository->getFullname() .'] tag: '. $line);
+                });
+            }
+        });
+
+
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[delete-tag:'. $repository->getFullname() .'] delete-tag FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+
+        $this->push($repository, 'origin', ':'. $tagName);
     }
 }

@@ -4,6 +4,8 @@ namespace TestGit\Controllers;
 use Fwk\Core\Action\Result;
 use Fwk\Form\Validation\EqualsFilter;
 use TestGit\EmptyRepositoryException;
+use TestGit\Events\RepositoryBranchDeleteEvent;
+use TestGit\Events\RepositoryTagDeleteEvent;
 use TestGit\Form\AddBranchForm;
 use TestGit\Form\AddTagForm;
 use TestGit\Model\Git\Push;
@@ -16,6 +18,8 @@ class Branches extends Repository
     protected $addBranchForm;
     protected $addTagForm;
     protected $createdBranch = null;
+    protected $canDeleteBranch = false;
+    protected $refType = Reference::TYPE_BRANCH;
 
     public function show()
     {
@@ -54,7 +58,7 @@ class Branches extends Repository
     public function create()
     {
         try {
-            $this->loadRepository('read');
+            $this->loadRepository('special');
         } catch(EmptyRepositoryException $exp) {
             $this->cloneUrlAction();
             return 'empty_repository';
@@ -114,7 +118,7 @@ class Branches extends Repository
     public function createTag()
     {
         try {
-            $this->loadRepository('read');
+            $this->loadRepository('special');
         } catch(EmptyRepositoryException $exp) {
             $this->cloneUrlAction();
             return 'empty_repository';
@@ -171,6 +175,83 @@ class Branches extends Repository
         return Result::FORM;
     }
 
+    public function delete()
+    {
+        try {
+            $this->loadRepository('special');
+        } catch(EmptyRepositoryException $exp) {
+            $this->cloneUrlAction();
+            return 'empty_repository';
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp;
+            return Result::ERROR;
+        }
+
+
+        if (empty($this->branch)) {
+            $this->errorMsg = "No branch selected";
+            return Result::FORM;
+        } elseif ($this->branch == $this->entity->getDefault_branch()) {
+            $this->errorMsg = "This is the repository's default branch";
+            return Result::FORM;
+        }
+
+        try {
+            $ref = $this->getGitDao()->findReference($this->entity, $this->branch);
+            $this->refType = $ref->getType();
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::FORM;
+        }
+
+        $this->canDeleteBranch = true;
+
+        $this->getGitDao()->getDb()->beginTransaction();
+        if ($this->isPOST()) {
+            try {
+                $security = $this->getServices()->get('security');
+                $user = $security->getUser();
+
+                $this->getGitDao()->deleteReference($this->entity, $ref);
+
+                if ($this->refType == Reference::TYPE_BRANCH) {
+                    $this->getGitService()->deleteBranch($this->entity, $user, $ref->getName());
+
+                    $this->getGitDao()->notify(new RepositoryBranchDeleteEvent(
+                            $this->entity,
+                            $user,
+                            $ref,
+                            $this->getServices())
+                    );
+                } elseif ($this->refType == Reference::TYPE_TAG) {
+                    $this->getGitService()->deleteTag($this->entity, $user, $ref->getName());
+
+                    $this->getGitDao()->notify(new RepositoryTagDeleteEvent(
+                            $this->entity,
+                            $user,
+                            $ref,
+                            $this->getServices())
+                    );
+                } else {
+                    throw new \Exception('Invalid reference');
+                }
+
+                $this->getGitDao()->getDb()->commit();
+            } catch(\Exception $exp) {
+                $this->errorMsg = $exp->getMessage();
+                $this->getGitDao()->getDb()->rollBack();
+                return Result::ERROR;
+            }
+
+            // back to default branch
+            $this->createdBranch = $this->entity->getDefault_branch();
+
+            return Result::SUCCESS;
+        }
+
+        return Result::FORM;
+    }
+
     public function getAddBranchForm()
     {
         if (!isset($this->addBranchForm)) {
@@ -206,5 +287,21 @@ class Branches extends Repository
     public function getCreatedBranch()
     {
         return $this->createdBranch;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getCanDeleteBranch()
+    {
+        return $this->canDeleteBranch;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRefType()
+    {
+        return $this->refType;
     }
 }

@@ -16,7 +16,10 @@ class Activity
 
     const REPO_COMMENT_COMMIT   = 'cmt-commit';
     const REPO_COMMENT_PR       = 'cmt-compare';
-    
+
+    const REPO_BRANCH_DELETE    = 'rm-branch';
+    const REPO_TAG_DELETE       = 'rm-tag';
+
     protected $id;
     protected $userId;
     protected $repositoryId;

@@ -12,9 +12,14 @@
                 <ul class="tags-list">
                 <?php foreach($this->branches as $tag): ?>
                 <li>
-                    <?php if($this->branch != $tag->getName()): ?>
-                    <a style="float:right" class="btn btn-xs btn-success" href="<?php echo $this->_helper->url('CompareNEW', array('name' => $this->name, 'compare' => $this->branch . '..' . $tag->getName()), true); ?>">Compare</a>
-                    <?php endif; ?>
+                    <div class="btn-group btn-group-xs" style="float:right">
+                        <?php if($this->branch != $tag->getName()): ?>
+                            <a class="btn btn-success" href="<?php echo $this->_helper->url('CompareNEW', array('name' => $this->name, 'compare' => $this->branch . '..' . $tag->getName()), true); ?>"><i class="octicon octicon-git-compare"></i> Compare</a>
+                        <?php endif; ?>
+                        <?php if($this->entity->getDefault_branch() != $tag->getName() && $this->_helper->isAllowed($this->entity, 'special')): ?>
+                            <a class="btn btn-danger" href="<?php echo $this->_helper->url('DeleteRef', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>" title="delete branch"><i class="octicon octicon-git-branch-delete"></i></a>
+                        <?php endif; ?>
+                    </div>
                     <strong><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>"><?php echo $tag->getName(); ?></a></strong> <small>@ <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->name, 'hash' => $tag->getCommit()->getHash()), true); ?>"><?php echo substr($tag->getCommit()->getHash(),0,6); ?></a></small> <?php if($this->entity->getDefault_branch() == $tag->getName()): ?><span class="label label-default">Default</span><?php endif; ?>
                     <p>Last updated by <?php echo $tag->getCommit()->getCommitterName(); ?> on <?php echo $tag->getCommit()->getCommitterDate()->format('d/m/Y H:i:s'); ?></p>
                     <small class="commit-txt"><?php echo htmlentities($tag->getCommit()->getShortMessage(), ENT_QUOTES, 'utf-8'); ?></small>
@@ -32,6 +37,9 @@
             <ul class="tags-list">
                 <?php foreach($this->tags as $tag): ?>
                 <li>
+                    <?php if($this->_helper->isAllowed($this->entity, 'special')): ?>
+                        <a class="btn btn-danger btn-xs" style="float:right;" href="<?php echo $this->_helper->url('DeleteRef', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>" title="delete tag"><i class="octicon octicon-tag-remove"></i></a>
+                    <?php endif; ?>
                     <strong><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->name, 'branch' => $tag->getName()), true); ?>"><?php echo $tag->getName(); ?></a></strong> <small>@ <a href="<?php echo $this->_helper->url('CommitNEW', array('name' => $this->name, 'hash' => $tag->getCommit()->getHash()), true); ?>"><?php echo substr($tag->getCommit()->getHash(),0,6); ?></a></small>
                     <p>Created by <?php echo $tag->getCommit()->getCommitterName(); ?> on <?php echo $tag->getCommit()->getAuthorDate()->format('d/m/Y H:i:s'); ?></p>
 

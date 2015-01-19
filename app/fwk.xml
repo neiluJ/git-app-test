@@ -368,6 +368,24 @@
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
+        <action name="DeleteRef" shortcut="TestGit\Controllers\Branches:delete">
+            <acl type="allow" role="user" />
+
+            <result name="form" type="php">
+                <param name="file">repository/branches/delete.php</param>
+            </result>
+
+            <result name="success" type="redirect">
+                <param name="actionName">BranchesNEW</param>
+                <param name="name">:name</param>
+                <param name="branch">:createdBranch</param>
+            </result>
+
+            <result name="error" type="chain">
+                <param name="actionName">Error</param>
+                <param name="errorMsg">:errorMsg</param>
+            </result>
+        </action>
         <action name="Users" shortcut="TestGit\Controllers\Users:show">
             <acl type="allow" role="" />
             <result name="success" type="php">
@@ -814,6 +832,10 @@
             <param name="branch" regex=".[^/]+" required="false" />
         </url>
         <url route="/:name/newtag/:branch$" action="AddTag">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" regex=".[^/]+" required="false" />
+        </url>
+        <url route="/:name/refs/:branch/delete$" action="DeleteRef">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" regex=".[^/]+" required="false" />
         </url>

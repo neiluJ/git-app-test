@@ -78,6 +78,20 @@
             <li class="commit">"<span class="commit-txt"><?php echo $this->_helper->escape(trim(substr($activity->message, 41, 41+200))); ?></span>"</li>
         </ul>
     </li>
+    <?php elseif ($activity->type == Activity::REPO_BRANCH_DELETE): ?>
+    <li class="rm-branch">
+        <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
+        <i class="octicon octicon-git-branch-delete"></i>
+        <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
+        deleted branch <strong><?php echo $this->_helper->escape($activity->message); ?></strong> on <strong><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $activity->obj->getRepositoryName())); ?>"><?php echo $activity->obj->getRepositoryName(); ?></a></strong>
+    </li>
+    <?php elseif ($activity->type == Activity::REPO_TAG_DELETE): ?>
+    <li class="rm-tag">
+        <span class="date"><?php echo $activity->date->format('d/m/Y H:i:s'); ?></span>
+        <i class="octicon octicon-tag-remove"></i>
+        <?php if ($activity->user != null): ?><strong><a href="<?php echo $this->_helper->url('Profile', array('username' => $activity->user->getUsername())); ?>"><?php echo $activity->user->getUsername(); ?></a></strong><?php else: ?><i><?php echo $activity->username; ?></i><?php endif; ?>
+        deleted tag <strong><?php echo $this->_helper->escape($activity->message); ?></strong> on <strong><a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $activity->obj->getRepositoryName())); ?>"><?php echo $activity->obj->getRepositoryName(); ?></a></strong>
+    </li>
     <?php endif; ?>
 <?php endforeach; ?>
 </ul>
