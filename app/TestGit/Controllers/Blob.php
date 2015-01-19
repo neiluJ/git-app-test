@@ -89,7 +89,7 @@ class Blob extends Commits implements ContextAware
         }
         
         $this->blob = $tree;
-        $this->repoAction = 'Blob';
+        $this->repoAction = 'RepositoryNEW';
         
         return Result::SUCCESS;
     }
