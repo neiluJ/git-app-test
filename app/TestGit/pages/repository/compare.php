@@ -18,15 +18,15 @@
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon"><b class="octicon octicon-repo"></b></div>
-                                <select class="form-control" name="base">
+                                <select class="form-control" name="base" readonly="readonly">
                                     <option value="<?php echo $this->entity->getOwner()->getUsername(); ?>" selected="selected"><?php echo $vh->escape($this->entity->getFullname()); ?></option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="input-group">
-                                <div class="input-group-addon"><b class="octicon octicon-git-branch"></b></div>
-                                <input type="text" name="baseRef" class="form-control" value="<?php echo $vh->escape($this->baseRef); ?>" placeholder="Branch, Tag or Commit" />
+                                <div class="input-group-addon"><b class="octicon octicon-git-branch" id="baseIcon"></b></div>
+                                <input type="text" name="baseRef" style="width: 330px" class="baseRef form-control" value="<?php echo $vh->escape($this->baseRef); ?>" placeholder="Branch, Tag or Commit" />
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -51,7 +51,7 @@
                         <div class="form-group">
                             <div class="input-group">
                                 <div class="input-group-addon"><b class="octicon octicon-git-branch"></b></div>
-                                <input type="text" name="targetRef"  value="<?php echo $vh->escape($this->targetRef); ?>" class="form-control" placeholder="Branch, Tag or Commit" />
+                                <input type="text" name="targetRef"  value="<?php echo $vh->escape($this->targetRef); ?>" class="targetRef form-control" placeholder="Branch, Tag or Commit" />
                             </div>
                         </div>
                         <div class="clearfix"></div>
@@ -286,6 +286,74 @@ foreach ($this->commits as $commit) {
                 }
             });
         })
+    });
+
+    <?php
+        $tags = array();
+        $branches = array();
+        foreach ($this->entity->getReferences() as $ref) { if (!$ref->isBranch()) { $tags[] = $ref->getName(); } else { $branches[] = $ref->getName(); } }
+    ?>
+
+    var branches = ["<?php echo implode('", "', $branches); ?>"], tags = ["<?php echo implode('", "', $tags); ?>"], refreshIcon = function(dataset, elm) {
+        if (dataset.indexOf("branches") !== -1) {
+            elm.removeClass("octicon-git-branch")
+                .removeClass("octicon-tag")
+                .removeClass("octicon-git-commit")
+                .addClass("octicon-git-branch");
+        } else if (dataset.indexOf("tags") !== -1) {
+            elm.removeClass("octicon-git-branch")
+                .removeClass("octicon-tag")
+                .removeClass("octicon-git-commit")
+                .addClass("octicon-tag");
+        } else {
+            elm.removeClass("octicon-git-branch")
+                .removeClass("octicon-tag")
+                .removeClass("octicon-git-commit")
+                .addClass("octicon-git-commit");
+        }
+    };
+
+    $(document).ready(function() {
+        $('input.baseRef').typeahead([
+            {
+                name: 'branchesbase',
+                local: branches,
+                template: [
+                    '<p class="repo-name"><i class="octicon octicon-git-branch"></i> {{value}}</p>'
+                ].join(''),
+                engine: Hogan,
+                limit:0,
+                header: '<span class="dropdown-header">BRANCHES</span>'
+            },
+            {
+                name: 'tagsbase',
+                local: tags,
+                template: [
+                    '<p class="repo-name"><i class="octicon octicon-tag"></i> {{value}}</p>'
+                ].join(''),
+                engine: Hogan,
+                limit:0,
+                header: '<span class="dropdown-header">TAGS</span>'
+            },
+            {
+                name: 'commitsbase',
+                remote: {cache: false, url: "<?php echo $this->_helper->url('SearchCommits'); ?>?repo=<?php echo $this->entity->getFullname(); ?>&q=%QUERY", ttl: 5, filter: function(obj) { return obj.searchResults; }},
+                template: [
+                    '<p class="commit-date">{{date}}</p>',
+                    '<p class="repo-name"><i class="octicon octicon-git-commit"></i> {{shortHash}}</p>',
+                    '<p class="commit-details"><strong>{{repoName}}</strong> by <strong>{{committer}}</strong></p>',
+                    '<p class="commit-txt">{{message}}</p>',
+                ].join(''),
+                engine: Hogan,
+                valueKey: "name",
+                limit:3,
+                header: '<span class="dropdown-header">COMMITS</span>'
+            }
+        ]).bind('typeahead:autocompleted', function (obj, datum, dataset) {
+            refreshIcon(dataset, $('#baseIcon'));
+        }).bind('typeahead:selected', function (obj, datum, dataset) {
+            refreshIcon(dataset, $('#baseIcon'));
+        });
     });
 </script>
 <?php include __DIR__ . '/../_footer.php'; ?>

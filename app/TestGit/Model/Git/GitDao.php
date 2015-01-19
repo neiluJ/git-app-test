@@ -415,7 +415,7 @@ class GitDao extends DaoBase
     }
     
     public function findCommits($text, $type = self::FIND_COMMIT_BOTH, 
-        User $user = null
+        User $user = null, $repoName = null
     ) {
          $queryRepos = Query::factory()
                 ->select()
@@ -430,11 +430,22 @@ class GitDao extends DaoBase
             }
             $queryRepos->andWhere('r.id IN ('. implode(',', $ids) .')');
             $queryRepos->orWhere('r.public = 1');
+
+            /**
+             * @todo User's Organizations rights
+             */
         } else {
             $queryRepos->andWhere('r.public = 1');
         }
-        
-        $repos = $this->getDb()->execute($queryRepos);
+
+        $params = array();
+
+        if (!empty($repoName)) {
+            $queryRepos->andWhere('r.fullname = ?');
+            $params[] = $repoName;
+        }
+
+        $repos = $this->getDb()->execute($queryRepos, $params);
         
         $query = Query::factory()
                 ->select()

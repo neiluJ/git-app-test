@@ -16,6 +16,8 @@ class Commits extends Repository
 
     public $year;
     public $month;
+
+    public $repo;
     
     protected $commits      = array();
     protected $jsonCommits  = array();
@@ -152,7 +154,7 @@ class Commits extends Repository
             $user   = null;
         }
         
-        $results    = $gitDao->findCommits($this->q, GitDao::FIND_COMMIT_BOTH, $user);
+        $results    = $gitDao->findCommits($this->q, GitDao::FIND_COMMIT_BOTH, $user, $this->repo);
         $final      = array();
         foreach ($results as $res) {
             $final[] = array(
