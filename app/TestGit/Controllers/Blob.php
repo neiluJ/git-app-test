@@ -5,6 +5,7 @@ use Fwk\Core\Action\Result;
 use Symfony\Component\HttpFoundation\Response;
 use Fwk\Core\ContextAware;
 use Fwk\Core\Context;
+use TestGit\Model\Git\GitDao;
 
 class Blob extends Commits implements ContextAware
 {
@@ -14,6 +15,9 @@ class Blob extends Commits implements ContextAware
     
     protected $language;
     protected $type;
+
+    protected $blame;
+    protected $blameCommits = array();
 
     protected static $languages = array(
         'php'   => array('php', 'phtml', 'php3', 'php4', 'php5'),
@@ -110,6 +114,48 @@ class Blob extends Commits implements ContextAware
         }
         
         return Result::ERROR;
+    }
+
+
+    public function blame()
+    {
+        $res = $this->blobAction();
+
+        if ($res == Result::ERROR || !$this->blob instanceof \Gitonomy\Git\Blob) {
+            return Result::ERROR;
+        }
+
+        if (!$this->blob->isText()) {
+            $this->errorMsg = "Cannot blame this type of file";
+            return Result::ERROR;
+        }
+
+        try {
+            $this->blame = $this->repository->getBlame($this->branch, $this->path);
+        } catch(\Exception $exp) {
+            $this->errorMsg = $exp->getMessage();
+            return Result::ERROR;
+        }
+
+        $commitsToFind = array();
+        foreach ($this->blame->getGroupedLines() as $info) {
+            $commitsToFind[$info[0]->getHash()] = 1;
+        }
+
+        try {
+            $user = $this->getServices()->get('security')->getUser();
+        } catch(\Exception $exp) {
+            $user = null;
+        }
+
+        $commits = $this->getGitDao()->findCommits(array_keys($commitsToFind), GitDao::FIND_COMMITS_HASHES, $user, $this->name);
+        foreach ($commits as $commit) {
+            $this->blameCommits[$commit->getHash()] = $commit;
+        }
+
+        unset($commitsToFind, $commits);
+
+        return Result::SUCCESS;
     }
 
     public function showNew()
@@ -247,5 +293,21 @@ class Blob extends Commits implements ContextAware
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBlame()
+    {
+        return $this->blame;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBlameCommits()
+    {
+        return $this->blameCommits;
     }
 }

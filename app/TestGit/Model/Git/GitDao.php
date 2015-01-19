@@ -26,6 +26,7 @@ class GitDao extends DaoBase
     const FIND_COMMIT_HASH  = 'hash';
     const FIND_COMMIT_MSG   = 'message';
     const FIND_COMMIT_BOTH  = 'hash+msg';
+    const FIND_COMMITS_HASHES = 'hashes';
     
     const ENTITY_REPO   = 'TestGit\\Model\\Git\\Repository';
     const ENTITY_ACCESS = 'TestGit\\Model\\Git\\Access';
@@ -452,7 +453,6 @@ class GitDao extends DaoBase
                 ->from($this->getOption('commitsTable'))
                 ->entity(self::ENTITY_COMMIT)
                 ->orderBy('committerDate', 'desc')
-                ->limit(8)
                 ;
         
         $params = array();
@@ -473,18 +473,26 @@ class GitDao extends DaoBase
                 $query->where('message LIKE ?'); 
                 $params[]   = '%'. str_replace(' ', '%', $text) .'%';
                 break;
+
+            case self::FIND_COMMITS_HASHES:
+                if (!is_array($text)) {
+                    $text = array($text);
+                }
+
+                $query->where('hash IN (\''. implode('\',\'', $text) .'\')');
+                break;
         }
-        
+
         $ids = array();
         foreach ($repos as $rep) {
             $ids[] = $rep->getId();
         }
         
         $query->andWhere('repositoryId IN ('. implode(', ', $ids) .')');
-        
+
         return $this->getDb()->execute($query, $params);
     }
-    
+
     public function countCommits(User $user)
     {
         $query = Query::factory()

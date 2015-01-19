@@ -216,6 +216,19 @@
             </result>
         </action>
 
+        <action name="Blame" shortcut="TestGit\Controllers\Blob:blame">
+            <acl type="allow" role="" />
+            <result name="success" type="php">
+                <param name="file">repository/blame.php</param>
+            </result>
+
+            <result name="error" type="chain">
+                <param name="actionName">RepoError</param>
+                <param name="errorMsg">:errorMsg</param>
+                <param name="entity">:entity</param>
+            </result>
+        </action>
+
         <action name="BlobRaw" shortcut="TestGit\Controllers\Blob:raw">
             <acl type="allow" role="" />    
         </action>
@@ -340,7 +353,8 @@
                 <param name="branch">:createdBranch</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
+                <param name="actionName">RepoError</param>
+                <param name="name">:name</param>
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
@@ -364,7 +378,8 @@
                 <param name="branch">:createdBranch</param>
             </result>
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
+                <param name="actionName">RepoError</param>
+                <param name="name">:name</param>
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
@@ -382,7 +397,8 @@
             </result>
 
             <result name="error" type="chain">
-                <param name="actionName">Error</param>
+                <param name="actionName">RepoError</param>
+                <param name="name">:name</param>
                 <param name="errorMsg">:errorMsg</param>
             </result>
         </action>
@@ -818,6 +834,11 @@
             <param name="path" required="true" regex=".*" />
         </url>
         <url route="/:name/blob/:branch/:path$" action="BlobNEW">
+            <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
+            <param name="branch" required="true" regex=".[^/]+" />
+            <param name="path" required="true" regex=".*" />
+        </url>
+        <url route="/:name/blame/:branch/:path$" action="Blame">
             <param name="name" required="true" regex="[a-zA-Z0-9\-_]+/[a-zA-Z0-9\-_]+" />
             <param name="branch" required="true" regex=".[^/]+" />
             <param name="path" required="true" regex=".*" />

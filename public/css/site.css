@@ -222,7 +222,7 @@ table.difftable tr, table.difftable td {
     font-family: Incosolata, "Courier New",Courier,monospace !important;
     font-size: 14px !important;
 }
-table.difftable code {
+table.difftable code, table.blame code {
     font-weight: normal;
     color: inherit;
     padding:0;
@@ -763,4 +763,14 @@ ol.notifs li span.date {
 
 #commitsContrib {
     margin-top: 10px;
+}
+
+table.blame td.ln {
+    border-left: solid 1px #eaeaea;
+}
+table.blame code {
+    background-color: transparent !important;
+}
+table.blame td.commit {
+    min-width: 250px;
 }

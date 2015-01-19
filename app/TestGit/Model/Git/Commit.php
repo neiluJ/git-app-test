@@ -251,6 +251,15 @@ class Commit
             return (empty($this->committerName) ? $this->committerEmail : $this->committerName);
         }
         
-        return $this->getCommitter()->get()->getFullname();
+        return $this->getCommitter()->displayName();
+    }
+
+    public function getComputedAuthorName()
+    {
+        if (empty($this->authorId)) {
+            return (empty($this->authorName) ? $this->authorEmail : $this->authorName);
+        }
+
+        return $this->getAuthor()->displayName();
     }
 }
