@@ -2,7 +2,9 @@
 namespace TestGit\Controllers;
 
 use Fwk\Core\Action\Result;
+use Gitonomy\Git\Diff\Diff;
 use Gitonomy\Git\Exception\ProcessException;
+use Symfony\Component\Process\ProcessBuilder;
 use TestGit\EmptyRepositoryException;
 
 class Compare extends Repository
@@ -58,7 +60,7 @@ class Compare extends Repository
         }
 
         try {
-            $this->diff = $this->repository->getDiff($this->compare);
+            $this->diff = $this->getRawDiff();
             $this->commits = $this->repository->getRevision($this->compare)->getLog(null, 0);
         } catch(ProcessException $exp) {
             $this->errorMsg = $exp;
@@ -208,7 +210,7 @@ class Compare extends Repository
         $targetRef = (empty($_POST['targetRef']) ? $this->entity->getDefault_branch() : $_POST['targetRef']);
 
         if ($base != $target) {
-            return sprintf("%s:%s..%s:%s", $base, $baseRef, $target, $targetRef);
+            return sprintf("%s..%s:%s", $baseRef, $target, $targetRef);
         } else {
             return sprintf("%s..%s", $baseRef, $targetRef);
         }
@@ -241,12 +243,30 @@ class Compare extends Repository
             $targetRef = $target;
         }
 
+        if ($baseOwner != $targetOwner) {
+            // $this->getGitService()->fetch($this->getGitDao()->findOne())
+        }
+
         $this->base = $baseOwner;
         $this->baseRef = $baseRef;
         $this->target = $targetOwner;
         $this->targetRef = $targetRef;
 
+        $this->compare = str_replace(':', '/', $this->compare);
         return true;
+    }
+
+    public function getRawDiff()
+    {
+        $args = array_merge(array('git', 'diff', '-r', '-p', '-m', '-M', '--no-commit-id', '--full-index'), array(
+            $this->compare,
+            '--',
+        ));
+
+        $diff = Diff::parse($this->repository->run('diff', $args));
+        $diff->setRepository($this->repository);
+
+        return $diff;
     }
 
     /**
