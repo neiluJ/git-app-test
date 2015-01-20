@@ -70,6 +70,17 @@
         <li<?php if ($repoMenuActive == "settings"): ?> class="active"<?php endif; ?>><a  style="padding: 5px 15px;" href="<?php echo $this->_helper->url('SettingsNEW', array('name' => $this->entity->getFullname())); ?>"><b class="octicon octicon-tools"></b> Settings</a></li>
         <?php endif; ?>
     </ul>
+
+    <hr />
+
+    <div class="btn-group btn-group-sm">
+        <?php if ($this->_helper->isAllowed('repository', 'create')): ?>
+            <a href="<?php echo $this->_helper->url('ForkNEW', array('name' => $this->entity->getFullname())); ?>" class="btn btn-default"><b class="octicon octicon-repo-forked"></b> Fork</a>
+        <?php endif; ?>
+        <?php if ($this->_helper->isAllowed($this->entity, 'owner')):?>
+            <a href="<?php echo $this->_helper->url('DeleteNEW', array('name' => $this->entity->getFullname())); ?>" class="btn btn-danger"><b class="octicon octicon-repo-delete"></b> Delete</a>
+        <?php endif; ?>
+    </div>
     <?php endif; ?>
 
     <?php if ($this->_helper->isAllowed($this->entity, 'special')): ?>

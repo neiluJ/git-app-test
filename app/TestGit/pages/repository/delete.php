@@ -15,7 +15,7 @@
             This will remove all files, branches, tags, history <strong>permanently</strong> !
         </div>
 
-            <form action="<?php echo $this->_helper->url('Delete', array('name' => $this->entity->getFullname())); ?>" method="post">
+            <form action="<?php echo $this->_helper->url('DeleteNEW', array('name' => $this->entity->getFullname())); ?>" method="post">
                 <div class="form-group">
                     <input type="submit" value="Delete repository" class="btn btn-danger">
                     <a href="<?php echo $this->_helper->url('RepositoryNEW', array('name' => $this->entity->getFullname())); ?>" class="btn btn-default">Cancel</a>
@@ -23,7 +23,15 @@
             </form>
         </div>
         <div class="col-md-2">
-            <div class="cloneUrl"><?php echo $this->_helper->embed('CloneUrl', array('name' => $this->name)); ?></div>
+            <?php if($this->_helper->isAllowed($this->entity, 'read')): ?>
+                <div class="cloneUrl"><?php echo $this->_helper->embed('CloneUrl', array('name' => $this->name)); ?></div>
+
+                <div class="btn-group btn-group-sm" style="margin-top:10px;">
+                    <a href="<?php echo $vh->url('Archive', array('name' => $this->entity->getFullname(), 'branch' => $this->branch, 'format' => 'zip'), true); ?>" class="btn btn-default"><b class="octicon octicon-cloud-download"></b> Download <strong>ZIP</strong></a>
+                    <a href="<?php echo $vh->url('Archive', array('name' => $this->entity->getFullname(), 'branch' => $this->branch, 'format' => 'tar.gz'), true); ?>" class="btn btn-default"><strong>TAR</strong></a>
+                </div>
+                <small style="display: block; text-align: center; color: #ccc; margin-top: 5px;">Download the contents of <strong><?php echo $vh->escape($this->entity->getFullname()); ?></strong> at <strong><?php echo $vh->escape($this->branch); ?></strong></small>
+            <?php endif; ?>
         </div>
     </div><!-- /row -->
 </div><!-- /.container -->

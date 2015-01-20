@@ -215,13 +215,19 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 $fork->setLanguages($this->entity->getLanguages());
                 
                 $this->getGitDao()->save($fork);
-                $this->getGitDao()->notify(new RepositoryForkEvent(
-                    $this->entity,
-                    $fork,
-                    $this->getServices()->get('security')->getUser(),
-                    $this->getServices())
-                );
+
+                /**
+                 * @todo it sucks to commit here but the indexing task need it..
+                 */
                 $this->getGitDao()->getDb()->commit();
+
+                $this->getGitDao()->notify(new RepositoryForkEvent(
+                        $this->entity,
+                        $fork,
+                        $this->getServices()->get('security')->getUser(),
+                        $this->getServices())
+                );
+
                 $this->name = $fork->getFullname();
             } catch(\Exception $exp) {
                 $this->errorMsg = $exp;
@@ -534,7 +540,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
     {
         if (!isset($this->forkForm)) {
             $this->forkForm = new CreateForkForm();
-            $this->forkForm->setAction($this->getServices()->get('viewHelper')->url('Fork', array('name' => $this->name)));
+            $this->forkForm->setAction($this->getServices()->get('viewHelper')->url('ForkNEW', array('name' => $this->name)));
 
             if (!$this->getServices()->get('security')->hasUser()) {
                 return $this->forkForm;
