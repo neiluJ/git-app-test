@@ -301,6 +301,9 @@ class ServersideSetupService extends ClassicSetupService
             $git->createWorkdir($fork);
         }, function() use ($fork, $git) {
             if (is_dir($git->getWorkDirPath($fork))) {
+                /**
+                 * @todo Bugs when directory not empty. Use proc: rm -Rf
+                 */
                 rmdir($git->getWorkDirPath($fork));
             }
         }, 'create-workdir', 'Creating work directory');
@@ -308,6 +311,7 @@ class ServersideSetupService extends ClassicSetupService
         $tr->add(function() use ($repo, $fork, $owner, $git) {
             $git->remote($fork, 'add', $repo->getOwner()->getUsername(), $git->getRepositoryPath($repo));
             $git->remote($repo, 'add', $owner->getUsername(), $git->getRepositoryPath($fork));
+            $git->remote($fork, 'update');
         }, function() use ($repo, $fork, $owner, $git) {
             try {
                 $git->remote($fork, 'rm', $repo->getOwner()->getUsername());

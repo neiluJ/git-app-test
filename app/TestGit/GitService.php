@@ -314,7 +314,10 @@ class GitService
     {
         $this->userConfig($repository);
         if (null === $branch) {
-            $branch = $repository->getDefault_branch();
+            $branch = "--all";
+            $everything = true;
+        } else {
+            $everything = false;
         }
         
         $this->logger->addDebug('[push:'. $repository->getFullname() .'] pushing changes to remote "'. $remote .'" (branch: '. $branch .')');
@@ -337,6 +340,28 @@ class GitService
         if (!$proc->isSuccessful()) {
             $logger->addCritical('[push:'. $repository->getFullname() .'] git push FAIL: '. $proc->getErrorOutput());
             throw new \RuntimeException($proc->getErrorOutput());
+        }
+
+        if ($everything === true) {
+            $proc = new Process($this->gitExecutable . ' push -f ' . $remote . ' --tags', $this->getWorkDirPath($repository));
+            $logger = $this->logger;
+            $proc->run(function ($type, $buffer) use ($logger, $repository) {
+                $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+
+                if ('err' !== $type) {
+                    array_walk($buffer, function ($line) use ($logger, $repository) {
+                        $logger->addDebug('[push:' . $repository->getFullname() . '] git push (tags): ' . $line);
+                    });
+                } else {
+                    array_walk($buffer, function ($line) use ($logger, $repository) {
+                        $logger->addError('[push:' . $repository->getFullname() . '] git push (tags): ' . $line);
+                    });
+                }
+            });
+            if (!$proc->isSuccessful()) {
+                $logger->addCritical('[push:' . $repository->getFullname() . '] git push FAIL (tags): ' . $proc->getErrorOutput());
+                throw new \RuntimeException($proc->getErrorOutput());
+            }
         }
     }
     
@@ -370,12 +395,16 @@ class GitService
         }
     }
     
-    public function remote(RepositoryEntity $repository, $action, $name, $url = null)
+    public function remote(RepositoryEntity $repository, $action, $name = null, $url = null)
     {
         $repoPath = $this->getWorkDirPath($repository);
         
         $this->logger->addDebug('[remote:'. $repository->getFullname() .'] remote '. $action .' '. $name .($url !== null ? ' ('. $url .')' : null));
-        
+
+        if ($action === "update") {
+            $name = $url = null;
+        }
+
         $proc = new Process(sprintf('%s remote %s %s %s', $this->gitExecutable, $action, $name, $url), $repoPath);
         $logger = $this->logger;
         $proc->run(function ($type, $buffer) use ($logger, $repository, $action) {

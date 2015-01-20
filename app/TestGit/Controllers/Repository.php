@@ -1,6 +1,7 @@
 <?php
 namespace TestGit\Controllers;
 
+use Doctrine\DBAL\ConnectionException;
 use Fwk\Core\Accessor;
 use Fwk\Core\ServicesAware;
 use Fwk\Di\Container;
@@ -197,6 +198,7 @@ class Repository implements ContextAware, ServicesAware, Preparable
             }
             
             $this->getGitDao()->getDb()->beginTransaction();
+            $tr = true;
             try {
                 $fork = $this->getGitDao()->create(
                     $this->getUsersDao()->getById($form->owner_id), 
@@ -219,7 +221,8 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 /**
                  * @todo it sucks to commit here but the indexing task need it..
                  */
-                $this->getGitDao()->getDb()->commit();
+                 $this->getGitDao()->getDb()->commit();
+                 $tr = false;
 
                 $this->getGitDao()->notify(new RepositoryForkEvent(
                         $this->entity,
@@ -231,7 +234,10 @@ class Repository implements ContextAware, ServicesAware, Preparable
                 $this->name = $fork->getFullname();
             } catch(\Exception $exp) {
                 $this->errorMsg = $exp;
-                $this->getGitDao()->getDb()->rollBack();
+                if ($tr) {
+                    $this->getGitDao()->getDb()->rollBack();
+                }
+
                 return Result::ERROR;
             }
         
