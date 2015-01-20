@@ -75,6 +75,7 @@
         <argument>:git.user.name</argument>
         <argument>:git.clone.hostname.ssh.local</argument>
         <argument>@logger</argument>
+        <argument>:repos.archives.dir</argument>
     </class-definition>
     
     <class-definition name="users" class="TestGit\UsersService" shared="true">

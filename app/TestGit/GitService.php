@@ -11,7 +11,10 @@ use Monolog\Logger;
 class GitService
 {
     const UPDATE_LOCK_FILE = 'forgery.update-lock';
-    
+
+    const ARCHIVE_FORMAT_ZIP    = 'zip';
+    const ARCHIVE_FORMAT_TAR    = 'tar.gz';
+
     protected $repositoriesDir;
     protected $workDir;
     protected $dateFormat;
@@ -21,7 +24,8 @@ class GitService
     protected $gitUsername;
     protected $gitCloneHostnameLocal;
     protected $gitExecutable;
-    
+    protected $archivesDir;
+
     /**
      * @var Logger
      */
@@ -29,7 +33,7 @@ class GitService
     
     public function __construct($repositoriesDir, $workDir, $gitExecutable, $dateFormat, 
         $forgeryUsername, $forgeryEmail, $forgeryFullname, $gitUsername, 
-        $gitCloneHostnameLocal, Logger $logger
+        $gitCloneHostnameLocal, Logger $logger, $archivesDir
     ) {
         if (!is_dir($repositoriesDir)) {
             throw new \Exception('Invalid repositories directory: '. $repositoriesDir);
@@ -49,6 +53,7 @@ class GitService
         $this->gitCloneHostnameLocal    = $gitCloneHostnameLocal;
         $this->gitUsername              = $gitUsername;
         $this->logger                   = $logger;
+        $this->archivesDir              = $archivesDir;
     }
     
     /**
@@ -758,5 +763,87 @@ EOF;
         }
 
         $this->push($repository, 'origin', ':'. $tagName);
+    }
+
+    public function archive(RepositoryEntity $repository, $branch = 'master', $format = self::ARCHIVE_FORMAT_ZIP)
+    {
+        $repoPath = $this->getWorkDirPath($repository);
+
+        $this->logger->addDebug('[archive:'. $repository->getFullname() .'] building archive @ '. $branch .' (format: '. $format .')');
+
+        try {
+            // getting last revision
+            $gitRepo = $this->transform($repository);
+            $refs = $gitRepo->getReferences();
+            if ($refs->hasBranch($branch)) {
+                $revision = $refs->getBranch($branch);
+            } else {
+                $revision = $gitRepo->getRevision($branch);
+            }
+            $commit = $gitRepo->getLog($revision, null, 0, 1)->getSingleCommit();
+            $hash = $commit->getShortHash();
+        } catch(\Exception $exp) {
+            $this->logger->addCritical('[archive:'. $repository->getFullname() .'] failed loading repository: '. $exp->getMessage());
+            throw $exp;
+        }
+
+        $targetDir = rtrim($this->archivesDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR .
+            $repository->getOwner()->getUsername();
+
+        $targetFile = $targetDir . DIRECTORY_SEPARATOR .
+            $repository->getName() . '-' . $hash . ($format === self::ARCHIVE_FORMAT_ZIP ? '.zip' : '.tar.gz');
+
+        if (!is_dir($targetDir)) {
+            @mkdir($targetDir, 0744, true);
+        } elseif (is_file($targetFile)) {
+            if ($commit->getAuthorDate()->format('U') > filemtime($targetFile)) {
+                $this->logger->addDebug('[archive:'. $repository->getFullname() .'] removing older archive (file: '. $targetFile .')');
+                unlink($targetFile);
+            } else {
+                $this->logger->addDebug('[archive:'. $repository->getFullname() .'] archive already exists (file: '. $targetFile .')');
+                return $targetFile;
+            }
+        }
+
+        if (!is_dir($targetDir) || !is_writable($targetDir)) {
+            $this->logger->addCritical('[archive:'. $repository->getFullname() .'] failed creating target directory: '. $targetDir);
+            throw new \RuntimeException('Cannot write archive on disk');
+        }
+
+        switch($format)
+        {
+            case self::ARCHIVE_FORMAT_ZIP:
+                $proc = new Process(sprintf('%s archive --format=zip --output=%s -9 --worktree-attributes %s', $this->gitExecutable, $targetFile, $commit->getHash()), $repoPath);
+                break;
+
+            case self::ARCHIVE_FORMAT_TAR:
+                $proc = new Process(sprintf('%s archive --format=tar --worktree-attributes %s | gzip >%s', $this->gitExecutable, $commit->getHash(), $targetFile), $repoPath);
+                break;
+
+            default:
+                $this->logger->addCritical('[archive:'. $repository->getFullname() .'] invalid archive format: '. $format);
+                throw new \InvalidArgumentException(sprintf('Invalid archive format: '. $format));
+        }
+
+        $logger = $this->logger;
+        $proc->run(function ($type, $buffer) use ($logger, $repository) {
+            $buffer = (strpos($buffer, "\n") !== false ? explode("\n", $buffer) : array($buffer));
+            if ('err' !== $type) {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addDebug('[archive:'. $repository->getFullname() .'] archive: '. $line);
+                });
+            } else {
+                array_walk($buffer, function($line) use ($logger, $repository) {
+                    $logger->addError('[archive:'. $repository->getFullname() .'] archive: '. $line);
+                });
+            }
+        });
+
+        if (!$proc->isSuccessful()) {
+            $logger->addCritical('[archive:'. $repository->getFullname() .'] archive FAIL: '. $proc->getErrorOutput());
+            throw new \RuntimeException($proc->getErrorOutput());
+        }
+
+        return $targetFile;
     }
 }

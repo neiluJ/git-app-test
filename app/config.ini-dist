@@ -30,11 +30,13 @@ db.database = forgery
 ;                       : (usually /home/git/repositories)
 ; - repos.working.dir   : Directory where Forgery can actually clone/use repos
 ;                       : (usually /home/git/workdir)
-; - repos.basePath      : Should be @repos.dir 
+; - repos.basePath      : Should be @repos.dir
+; - repos.archives.dir  : Directory where we store downloadable archives of repos
 ; --------------------------
 repos.dir = /home/neiluj/tmp/testgit/repositories
 repos.working.dir = /home/neiluj/tmp/testgit/workdir
 repos.basePath = /home/neiluj/tmp/testgit/repositories
+repos.archives.dir = /home/git/archives
 
 ; ---------------------
 ; Cloning Configuration
