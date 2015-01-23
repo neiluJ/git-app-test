@@ -870,6 +870,10 @@ EOF;
 
         if (!$proc->isSuccessful()) {
             $logger->addCritical('[archive:'. $repository->getFullname() .'] archive FAIL: '. $proc->getErrorOutput());
+            if (is_file($targetFile)) {
+                @unlink($targetFile);
+            }
+
             throw new \RuntimeException($proc->getErrorOutput());
         }
 
